@@ -12,8 +12,14 @@ const router = Router();
 
 router.use(authenticateToken);
 
-// List insurance claims
+// List insurance claims (canonical path used by the SPA)
+router.get('/claims', requireRoles('admin', 'billing', 'patient'), InsuranceController.getAll);
+
+// Backwards-compatible alias kept for existing clients
 router.get('/', requireRoles('admin', 'billing', 'patient'), InsuranceController.getAll);
+
+// List insurance policies visible to the caller
+router.get('/policies', requireRoles('admin', 'billing', 'patient'), InsuranceController.getPolicies);
 
 // Submit insurance claim
 router.post(

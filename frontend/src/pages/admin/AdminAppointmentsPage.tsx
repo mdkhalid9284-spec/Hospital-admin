@@ -5,6 +5,7 @@ import { InteractiveCalendar } from '../../components/ui/InteractiveCalendar';
 import { Modal, ModalHeader, Field, inputCls } from '../../components/ui/primitives';
 import { CalendarDays, Plus, CheckCircle, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { todayISO } from '../../utils/date';
 
 export const AdminAppointmentsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,12 +20,14 @@ export const AdminAppointmentsPage: React.FC = () => {
 
   // Form states
   const [selectedDocId, setSelectedDocId] = useState('');
-  const [selectedDate, setSelectedDate] = useState('2026-10-06');
+  const [selectedDate, setSelectedDate] = useState(todayISO());
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [doctorAvailable, setDoctorAvailable] = useState(true);
   const [selectedSlot, setSelectedSlot] = useState('');
   const [selectedPatId, setSelectedPatId] = useState('');
   const [reason, setReason] = useState('');
   const [booking, setBooking] = useState(false);
+  const [bookError, setBookError] = useState<string | null>(null);
 
   const fetchAppointments = async () => {
     try {
@@ -63,11 +66,13 @@ export const AdminAppointmentsPage: React.FC = () => {
         const res = await apiClient.get(
           `/appointments/available-slots?doctorId=${selectedDocId}&date=${selectedDate}`
         );
-        const slots = res.data.data.availableSlots;
+        const slots = res.data.data.availableSlots ?? [];
         setAvailableSlots(slots);
+        setDoctorAvailable(res.data.data.isDoctorAvailable !== false);
         setSelectedSlot(slots[0] || '');
       } catch {
         setAvailableSlots([]);
+        setDoctorAvailable(false);
         setSelectedSlot('');
       }
     })();
@@ -77,6 +82,7 @@ export const AdminAppointmentsPage: React.FC = () => {
     e.preventDefault();
     if (!selectedSlot) return;
     setBooking(true);
+    setBookError(null);
     try {
       await apiClient.post('/appointments', {
         patientId: selectedPatId,
@@ -91,7 +97,7 @@ export const AdminAppointmentsPage: React.FC = () => {
       fetchAppointments();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Booking failed');
+      setBookError(err.message || 'Booking failed');
     } finally {
       setBooking(false);
     }
@@ -107,7 +113,8 @@ export const AdminAppointmentsPage: React.FC = () => {
       fetchAppointments();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Failed to update status');
+      setToastMsg(err.message || 'Failed to update status');
+      setTimeout(() => setToastMsg(null), 4500);
     }
   };
 
@@ -125,7 +132,10 @@ export const AdminAppointmentsPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowBookModal(true)}
+          onClick={() => {
+            setBookError(null);
+            setShowBookModal(true);
+          }}
           className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Schedule Appointment
@@ -192,6 +202,7 @@ export const AdminAppointmentsPage: React.FC = () => {
               <input
                 type="date"
                 required
+                min={todayISO()}
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className={inputCls}
@@ -205,7 +216,9 @@ export const AdminAppointmentsPage: React.FC = () => {
                 className={inputCls}
               >
                 {availableSlots.length === 0 ? (
-                  <option value="">No slots available</option>
+                  <option value="">
+                    {doctorAvailable ? 'No slots available' : 'Doctor has no clinic this day'}
+                  </option>
                 ) : (
                   availableSlots.map((s) => (
                     <option key={s} value={s}>
@@ -245,6 +258,16 @@ export const AdminAppointmentsPage: React.FC = () => {
               className={inputCls}
             />
           </Field>
+
+          {bookError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+            >
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{bookError}</span>
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <button

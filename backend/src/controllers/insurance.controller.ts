@@ -45,16 +45,17 @@ export class InsuranceController {
   public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
+      const filters = InsuranceController.readFilters(req);
       let claims;
       if (user.role === 'patient') {
-        claims = await InsuranceService.getByPatientId(user.patientId!);
+        claims = await InsuranceService.getByPatientId(user.patientId!, filters);
       } else {
-        claims = await InsuranceService.getAll();
+        claims = await InsuranceService.getAll(filters);
       }
 
       res.status(200).json({
         success: true,
-        data: { claims },
+        data: { claims, total: claims.length },
       });
     } catch (err) {
       next(err);
@@ -63,13 +64,49 @@ export class InsuranceController {
 
   public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const claims = await InsuranceService.getByPatientId(req.params.patientId);
+      const claims = await InsuranceService.getByPatientId(
+        req.params.patientId,
+        InsuranceController.readFilters(req)
+      );
       res.status(200).json({
         success: true,
-        data: { claims },
+        data: { claims, total: claims.length },
       });
     } catch (err) {
       next(err);
     }
+  }
+
+  public static async getPolicies(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user!;
+      const policies =
+        user.role === 'patient'
+          ? await InsuranceService.getPoliciesByPatientId(user.patientId!)
+          : await InsuranceService.getAllPolicies();
+
+      res.status(200).json({
+        success: true,
+        data: { policies },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  private static readFilters(req: Request): {
+    status?: string;
+    search?: string;
+    from?: string;
+    to?: string;
+  } {
+    const read = (key: string): string | undefined =>
+      typeof req.query[key] === 'string' ? (req.query[key] as string) : undefined;
+    return {
+      status: read('status'),
+      search: read('search'),
+      from: read('from'),
+      to: read('to'),
+    };
   }
 }

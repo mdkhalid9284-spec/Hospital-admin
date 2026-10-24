@@ -5,6 +5,19 @@ import { AppError } from '../middlewares/errorHandler.js';
 import { logAuditEvent } from '../middlewares/audit.middleware.js';
 import { NotificationService } from './notification.service.js';
 
+export interface BillFilters {
+  from?: string;
+  to?: string;
+}
+
+const matchesDateRange = (bill: IBill, filters?: BillFilters): boolean => {
+  if (!filters) return true;
+  const created = bill.createdAt.slice(0, 10);
+  if (filters.from && created < filters.from) return false;
+  if (filters.to && created > filters.to) return false;
+  return true;
+};
+
 export class BillService {
   /**
    * Authoritative server-side bill creation and charge calculation
@@ -142,11 +155,11 @@ export class BillService {
     return bill;
   }
 
-  public static async getByPatientId(patientId: string): Promise<IBill[]> {
-    return db.bills.filter((b) => b.patientId === patientId);
+  public static async getByPatientId(patientId: string, filters?: BillFilters): Promise<IBill[]> {
+    return db.bills.filter((b) => b.patientId === patientId && matchesDateRange(b, filters));
   }
 
-  public static async getAll(): Promise<IBill[]> {
-    return db.bills;
+  public static async getAll(filters?: BillFilters): Promise<IBill[]> {
+    return db.bills.filter((bill) => matchesDateRange(bill, filters));
   }
 }

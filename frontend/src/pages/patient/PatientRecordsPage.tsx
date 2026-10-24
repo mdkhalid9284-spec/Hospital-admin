@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { IMedicalRecord, IPrescription, IPatient } from '../../types';
+import { IMedicalRecord, IPrescription } from '../../types';
 import { TestAnalyticsBubbleChart } from '../../components/ui/TestAnalyticsBubbleChart';
-import { FileText, Pill, HeartPulse, Printer, Clock } from 'lucide-react';
+import { FileText, Pill, Printer, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Modal, ModalHeader } from '../../components/ui/primitives';
+import { calculateAge, formatDateShort, parseISODate } from '../../utils/date';
 
 export const PatientRecordsPage: React.FC = () => {
   const { user } = useAuth();
@@ -13,25 +14,38 @@ export const PatientRecordsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'rx' | 'notes'>('rx');
   const [viewRx, setViewRx] = useState<IPrescription | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    const pid = user?.patientId || 'pat-001';
+    const pid = user?.patientId;
+    if (!pid) {
+      setLoading(false);
+      setError('No patient profile is linked to this account.');
+      return;
+    }
     (async () => {
       try {
         setLoading(true);
+        setError(null);
         const [recRes, rxRes] = await Promise.all([
-          apiClient.get(`/records/patient/${pid}`).catch(() => ({ data: { data: { records: [] } } })),
-          apiClient.get(`/prescriptions/patient/${pid}`).catch(() => ({ data: { data: { prescriptions: [] } } })),
+          apiClient.get(`/records/patient/${pid}`),
+          apiClient.get(`/prescriptions/patient/${pid}`),
         ]);
-        setRecords(recRes.data.data.records || []);
-        setPrescriptions(rxRes.data.data.prescriptions || []);
-      } catch (e) {
-        console.error(e);
+        setRecords(recRes.data.data?.records ?? []);
+        setPrescriptions(rxRes.data.data?.prescriptions ?? []);
+      } catch (err: any) {
+        setError(err.message || 'Unable to load your medical records.');
+        setRecords([]);
+        setPrescriptions([]);
       } finally {
         setLoading(false);
       }
     })();
-  }, [user]);
+  }, [user, reloadKey]);
+
+  const ageOf = (rx: IPrescription): number =>
+    typeof rx.patientAge === 'number' ? rx.patientAge : calculateAge(rx.patientDob, rx.prescribedAt);
 
   return (
     <div className="space-y-6 anim-fade-up">
@@ -75,24 +89,48 @@ export const PatientRecordsPage: React.FC = () => {
           </button>
         </div>
 
+        {error && (
+          <div
+            role="alert"
+            className="flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 sm:flex-row sm:items-center"
+          >
+            <AlertTriangle size={15} className="shrink-0" />
+            <span className="flex-1">{error}</span>
+            <button
+              type="button"
+              onClick={() => setReloadKey((key) => key + 1)}
+              className="inline-flex items-center gap-1 self-start rounded-lg bg-red-600 px-2.5 py-1 text-white hover:bg-red-700"
+            >
+              <RefreshCw size={12} /> Retry
+            </button>
+          </div>
+        )}
+
         {activeTab === 'rx' && (
           <div className="space-y-3">
-            {prescriptions.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No prescriptions found.</p>
+            {loading ? (
+              <p className="py-6 text-center text-xs text-slate-400">Loading prescriptions…</p>
+            ) : prescriptions.length === 0 ? (
+              <p className="text-xs text-slate-400 py-6 text-center">
+                {error ? 'Prescriptions could not be retrieved.' : 'No prescriptions found.'}
+              </p>
             ) : (
               prescriptions.map((rx) => (
                 <div
                   key={rx.id}
                   className="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-mono text-xs font-bold text-blue-700 bg-white px-2.5 py-0.5 rounded-full border border-blue-200">
                           {rx.prescriptionCode}
                         </span>
                         <span className="text-xs font-bold text-slate-900">
-                          Prescribed by Dr. {rx.doctorName}
+                          Prescribed by {rx.doctorName}
+                        </span>
+                        <span className="text-[10px] font-medium text-slate-400">
+                          {formatDateShort(parseISODate(rx.prescribedAt))}
                         </span>
                       </div>
                       <p className="text-sm font-bold text-slate-800 mt-1">
@@ -134,8 +172,12 @@ export const PatientRecordsPage: React.FC = () => {
 
         {activeTab === 'notes' && (
           <div className="space-y-3">
-            {records.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">No doctor clinical notes recorded.</p>
+            {loading ? (
+              <p className="py-6 text-center text-xs text-slate-400">Loading clinical notes…</p>
+            ) : records.length === 0 ? (
+              <p className="text-xs text-slate-400 py-6 text-center">
+                {error ? 'Clinical notes could not be retrieved.' : 'No doctor clinical notes recorded.'}
+              </p>
             ) : (
               records.map((r) => (
                 <div
@@ -145,7 +187,7 @@ export const PatientRecordsPage: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-slate-900 text-[13px]">{r.title}</p>
                     <span className="text-[11px] text-slate-400 font-medium">
-                      Dr. {r.doctorName} · {new Date(r.createdAt).toLocaleDateString()}
+                      {r.doctorName} · {new Date(r.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                   <p className="text-slate-600 leading-relaxed whitespace-pre-line">{r.notes}</p>
@@ -178,25 +220,51 @@ export const PatientRecordsPage: React.FC = () => {
             onClose={() => setViewRx(null)}
           />
           <div className="p-6 space-y-4 text-xs">
-            <div className="p-5 bg-white border border-slate-300 rounded-2xl space-y-4 shadow-sm">
+            <div className="rx-print-area p-5 bg-white border border-slate-300 rounded-2xl space-y-4 shadow-sm">
               <div className="flex items-start justify-between border-b pb-3">
                 <div>
                   <h2 className="text-base font-bold text-slate-900">HospitalCare Medical Center</h2>
                   <p className="text-[11px] text-slate-500">Department of Clinical Medicine</p>
                 </div>
-                <div className="text-right font-mono font-bold text-slate-800">
-                  {viewRx.prescriptionCode}
+                <div className="text-right">
+                  <p className="font-mono font-bold text-slate-800">{viewRx.prescriptionCode}</p>
+                  <p className="text-[10px] text-slate-400">
+                    Issued {formatDateShort(parseISODate(viewRx.prescribedAt))}
+                  </p>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-xl grid grid-cols-2 gap-2">
+              <div className="p-3 bg-slate-50 rounded-xl grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Patient</p>
                   <p className="font-bold text-slate-900">{viewRx.patientName}</p>
                 </div>
                 <div>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Patient ID</p>
+                  <p className="font-bold text-slate-900">{viewRx.patientCode}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Age / DOB</p>
+                  <p className="font-bold text-slate-900">
+                    {ageOf(viewRx)} yrs
+                    {viewRx.patientDob
+                      ? ` · ${formatDateShort(parseISODate(viewRx.patientDob))}`
+                      : ''}
+                  </p>
+                </div>
+                <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Doctor</p>
-                  <p className="font-bold text-slate-900">Dr. {viewRx.doctorName}</p>
+                  <p className="font-bold text-slate-900">{viewRx.doctorName}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Prescription Date</p>
+                  <p className="font-bold text-slate-900">
+                    {formatDateShort(parseISODate(viewRx.prescribedAt))}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Diagnosis</p>
+                  <p className="font-bold text-blue-700">{viewRx.diagnosis}</p>
                 </div>
               </div>
 
@@ -207,10 +275,22 @@ export const PatientRecordsPage: React.FC = () => {
                     <div key={i} className="p-2.5">
                       <p className="font-bold text-slate-900">{i + 1}. {m.medicineName} ({m.dosage})</p>
                       <p className="text-[11px] text-slate-600">Schedule: {m.frequency} for {m.duration}</p>
+                      {m.instructions && (
+                        <p className="text-[10.5px] italic text-slate-400">
+                          Instructions: {m.instructions}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
+
+              {viewRx.generalAdvice && (
+                <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3">
+                  <p className="text-[11px] font-bold text-blue-900">General Advice:</p>
+                  <p className="mt-0.5 text-[11px] text-blue-800">{viewRx.generalAdvice}</p>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center pt-2">

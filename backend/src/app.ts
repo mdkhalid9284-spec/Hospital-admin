@@ -10,7 +10,7 @@ import { requestContextMiddleware } from './middlewares/audit.middleware.js';
 
 export const createApp = (): Express => {
   const app = express();
-
+app.set('trust proxy', 1);
   // 1. Security Headers via Helmet
   app.use(
     helmet({
@@ -47,7 +47,13 @@ export const createApp = (): Express => {
           callback(null, true);
           return;
         }
-        const allowed = origin === config.clientOrigin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
+
+const allowed =
+  origin === config.clientOrigin ||
+  origin === 'https://hospital-admin-ivory.vercel.app' ||
+  origin.startsWith('http://localhost') ||
+  origin.startsWith('http://127.0.0.1');
+
         if (allowed) {
           callback(null, true);
         } else {

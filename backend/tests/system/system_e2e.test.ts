@@ -75,8 +75,15 @@ describe('System & End-to-End Testing (ST-01 to ST-10)', () => {
       .set('Authorization', `Bearer ${doctorToken}`);
 
     expect(res.status).toBe(200);
-    // Doctor doc-001 is assigned to pat-001
-    expect(res.body.data.patients.every((p: any) => p.id === 'pat-001')).toBe(true);
+
+    const returnedIds = res.body.data.patients.map((p: any) => p.id);
+    const assignedIds = db.patients
+      .filter((patient) => patient.assignedDoctorId === 'doc-001')
+      .map((patient) => patient.id);
+
+    expect(returnedIds.length).toBeGreaterThan(0);
+    expect(returnedIds.sort()).toEqual(assignedIds.sort());
+    expect(returnedIds).toContain('pat-001');
   });
 
   // ST-04: Doctor creates digital prescription

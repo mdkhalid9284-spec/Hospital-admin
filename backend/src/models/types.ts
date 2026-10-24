@@ -161,6 +161,9 @@ export interface IPrescription {
   prescriptionCode: string;
   patientId: string;
   patientName: string;
+  patientCode: string;
+  patientDob: string;
+  patientAge: number; // age in completed years at the time of prescribing
   doctorId: string;
   doctorName: string;
   diagnosis: string;
@@ -243,6 +246,7 @@ export interface IInsuranceClaim {
   remarks?: string;
   submittedAt: string;
   adjudicatedAt?: string | null;
+  adjudicatedBy?: string | null;
 }
 
 export interface IAuditLog {

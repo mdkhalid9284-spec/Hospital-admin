@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import { DocumentService } from '../services/document.service.js';
+import fs from 'fs';
+import { DocumentService, DocumentActor } from '../services/document.service.js';
 import { AppError } from '../middlewares/errorHandler.js';
+
+const toActor = (user: NonNullable<Request['user']>): DocumentActor => ({
+  id: user.id,
+  name: user.fullName,
+  role: user.role,
+  patientId: user.patientId,
+  doctorId: user.doctorId,
+});
 
 export class DocumentController {
   public static async upload(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -23,7 +32,7 @@ export class DocumentController {
           title: req.body.title,
           isExternalRecord: req.body.isExternalRecord === 'true' || req.body.isExternalRecord === true,
         },
-        { id: user.id, name: user.fullName, role: user.role }
+        toActor(user)
       );
 
       res.status(201).json({
@@ -38,19 +47,23 @@ export class DocumentController {
   public static async download(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
-      const { filePath, document } = await DocumentService.getFileStream(req.params.id, {
-        id: user.id,
-        name: user.fullName,
-        role: user.role,
-        patientId: user.patientId,
-        doctorId: user.doctorId,
-      });
+      const { filePath, document } = await DocumentService.getFileStream(
+        req.params.id,
+        toActor(user)
+      );
 
+      const safeName = document.originalFilename.replace(/["\r\n]/g, '_');
+      const stats = fs.statSync(filePath);
       res.setHeader('Content-Type', document.mimeType);
       res.setHeader(
         'Content-Disposition',
-        `inline; filename="${encodeURIComponent(document.originalFilename)}"`
+        `attachment; filename="${safeName}"; filename*=UTF-8''${encodeURIComponent(
+          document.originalFilename
+        )}`
       );
+      res.setHeader('Content-Length', String(stats.size));
+      res.setHeader('Cache-Control', 'private, no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       res.sendFile(filePath);
     } catch (err) {
       next(err);
@@ -60,11 +73,7 @@ export class DocumentController {
   public static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
-      await DocumentService.deleteDocument(req.params.id, {
-        id: user.id,
-        name: user.fullName,
-        role: user.role,
-      });
+      await DocumentService.deleteDocument(req.params.id, toActor(user));
 
       res.status(200).json({
         success: true,
@@ -77,7 +86,8 @@ export class DocumentController {
 
   public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const documents = await DocumentService.getByPatientId(req.params.patientId);
+      const user = req.user!;
+      const documents = await DocumentService.getByPatientId(req.params.patientId, toActor(user));
       res.status(200).json({
         success: true,
         data: { documents },
@@ -90,12 +100,7 @@ export class DocumentController {
   public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
-      let documents;
-      if (user.role === 'patient') {
-        documents = await DocumentService.getByPatientId(user.patientId!);
-      } else {
-        documents = await DocumentService.getAll();
-      }
+      const documents = await DocumentService.getAll(toActor(user));
 
       res.status(200).json({
         success: true,

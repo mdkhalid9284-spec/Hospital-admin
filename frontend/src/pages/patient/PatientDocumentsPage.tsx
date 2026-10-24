@@ -12,6 +12,7 @@ export const PatientDocumentsPage: React.FC = () => {
   const [documents, setDocuments] = useState<IMedicalDocument[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // Filters
@@ -32,7 +33,7 @@ export const PatientDocumentsPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       const res = await apiClient.get(`/documents/patient/${user.patientId}`);
-      setDocuments(res.data.data || []);
+      setDocuments(res.data.data?.documents ?? []);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch medical documents');
     } finally {
@@ -44,11 +45,31 @@ export const PatientDocumentsPage: React.FC = () => {
     fetchDocuments();
   }, [user?.patientId]);
 
+  const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+  const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+      if (!ALLOWED_EXTENSIONS.includes(extension)) {
+        setSelectedFile(null);
+        setUploadError('Unsupported file type. Upload a PDF, JPEG, PNG or WebP file.');
+        return;
+      }
+      if (file.type && !ALLOWED_TYPES.includes(file.type)) {
+        setSelectedFile(null);
+        setUploadError(`Unsupported MIME type '${file.type}'.`);
+        return;
+      }
       if (file.size > 10 * 1024 * 1024) {
+        setSelectedFile(null);
         setUploadError('File size exceeds the 10 MB maximum limit.');
+        return;
+      }
+      if (file.size === 0) {
+        setSelectedFile(null);
+        setUploadError('The selected file is empty.');
         return;
       }
       setSelectedFile(file);
@@ -97,10 +118,17 @@ export const PatientDocumentsPage: React.FC = () => {
 
   const handleDownload = async (doc: IMedicalDocument) => {
     try {
+      setDownloadError(null);
       const response = await apiClient.get(`/documents/${doc.id}/download`, {
         responseType: 'blob',
       });
-      const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const blob = new Blob([response.data], {
+        type: (response.headers['content-type'] as string) || doc.mimeType,
+      });
+      if (blob.size === 0) {
+        throw new Error('The stored file is empty or missing.');
+      }
+      const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
       link.setAttribute('download', doc.originalFilename || `${doc.title}.pdf`);
@@ -109,7 +137,9 @@ export const PatientDocumentsPage: React.FC = () => {
       link.remove();
       window.URL.revokeObjectURL(blobUrl);
     } catch (err: any) {
-      alert(`Download failed: ${err.message || 'Error retrieving file'}`);
+      setDownloadError(
+        `Could not download “${doc.title}”: ${err.message || 'Error retrieving file'}`
+      );
     }
   };
 
@@ -121,9 +151,15 @@ export const PatientDocumentsPage: React.FC = () => {
 
   const filteredDocs = documents.filter((doc) => {
     const matchesCat = selectedCategory === 'ALL' || doc.category === selectedCategory;
-    const matchesSearch = 
-      doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.originalFilename.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.trim().toLowerCase();
+    const formatLabel = doc.mimeType.split('/').pop() ?? '';
+    const extension = doc.originalFilename.split('.').pop() ?? '';
+    const matchesSearch =
+      query.length === 0 ||
+      [doc.title, doc.originalFilename, doc.category, doc.mimeType, formatLabel, extension]
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
     return matchesCat && matchesSearch;
   });
 
@@ -162,9 +198,34 @@ export const PatientDocumentsPage: React.FC = () => {
       )}
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex flex-col sm:flex-row sm:items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />
-          <span>{error}</span>
+          <span className="flex-1">{error}</span>
+          <button
+            type="button"
+            onClick={fetchDocuments}
+            className="self-start rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {downloadError && (
+        <div
+          role="alert"
+          className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex items-center gap-3"
+        >
+          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+          <span className="flex-1">{downloadError}</span>
+          <button
+            type="button"
+            onClick={() => setDownloadError(null)}
+            aria-label="Dismiss download error"
+            className="text-amber-600 hover:text-amber-800"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -245,7 +306,10 @@ export const PatientDocumentsPage: React.FC = () => {
                 <p className="text-xs text-slate-500 mt-1 font-mono truncate">{doc.originalFilename}</p>
                 
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                  <span>{formatFileSize(doc.fileSizeBytes)}</span>
+                  <span>
+                    {doc.mimeType === 'application/pdf' ? 'PDF' : 'Image'} ·{' '}
+                    {formatFileSize(doc.fileSizeBytes)}
+                  </span>
                   <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>

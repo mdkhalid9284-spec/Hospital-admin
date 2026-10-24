@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../api/client';
 import { IMedicalDocument, IPatient } from '../../types';
-import { FolderOpen, Download, Upload, Search, FileText, CheckCircle, Eye } from 'lucide-react';
+import {
+  FolderOpen,
+  Download,
+  Upload,
+  Search,
+  FileText,
+  CheckCircle,
+  Eye,
+  AlertTriangle,
+  RefreshCw,
+} from 'lucide-react';
 import { Modal, ModalHeader, Field, inputCls } from '../../components/ui/primitives';
 
 export const DoctorDocumentsPage: React.FC = () => {
   const [documents, setDocuments] = useState<IMedicalDocument[]>([]);
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [searchQ, setSearchQ] = useState('');
 
   // Upload modal
@@ -17,22 +29,26 @@ export const DoctorDocumentsPage: React.FC = () => {
   const [docTitle, setDocTitle] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [docRes, patRes] = await Promise.all([
         apiClient.get('/documents'),
         apiClient.get('/patients'),
       ]);
-      setDocuments(docRes.data.data.documents);
-      setPatients(patRes.data.data.patients);
-      if (patRes.data.data.patients.length > 0 && !targetPatientId) {
-        setTargetPatientId(patRes.data.data.patients[0].id);
+      setDocuments(docRes.data.data?.documents ?? []);
+      const patientList = patRes.data.data?.patients ?? [];
+      setPatients(patientList);
+      if (patientList.length > 0 && !targetPatientId) {
+        setTargetPatientId(patientList[0].id);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setError(err.message || 'Unable to load documents.');
+      setDocuments([]);
     } finally {
       setLoading(false);
     }
@@ -42,10 +58,32 @@ export const DoctorDocumentsPage: React.FC = () => {
     fetchData();
   }, []);
 
+  const validateFile = (candidate: File | null): boolean => {
+    if (!candidate) return false;
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
+    const extension = candidate.name.split('.').pop()?.toLowerCase() ?? '';
+    if (!allowedExtensions.includes(extension)) {
+      setUploadError('Unsupported file type. Upload a PDF, JPEG, PNG or WebP file.');
+      return false;
+    }
+    if (candidate.size > 10 * 1024 * 1024) {
+      setUploadError('File size exceeds the 10 MB maximum limit.');
+      return false;
+    }
+    if (candidate.size === 0) {
+      setUploadError('The selected file is empty.');
+      return false;
+    }
+    setUploadError(null);
+    return true;
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !targetPatientId) return;
+    if (!validateFile(file)) return;
     setUploading(true);
+    setUploadError(null);
     try {
       const form = new FormData();
       form.append('file', file);
@@ -61,7 +99,7 @@ export const DoctorDocumentsPage: React.FC = () => {
       fetchData();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Upload failed');
+      setUploadError(err.message || 'Upload failed');
     } finally {
       setUploading(false);
     }
@@ -69,10 +107,13 @@ export const DoctorDocumentsPage: React.FC = () => {
 
   const handleDownload = async (doc: IMedicalDocument) => {
     try {
+      setActionError(null);
       const res = await apiClient.get(`/documents/${doc.id}/download`, {
         responseType: 'blob',
       });
-      const url = window.URL.createObjectURL(new Blob([res.data], { type: doc.mimeType }));
+      const blob = new Blob([res.data], { type: doc.mimeType });
+      if (blob.size === 0) throw new Error('The stored file is empty or missing.');
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', doc.originalFilename);
@@ -81,17 +122,20 @@ export const DoctorDocumentsPage: React.FC = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
-      alert(err.message || 'Download failed');
+      setActionError(err.message || 'Download failed');
     }
   };
 
-  const filtered = documents.filter(
-    (d) =>
-      !searchQ ||
-      d.title.toLowerCase().includes(searchQ.toLowerCase()) ||
-      d.originalFilename.toLowerCase().includes(searchQ.toLowerCase()) ||
-      d.category.toLowerCase().includes(searchQ.toLowerCase())
-  );
+  const filtered = documents.filter((d) => {
+    const query = searchQ.trim().toLowerCase();
+    if (!query) return true;
+    const extension = d.originalFilename.split('.').pop() ?? '';
+    const format = d.mimeType.split('/').pop() ?? '';
+    return [d.title, d.originalFilename, d.category, d.mimeType, format, extension]
+      .join(' ')
+      .toLowerCase()
+      .includes(query);
+  });
 
   return (
     <div className="space-y-5 anim-fade-up">
@@ -107,8 +151,12 @@ export const DoctorDocumentsPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowUpload(true)}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          onClick={() => {
+            setUploadError(null);
+            setShowUpload(true);
+          }}
+          disabled={patients.length === 0}
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
         >
           <Upload size={14} /> Upload Diagnostic File
         </button>
@@ -118,6 +166,41 @@ export const DoctorDocumentsPage: React.FC = () => {
         <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2 anim-pop">
           <CheckCircle size={16} className="text-emerald-600 shrink-0" />
           {toastMsg}
+        </div>
+      )}
+
+      {error && (
+        <div
+          role="alert"
+          className="p-3.5 bg-red-50 border border-red-200 text-red-800 rounded-2xl text-xs font-bold flex items-center gap-2"
+        >
+          <AlertTriangle size={16} className="text-red-600 shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            type="button"
+            onClick={fetchData}
+            className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-2.5 py-1 text-white hover:bg-red-700"
+          >
+            <RefreshCw size={12} /> Retry
+          </button>
+        </div>
+      )}
+
+      {actionError && (
+        <div
+          role="alert"
+          className="p-3.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs font-bold flex items-center gap-2"
+        >
+          <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+          <span className="flex-1">{actionError}</span>
+          <button
+            type="button"
+            onClick={() => setActionError(null)}
+            className="text-amber-600 hover:text-amber-800"
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
         </div>
       )}
 
@@ -148,7 +231,26 @@ export const DoctorDocumentsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filtered.map((doc) => (
+              {loading && (
+                <tr>
+                  <td colSpan={5} className="py-10 text-center text-xs text-slate-400">
+                    Loading documents…
+                  </td>
+                </tr>
+              )}
+              {!loading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-10 text-center">
+                    <FolderOpen className="mx-auto mb-2 text-slate-300" size={26} />
+                    <p className="text-xs font-semibold text-slate-500">
+                      {documents.length === 0
+                        ? 'No documents uploaded yet.'
+                        : 'No documents match your search.'}
+                    </p>
+                  </td>
+                </tr>
+              )}
+              {!loading && filtered.map((doc) => (
                 <tr key={doc.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="py-3.5 pl-2">
                     <div className="flex items-center gap-2.5">
@@ -197,6 +299,14 @@ export const DoctorDocumentsPage: React.FC = () => {
           onClose={() => setShowUpload(false)}
         />
         <form onSubmit={handleUpload} className="p-6 space-y-4">
+          {uploadError && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+            >
+              {uploadError}
+            </div>
+          )}
           <Field label="Target Patient *">
             <select
               required
@@ -237,9 +347,22 @@ export const DoctorDocumentsPage: React.FC = () => {
               type="file"
               required
               accept=".pdf,image/png,image/jpeg,image/webp"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const candidate = e.target.files?.[0] || null;
+                if (validateFile(candidate)) {
+                  setFile(candidate);
+                } else {
+                  setFile(null);
+                  e.target.value = '';
+                }
+              }}
               className="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
             />
+            {file && (
+              <p className="mt-1 text-[10px] text-slate-400">
+                {file.name} · {(file.size / 1024).toFixed(1)} KB
+              </p>
+            )}
           </Field>
           <div className="flex justify-end gap-2 pt-2">
             <button

@@ -5,6 +5,7 @@ import { IAnalyticsSummary, IAdmission, IAppointment, IBill } from '../types';
 import { Users, BedDouble, CalendarDays, Wallet, UserCheck, TrendingUp, ArrowRight, Clock, Pill, FileText, Sparkles, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, Badge, StatusBadge, Avatar, SkeletonBlock } from '../components/ui/primitives';
+import { todayISO } from '../utils/date';
 
 function todayStr() {
   return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -44,6 +45,7 @@ export const Dashboard: React.FC = () => {
   const [admissions, setAdmissions] = useState<IAdmission[]>([]);
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [bills, setBills] = useState<IBill[]>([]);
+  const [patientCount, setPatientCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,13 +65,11 @@ export const Dashboard: React.FC = () => {
         } else if (user?.role === 'doctor') {
           const [ap, pat] = await Promise.all([apiClient.get('/appointments'), apiClient.get('/patients')]);
           if (!alive) return;
-          setAppointments(ap.data.data.appointments.slice(0, 8));
-          setMetrics({
-            totalPatients: pat.data.data.total ?? pat.data.data.patients?.length ?? 0,
-            todayAppointments: ap.data.data.appointments.length,
-            currentAdmissions: 0, totalBeds: 0, availableBeds: 0, occupiedBeds: 0, occupancyRate: 0,
-            totalRevenue: 0, pendingRevenue: 0, pendingInsuranceClaims: 0, recentActivityCount: 0,
-          });
+          const todaysAppointments = (ap.data.data.appointments ?? []).filter(
+            (appointment: IAppointment) => appointment.appointmentDate === todayISO()
+          );
+          setAppointments(todaysAppointments.slice(0, 8));
+          setPatientCount(pat.data.data.total ?? pat.data.data.patients?.length ?? 0);
         } else {
           const [ap, b] = await Promise.all([apiClient.get('/appointments'), apiClient.get('/bills')]);
           if (!alive) return;
@@ -161,7 +161,7 @@ export const Dashboard: React.FC = () => {
                     <Avatar name={a.patientName} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-bold text-slate-900 truncate">{a.patientName}</p>
-                      <p className="text-[11px] text-slate-500 truncate">{a.timeSlot} · Dr. {a.doctorName}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{a.timeSlot} · {a.doctorName}</p>
                     </div>
                     <StatusBadge status={a.status} />
                   </div>
@@ -217,7 +217,7 @@ export const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger">
             <Stat dark label="Today's Appointments" value={String(appointments.length)} sub="Consultations booked" icon={<CalendarDays size={20} />} tint="" />
-            <Stat label="Assigned Patients" value={String(metrics?.totalPatients ?? 0)} sub="Under your care" icon={<Users size={20} />} tint="bg-sky-50 text-sky-600" />
+            <Stat label="Assigned Patients" value={String(patientCount)} sub="Under your care" icon={<Users size={20} />} tint="bg-sky-50 text-sky-600" />
             <Stat label="Pending Notes" value={String(Math.max(0, appointments.filter((a) => a.status === 'Confirmed').length))} sub="Awaiting documentation" icon={<FileText size={20} />} tint="bg-amber-50 text-amber-600" />
             <Stat label="Prescriptions" value="—" sub="Open doctor portal" icon={<Pill size={20} />} tint="bg-emerald-50 text-emerald-600" />
           </div>
@@ -257,7 +257,7 @@ export const Dashboard: React.FC = () => {
             <p className="text-[11px] font-bold uppercase tracking-wider text-sky-200">Next appointment</p>
             {appointments[0] ? (
               <>
-                <h2 className="text-xl font-bold mt-1">Dr. {appointments[0].doctorName}</h2>
+                <h2 className="text-xl font-bold mt-1">{appointments[0].doctorName}</h2>
                 <p className="text-[13px] text-sky-100 mt-0.5">{appointments[0].appointmentDate} · {appointments[0].timeSlot} · {appointments[0].reason}</p>
                 <div className="flex gap-2 mt-4">
                   <Link to="/appointments" className="px-4 py-2 bg-white text-sky-800 font-bold rounded-xl text-[13px]">Manage visits</Link>

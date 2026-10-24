@@ -3,13 +3,30 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../database/index.js';
 import { config } from '../config/index.js';
-import { IMedicalDocument, DocumentCategory, UserRole } from '../models/types.js';
+import { IMedicalDocument, DocumentCategory, UserRole, IPatient } from '../models/types.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { logAuditEvent } from '../middlewares/audit.middleware.js';
 
+export interface DocumentActor {
+  id: string;
+  name: string;
+  role: UserRole;
+  patientId?: string;
+  doctorId?: string;
+}
+
+const VALID_CATEGORIES: DocumentCategory[] = [
+  'Prescription',
+  'Report',
+  'Scan',
+  'Bill',
+  'Insurance',
+  'Other',
+];
+
 export class DocumentService {
   /**
-   * Validate file signature / magic bytes
+   * Validate file signature / magic bytes.
    */
   public static validateMagicBytes(buffer: Buffer, mimeType: string): boolean {
     if (buffer.length < 4) return false;
@@ -52,6 +69,46 @@ export class DocumentService {
     return false;
   }
 
+  private static getPatientOrThrow(patientId: string): IPatient {
+    const patient = db.patients.find((p) => p.id === patientId);
+    if (!patient) {
+      throw new AppError(`Patient with ID '${patientId}' not found.`, 404, 'PATIENT_NOT_FOUND');
+    }
+    return patient;
+  }
+
+  private static assertPatientAccess(patient: IPatient, actor: DocumentActor): void {
+    if (actor.role === 'admin') return;
+
+    if (actor.role === 'patient') {
+      if (actor.patientId !== patient.id) {
+        throw new AppError(
+          'Forbidden. You can only access your own medical documents.',
+          403,
+          'FORBIDDEN_DOCUMENT_ACCESS'
+        );
+      }
+      return;
+    }
+
+    if (actor.role === 'doctor') {
+      if (patient.assignedDoctorId !== actor.doctorId) {
+        throw new AppError(
+          'Forbidden. You can only access documents of your assigned patients.',
+          403,
+          'FORBIDDEN_DOCUMENT_ACCESS'
+        );
+      }
+      return;
+    }
+
+    throw new AppError(
+      'Forbidden. Your role is not authorized to access clinical documents.',
+      403,
+      'FORBIDDEN_DOCUMENT_ACCESS'
+    );
+  }
+
   public static async uploadDocument(
     file: Express.Multer.File,
     data: {
@@ -60,11 +117,25 @@ export class DocumentService {
       title: string;
       isExternalRecord?: boolean;
     },
-    actor: { id: string; name: string; role: UserRole }
+    actor: DocumentActor
   ): Promise<IMedicalDocument> {
-    const patient = db.patients.find((p) => p.id === data.patientId);
-    if (!patient) {
-      throw new AppError(`Patient with ID '${data.patientId}' not found.`, 404, 'PATIENT_NOT_FOUND');
+    const patient = this.getPatientOrThrow(data.patientId);
+    this.assertPatientAccess(patient, actor);
+
+    const title = (data.title ?? '').trim();
+    if (title.length < 2 || title.length > 200) {
+      throw new AppError(
+        'A document title between 2 and 200 characters is required.',
+        400,
+        'INVALID_DOCUMENT_TITLE'
+      );
+    }
+    if (!VALID_CATEGORIES.includes(data.category)) {
+      throw new AppError(
+        `Invalid document category '${data.category}'.`,
+        400,
+        'INVALID_DOCUMENT_CATEGORY'
+      );
     }
 
     // Validate MIME Type
@@ -95,17 +166,15 @@ export class DocumentService {
       );
     }
 
-    // Generate safe storage key
+    // Generate an unguessable storage key that is never exposed as a public path.
     const fileExt = path.extname(file.originalname) || '.bin';
     const safeKey = `${uuidv4()}${fileExt.toLowerCase()}`;
     const targetPath = path.join(config.storage.localPath, safeKey);
 
-    // Ensure storage directory exists
     if (!fs.existsSync(config.storage.localPath)) {
       fs.mkdirSync(config.storage.localPath, { recursive: true });
     }
 
-    // Write file securely
     await fs.promises.writeFile(targetPath, file.buffer);
 
     const docId = `doc-${uuidv4().substring(0, 8)}`;
@@ -116,8 +185,8 @@ export class DocumentService {
       uploadedBy: actor.id,
       uploaderRole: actor.role,
       category: data.category,
-      title: data.title,
-      originalFilename: file.originalname,
+      title,
+      originalFilename: path.basename(file.originalname).slice(0, 255),
       safeStorageKey: safeKey,
       mimeType: file.mimetype,
       fileSizeBytes: file.size,
@@ -140,25 +209,38 @@ export class DocumentService {
 
   public static async getFileStream(
     docId: string,
-    actor: { id: string; name: string; role: UserRole; patientId?: string; doctorId?: string }
+    actor: DocumentActor
   ): Promise<{ filePath: string; document: IMedicalDocument }> {
     const doc = db.documents.find((d) => d.id === docId);
     if (!doc) {
       throw new AppError(`Document with ID '${docId}' not found.`, 404, 'DOCUMENT_NOT_FOUND');
     }
 
-    // Authorization check
-    if (actor.role === 'patient') {
+    if (actor.role === 'admin') {
+      // Admin may access all documents.
+    } else if (actor.role === 'patient') {
       if (actor.patientId !== doc.patientId) {
-        throw new AppError('Forbidden. You can only access your own medical documents.', 403, 'FORBIDDEN_DOCUMENT_ACCESS');
+        throw new AppError(
+          'Forbidden. You can only access your own medical documents.',
+          403,
+          'FORBIDDEN_DOCUMENT_ACCESS'
+        );
       }
     } else if (actor.role === 'doctor') {
-      // Doctor can access assigned patients
       const patient = db.patients.find((p) => p.id === doc.patientId);
       if (patient?.assignedDoctorId !== actor.doctorId && doc.uploadedBy !== actor.id) {
-        // Allow if doctor uploaded or is assigned
-        throw new AppError('Forbidden. You can only access documents of your assigned patients.', 403, 'FORBIDDEN_DOCUMENT_ACCESS');
+        throw new AppError(
+          'Forbidden. You can only access documents of your assigned patients.',
+          403,
+          'FORBIDDEN_DOCUMENT_ACCESS'
+        );
       }
+    } else {
+      throw new AppError(
+        'Forbidden. Your role is not authorized to access clinical documents.',
+        403,
+        'FORBIDDEN_DOCUMENT_ACCESS'
+      );
     }
 
     const filePath = path.join(config.storage.localPath, doc.safeStorageKey);
@@ -175,7 +257,7 @@ export class DocumentService {
 
   public static async deleteDocument(
     docId: string,
-    actor: { id: string; name: string; role: UserRole }
+    actor: DocumentActor
   ): Promise<void> {
     const index = db.documents.findIndex((d) => d.id === docId);
     if (index === -1) {
@@ -184,12 +266,15 @@ export class DocumentService {
 
     const doc = db.documents[index];
 
-    // Only Admin or the original uploader can delete
+    // Only Admin or the original uploader can delete.
     if (actor.role !== 'admin' && doc.uploadedBy !== actor.id) {
-      throw new AppError('Forbidden. Only administrators or the uploader can delete this document.', 403, 'FORBIDDEN_DOCUMENT_DELETE');
+      throw new AppError(
+        'Forbidden. Only administrators or the uploader can delete this document.',
+        403,
+        'FORBIDDEN_DOCUMENT_DELETE'
+      );
     }
 
-    // Remove file if exists
     const filePath = path.join(config.storage.localPath, doc.safeStorageKey);
     if (fs.existsSync(filePath)) {
       try {
@@ -207,11 +292,41 @@ export class DocumentService {
     });
   }
 
-  public static async getByPatientId(patientId: string): Promise<IMedicalDocument[]> {
+  public static async getByPatientId(
+    patientId: string,
+    actor?: DocumentActor
+  ): Promise<IMedicalDocument[]> {
+    const patient = this.getPatientOrThrow(patientId);
+    if (actor) {
+      this.assertPatientAccess(patient, actor);
+    }
     return db.documents.filter((d) => d.patientId === patientId);
   }
 
-  public static async getAll(): Promise<IMedicalDocument[]> {
-    return db.documents;
+  public static async getAll(actor: DocumentActor): Promise<IMedicalDocument[]> {
+    if (actor.role === 'admin') {
+      return db.documents;
+    }
+
+    if (actor.role === 'patient') {
+      return db.documents.filter((doc) => doc.patientId === actor.patientId);
+    }
+
+    if (actor.role === 'doctor') {
+      const assignedPatientIds = new Set(
+        db.patients
+          .filter((patient) => patient.assignedDoctorId === actor.doctorId)
+          .map((patient) => patient.id)
+      );
+      return db.documents.filter(
+        (doc) => assignedPatientIds.has(doc.patientId) || doc.uploadedBy === actor.id
+      );
+    }
+
+    throw new AppError(
+      'Forbidden. Your role is not authorized to access clinical documents.',
+      403,
+      'FORBIDDEN_DOCUMENT_ACCESS'
+    );
   }
 }

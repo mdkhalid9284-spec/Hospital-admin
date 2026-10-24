@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { IAppointment, IDoctor } from '../../types';
 import { Calendar, Plus, Clock, CheckCircle, XCircle, ChevronRight, Stethoscope } from 'lucide-react';
 import { StatusBadge, Modal, ModalHeader, Field, inputCls } from '../../components/ui/primitives';
+import { formatDateShort, parseISODate, todayISO } from '../../utils/date';
 
 export const PatientAppointmentsPage: React.FC = () => {
   const { user } = useAuth();
@@ -14,11 +15,13 @@ export const PatientAppointmentsPage: React.FC = () => {
   // Book Consultation Modal
   const [showBook, setShowBook] = useState(false);
   const [doctorId, setDoctorId] = useState('');
-  const [appointmentDate, setAppointmentDate] = useState('2026-10-06');
+  const [appointmentDate, setAppointmentDate] = useState(todayISO());
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [doctorAvailable, setDoctorAvailable] = useState(true);
   const [timeSlot, setTimeSlot] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [bookError, setBookError] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const fetchAppointments = async () => {
@@ -52,11 +55,13 @@ export const PatientAppointmentsPage: React.FC = () => {
         const res = await apiClient.get(
           `/appointments/available-slots?doctorId=${doctorId}&date=${appointmentDate}`
         );
-        const slots = res.data.data.availableSlots;
+        const slots = res.data.data.availableSlots ?? [];
         setAvailableSlots(slots);
+        setDoctorAvailable(res.data.data.isDoctorAvailable !== false);
         setTimeSlot(slots[0] || '');
       } catch {
         setAvailableSlots([]);
+        setDoctorAvailable(false);
         setTimeSlot('');
       }
     })();
@@ -66,6 +71,7 @@ export const PatientAppointmentsPage: React.FC = () => {
     e.preventDefault();
     if (!timeSlot) return;
     setSubmitting(true);
+    setBookError(null);
     try {
       await apiClient.post('/appointments', {
         patientId: user?.patientId || 'pat-001',
@@ -80,7 +86,7 @@ export const PatientAppointmentsPage: React.FC = () => {
       fetchAppointments();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Booking failed');
+      setBookError(err.message || 'Booking failed');
     } finally {
       setSubmitting(false);
     }
@@ -90,11 +96,12 @@ export const PatientAppointmentsPage: React.FC = () => {
     if (!confirm('Are you sure you wish to cancel this appointment?')) return;
     try {
       await apiClient.patch(`/appointments/${id}/status`, { status: 'Cancelled' });
-      setToastMsg('Appointment cancelled.');
+      setToastMsg('Appointment cancelled. The time slot has been released.');
       fetchAppointments();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Failed to cancel appointment');
+      setToastMsg(err.message || 'Failed to cancel appointment');
+      setTimeout(() => setToastMsg(null), 4500);
     }
   };
 
@@ -112,7 +119,10 @@ export const PatientAppointmentsPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowBook(true)}
+          onClick={() => {
+            setBookError(null);
+            setShowBook(true);
+          }}
           className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Book New Visit
@@ -153,7 +163,7 @@ export const PatientAppointmentsPage: React.FC = () => {
                   <p className="text-sm font-bold text-slate-800 mt-1.5">{a.reason}</p>
                   <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
                     <Clock size={12} className="text-slate-400" />
-                    {a.appointmentDate} · {a.timeSlot}
+                    {formatDateShort(parseISODate(a.appointmentDate))} · {a.timeSlot}
                   </p>
                 </div>
 
@@ -202,6 +212,7 @@ export const PatientAppointmentsPage: React.FC = () => {
               <input
                 type="date"
                 required
+                min={todayISO()}
                 value={appointmentDate}
                 onChange={(e) => setAppointmentDate(e.target.value)}
                 className={inputCls}
@@ -215,7 +226,9 @@ export const PatientAppointmentsPage: React.FC = () => {
                 className={inputCls}
               >
                 {availableSlots.length === 0 ? (
-                  <option value="">No slots available</option>
+                  <option value="">
+                    {doctorAvailable ? 'No slots available' : 'Doctor has no clinic this day'}
+                  </option>
                 ) : (
                   availableSlots.map((s) => (
                     <option key={s} value={s}>
@@ -255,6 +268,15 @@ export const PatientAppointmentsPage: React.FC = () => {
               className={inputCls}
             />
           </Field>
+
+          {bookError && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+            >
+              {bookError}
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <button

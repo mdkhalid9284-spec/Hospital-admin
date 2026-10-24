@@ -759,3 +759,65 @@
 .hc-field input,
 .hc-field select,
 .hc-field textarea { @apply hc-input; }
+
+/* ======================
+   PRINT
+====================== */
+@media print {
+  @page { margin: 14mm; }
+
+  html, body {
+    background: #ffffff !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area *,
+  .rx-print-area,
+  .rx-print-area * {
+    visibility: visible;
+  }
+
+  .print-area,
+  .rx-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Neutralise app-shell/modal clipping so paginated content is not cut off. */
+  .fixed.inset-0 {
+    position: static !important;
+    background: transparent !important;
+  }
+
+  .overflow-y-auto,
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  .max-h-\[75vh\],
+  .max-h-\[80vh\],
+  .max-h-\[85vh\] {
+    max-height: none !important;
+  }
+
+  section,
+  table,
+  .rx-print-area {
+    break-inside: avoid;
+  }
+}

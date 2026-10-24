@@ -151,6 +151,9 @@ export interface IPrescription {
   prescriptionCode: string;
   patientId: string;
   patientName: string;
+  patientCode: string;
+  patientDob: string;
+  patientAge: number;
   doctorId: string;
   doctorName: string;
   diagnosis: string;
@@ -207,6 +210,17 @@ export interface IBill {
 
 export type ClaimStatus = 'Submitted' | 'Approved' | 'Rejected';
 
+export interface IInsurancePolicy {
+  id: string;
+  patientId: string;
+  provider: string;
+  policyNumber: string;
+  policyHolderName: string;
+  coverageAmount: number;
+  validUntil: string;
+  createdAt: string;
+}
+
 export interface IInsuranceClaim {
   id: string;
   claimCode: string;
@@ -220,6 +234,8 @@ export interface IInsuranceClaim {
   status: ClaimStatus;
   remarks?: string;
   submittedAt: string;
+  adjudicatedAt?: string | null;
+  adjudicatedBy?: string | null;
 }
 
 export interface IAuditLog {
@@ -236,6 +252,34 @@ export interface IAuditLog {
   details?: Record<string, any>;
 }
 
+export interface IAnalyticsRange {
+  key: '7d' | '30d' | '90d' | '1y';
+  fromDate: string;
+  toDate: string;
+  days: number;
+}
+
+export interface IRevenueTrendPoint {
+  label: string;
+  date: string;
+  billed: number;
+  collected: number;
+}
+
+export interface IOccupancyTrendPoint {
+  label: string;
+  date: string;
+  occupiedBeds: number;
+  totalBeds: number;
+  occupancyRate: number;
+}
+
+export interface IBreakdownItem {
+  label: string;
+  count: number;
+  percentage: number;
+}
+
 export interface IAnalyticsSummary {
   totalPatients: number;
   currentAdmissions: number;
@@ -248,4 +292,14 @@ export interface IAnalyticsSummary {
   pendingRevenue: number;
   pendingInsuranceClaims: number;
   recentActivityCount: number;
+  range: IAnalyticsRange;
+  newPatientsInRange: number;
+  averageOccupancyRate: number;
+  appointmentsInRange: number;
+  grossBilled: number;
+  insurerRecoveries: number;
+  revenueTrend: IRevenueTrendPoint[];
+  bedOccupancyTrend: IOccupancyTrendPoint[];
+  consultationBreakdown: IBreakdownItem[];
+  appointmentStatusBreakdown: IBreakdownItem[];
 }

@@ -1,7 +1,30 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IAppointment } from '../../types';
-import { ChevronLeft, ChevronRight, Download, Search, Plus, Calendar, Clock, MapPin, User, FileText, CheckCircle, X } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Search,
+  Plus,
+  CalendarDays,
+  Clock,
+  User,
+  FileText,
+  CheckCircle,
+  X,
+} from 'lucide-react';
 import { Avatar, StatusBadge } from './primitives';
+import {
+  addDays,
+  formatDateRange,
+  formatDayLong,
+  formatMonthYear,
+  isSameDay,
+  isToday,
+  parseISODate,
+  startOfWeekMonday,
+  toISODate,
+} from '../../utils/date';
 
 type ViewMode = 'day' | 'week' | 'month';
 
@@ -13,6 +36,49 @@ interface InteractiveCalendarProps {
   onStatusChange?: (id: string, status: 'Confirmed' | 'Completed' | 'Cancelled') => void;
 }
 
+/** Mirrors the backend's single source of truth for consult slots. */
+const TIME_SLOTS = [
+  '09:00 - 09:30',
+  '09:30 - 10:00',
+  '10:00 - 10:30',
+  '10:30 - 11:00',
+  '11:00 - 11:30',
+  '11:30 - 12:00',
+  '14:00 - 14:30',
+  '14:30 - 15:00',
+  '15:00 - 15:30',
+  '15:30 - 16:00',
+  '16:00 - 16:30',
+  '16:30 - 17:00',
+];
+
+const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const startOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
+const endOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+const monthMatrixStart = (date: Date): Date => startOfWeekMonday(startOfMonth(date));
+
+const shortTime = (slot: string): string => slot.split(' - ')[0];
+
+const chipTone = (status: string): string => {
+  switch (status) {
+    case 'Confirmed':
+      return 'bg-sky-50 border-sky-200 text-sky-800 hover:bg-sky-100';
+    case 'Pending':
+      return 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100';
+    case 'Completed':
+      return 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100';
+    default:
+      return 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200';
+  }
+};
+
+const escapeCsv = (value: string): string => {
+  const sanitized = value ?? '';
+  return /[",\r\n]/.test(sanitized) ? `"${sanitized.replace(/"/g, '""')}"` : sanitized;
+};
+
 export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
   appointments,
   onSelectAppointment,
@@ -21,364 +87,580 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
   onStatusChange,
 }) => {
   const [view, setView] = useState<ViewMode>('week');
-  const [selectedApp, setSelectedApp] = useState<IAppointment | null>(
-    appointments.length > 0 ? appointments[0] : null
-  );
+  const [cursor, setCursor] = useState<Date>(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  });
+  const [selectedApp, setSelectedApp] = useState<IAppointment | null>(null);
   const [searchQ, setSearchQ] = useState('');
-  const [currentDate, setCurrentDate] = useState(new Date('2026-10-06'));
 
-  // Week days starting from Monday
-  const weekDays = [
-    { name: 'Mon', date: 17, fullDate: '2026-10-05' },
-    { name: 'Tue', date: 18, fullDate: '2026-10-06' },
-    { name: 'Wed', date: 19, fullDate: '2026-10-07', isToday: true },
-    { name: 'Thu', date: 20, fullDate: '2026-10-08' },
-    { name: 'Fri', date: 21, fullDate: '2026-10-09' },
-    { name: 'Sat', date: 22, fullDate: '2026-10-10' },
-  ];
+  const weekStart = useMemo(() => startOfWeekMonday(cursor), [cursor]);
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)),
+    [weekStart]
+  );
+  const monthStart = useMemo(() => startOfMonth(cursor), [cursor]);
+  const monthEnd = useMemo(() => endOfMonth(cursor), [cursor]);
+  const monthDays = useMemo(() => {
+    const start = monthMatrixStart(cursor);
+    return Array.from({ length: 42 }, (_, index) => addDays(start, index));
+  }, [cursor]);
 
-  const timeSlots = ['10:00', '11:00', '12:00', '01:00', '02:00'];
+  const filtered = useMemo(() => {
+    const query = searchQ.trim().toLowerCase();
+    if (!query) return appointments;
+    return appointments.filter((appointment) =>
+      [
+        appointment.appointmentCode,
+        appointment.patientName,
+        appointment.doctorName,
+        appointment.reason,
+        appointment.timeSlot,
+        appointment.status,
+        appointment.notes ?? '',
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(query)
+    );
+  }, [appointments, searchQ]);
 
-  const filtered = appointments.filter(
-    (a) =>
-      !searchQ ||
-      a.patientName.toLowerCase().includes(searchQ.toLowerCase()) ||
-      a.reason.toLowerCase().includes(searchQ.toLowerCase()) ||
-      a.doctorName.toLowerCase().includes(searchQ.toLowerCase())
+  const inView = (appointment: IAppointment): boolean => {
+    if (view === 'day') return appointment.appointmentDate === toISODate(cursor);
+    if (view === 'week') {
+      const start = toISODate(weekStart);
+      const end = toISODate(addDays(weekStart, 6));
+      return appointment.appointmentDate >= start && appointment.appointmentDate <= end;
+    }
+    const month = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`;
+    return appointment.appointmentDate.startsWith(month);
+  };
+
+  const visibleAppointments = useMemo(
+    () => filtered.filter(inView),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filtered, view, cursor, weekStart]
   );
 
-  const handleExport = () => {
+  const appointmentsOn = (date: Date): IAppointment[] => {
+    const key = toISODate(date);
+    return filtered.filter((appointment) => appointment.appointmentDate === key);
+  };
+
+  const appointmentsAt = (date: Date, slot: string): IAppointment[] => {
+    const key = toISODate(date);
+    return filtered.filter(
+      (appointment) => appointment.appointmentDate === key && appointment.timeSlot === slot
+    );
+  };
+
+  const headerLabel = useMemo(() => {
+    if (view === 'day') return formatDayLong(cursor);
+    if (view === 'week') return formatDateRange(weekStart, addDays(weekStart, 6));
+    return formatMonthYear(cursor);
+  }, [view, cursor, weekStart]);
+
+  const move = (direction: -1 | 1): void => {
+    if (view === 'day') {
+      setCursor((current) => addDays(current, direction));
+      return;
+    }
+    if (view === 'week') {
+      setCursor((current) => addDays(current, direction * 7));
+      return;
+    }
+    setCursor(
+      (current) => new Date(current.getFullYear(), current.getMonth() + direction, 1)
+    );
+  };
+
+  const goToToday = (): void => {
+    const today = new Date();
+    setCursor(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+  };
+
+  const openDay = (date: Date): void => {
+    setCursor(new Date(date.getFullYear(), date.getMonth(), date.getDate()));
+    setView('day');
+  };
+
+  const selectAppointment = (appointment: IAppointment): void => {
+    setSelectedApp(appointment);
+    onSelectAppointment?.(appointment);
+  };
+
+  const handleExport = (): void => {
+    const rows = visibleAppointments.map((appointment) => [
+      appointment.appointmentCode,
+      appointment.appointmentDate,
+      appointment.timeSlot,
+      appointment.patientName,
+      appointment.doctorName,
+      appointment.reason,
+      appointment.status,
+      appointment.notes ?? '',
+    ]);
     const csv = [
-      ['Appointment Code', 'Patient', 'Doctor', 'Date', 'Time', 'Reason', 'Status'],
-      ...filtered.map((a) => [a.appointmentCode, a.patientName, a.doctorName, a.appointmentDate, a.timeSlot, a.reason, a.status]),
+      ['Appointment Code', 'Date', 'Time Slot', 'Patient', 'Doctor', 'Reason', 'Status', 'Notes'],
+      ...rows,
     ]
-      .map((row) => row.join(','))
-      .join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+      .map((row) => row.map(escapeCsv).join(','))
+      .join('\r\n');
+
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
+    const rangeKey =
+      view === 'day'
+        ? toISODate(cursor)
+        : view === 'week'
+          ? `${toISODate(weekStart)}_to_${toISODate(addDays(weekStart, 6))}`
+          : `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`;
     link.href = url;
-    link.download = `appointments_schedule_${Date.now()}.csv`;
+    link.download = `appointments-${view}-${rangeKey}.csv`;
+    document.body.appendChild(link);
     link.click();
+    link.remove();
     URL.revokeObjectURL(url);
   };
 
-  return (
-    <div className="space-y-4">
-      {/* Calendar Sub-bar matching screenshot */}
-      <div className="bg-white rounded-[26px] border border-slate-200/90 p-4 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.06)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Date Selector & Month label */}
-        <div className="flex items-center gap-3">
-          <h2 className="text-[17px] font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            October 2026
-            <div className="flex items-center gap-1 ml-1">
-              <button
-                onClick={() => setCurrentDate(new Date(currentDate.getTime() - 7 * 86400000))}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
-              >
-                <ChevronLeft size={14} />
-              </button>
-              <button
-                onClick={() => setCurrentDate(new Date(currentDate.getTime() + 7 * 86400000))}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
-              >
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </h2>
+  const renderChip = (appointment: IAppointment, compact = false): React.ReactNode => (
+    <button
+      key={appointment.id}
+      type="button"
+      onClick={() => selectAppointment(appointment)}
+      title={`${appointment.timeSlot} · ${appointment.patientName} · ${appointment.reason}`}
+      className={`w-full text-left rounded-md border px-1.5 py-1 transition-colors ${chipTone(
+        appointment.status
+      )} ${compact ? 'text-[10px] leading-tight' : 'text-[11px]'}`}
+    >
+      <span className="font-bold">{shortTime(appointment.timeSlot)}</span>{' '}
+      <span className="font-medium truncate">{appointment.patientName}</span>
+    </button>
+  );
 
-          {/* View Pill switcher */}
-          <div className="bg-slate-100 p-1 rounded-full border border-slate-200/70 flex items-center">
-            {(['day', 'week', 'month'] as ViewMode[]).map((v) => (
+  const renderDayView = (): React.ReactNode => {
+    const dailyAppointments = appointmentsOn(cursor);
+
+    return (
+      <div className="space-y-3">
+        {dailyAppointments.length === 0 && (
+          <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center">
+            <CalendarDays className="mx-auto mb-2 text-slate-300" size={26} />
+            <p className="text-sm font-semibold text-slate-600">No appointments scheduled</p>
+            <p className="text-xs text-slate-400 mt-1">
+              There are no consultations for {formatDayLong(cursor)}.
+            </p>
+          </div>
+        )}
+
+        <div className="rounded-xl border border-slate-200 overflow-hidden bg-white">
+          {TIME_SLOTS.map((slot) => {
+            const slotAppointments = appointmentsAt(cursor, slot);
+            return (
+              <div
+                key={slot}
+                className="grid grid-cols-[84px_minmax(0,1fr)] sm:grid-cols-[110px_minmax(0,1fr)] border-b border-slate-100 last:border-b-0"
+              >
+                <div className="bg-slate-50/80 border-r border-slate-100 px-2 sm:px-3 py-3 text-[11px] sm:text-xs font-semibold text-slate-500">
+                  {slot}
+                </div>
+                <div className="p-2 min-h-[48px] flex flex-col gap-1.5">
+                  {slotAppointments.length === 0 ? (
+                    <span className="text-[11px] text-slate-300 py-1">Available</span>
+                  ) : (
+                    slotAppointments.map((appointment) => (
+                      <button
+                        key={appointment.id}
+                        type="button"
+                        onClick={() => selectAppointment(appointment)}
+                        className={`w-full text-left rounded-lg border px-3 py-2 transition-colors ${chipTone(
+                          appointment.status
+                        )}`}
+                      >
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className="text-xs font-bold">{appointment.patientName}</span>
+                          <span className="text-[10px] opacity-80">
+                            {appointment.doctorName}
+                          </span>
+                          <StatusBadge status={appointment.status} className="ml-auto" />
+                        </div>
+                        <p className="text-[11px] mt-0.5 opacity-80 truncate">
+                          {appointment.reason}
+                        </p>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderWeekView = (): React.ReactNode => (
+    <div className="space-y-3">
+      {visibleAppointments.length === 0 && (
+        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-4 text-center text-sm text-slate-500">
+          No appointments scheduled for this week.
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div className="min-w-[860px]">
+          <div className="grid grid-cols-[96px_repeat(7,minmax(0,1fr))] border-b border-slate-200 bg-slate-50">
+            <div className="px-2 py-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">
+              Time
+            </div>
+            {weekDays.map((day) => (
               <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`px-3.5 py-1 rounded-full text-xs font-bold capitalize transition-all ${
-                  view === v
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900'
+                key={toISODate(day)}
+                type="button"
+                onClick={() => openDay(day)}
+                className={`px-1 py-2 text-center border-l border-slate-100 hover:bg-sky-50 transition-colors ${
+                  isToday(day) ? 'bg-sky-100/70' : ''
                 }`}
               >
-                {v}
+                <div className="text-[10px] font-semibold uppercase text-slate-400">
+                  {WEEKDAY_LABELS[(day.getDay() + 6) % 7]}
+                </div>
+                <div
+                  className={`mx-auto mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                    isToday(day) ? 'bg-sky-600 text-white' : 'text-slate-700'
+                  }`}
+                >
+                  {day.getDate()}
+                </div>
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Right Search & Action Buttons */}
-        <div className="flex items-center gap-2.5">
-          <div className="relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQ}
-              onChange={(e) => setSearchQ(e.target.value)}
-              placeholder="Search appointments…"
-              className="pl-9 pr-3.5 py-1.5 bg-slate-100/80 border border-transparent focus:bg-white focus:border-slate-300 rounded-full text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition-all w-48 sm:w-60"
-            />
-          </div>
-
-          <button
-            onClick={handleExport}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-full text-xs font-semibold text-slate-700 transition-all shadow-sm"
-          >
-            <Download size={13} /> Export
-          </button>
-
-          {onBookNew && (
-            <button
-              onClick={onBookNew}
-              className="flex items-center gap-1.5 px-4 py-1.5 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold transition-all shadow-md shadow-blue-500/25"
-            >
-              <Plus size={14} /> Book
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Main Calendar Matrix & Popover Layout */}
-      <div className="relative bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] overflow-x-auto">
-        {/* Grid Header: Days of Week */}
-        <div className="min-w-[760px] grid grid-cols-7 border-b border-slate-200/80 pb-3">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-2">Time</div>
-          {weekDays.map((d) => (
-            <div key={d.name} className="text-center">
-              <span className="text-xs font-semibold text-slate-500">{d.name} </span>
-              <span
-                className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ml-1 ${
-                  d.isToday ? 'bg-[#1d6cf2] text-white shadow-sm' : 'text-slate-800'
-                }`}
-              >
-                {d.date}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar Body with Time Slots and Appointments */}
-        <div className="min-w-[760px] relative mt-2">
-          {/* Current Time Indicator Line (12:40 PM) matching screenshot */}
-          <div
-            className="absolute left-0 right-0 z-20 flex items-center pointer-events-none"
-            style={{ top: '158px' }}
-          >
-            <span className="px-2 py-0.5 rounded-full bg-[#1d6cf2] text-white text-[10px] font-bold shadow-md">
-              12:40
-            </span>
-            <div className="flex-1 h-[2px] bg-[#1d6cf2] opacity-80 border-t border-dashed border-blue-400" />
-          </div>
-
-          {/* Time Rows */}
-          {timeSlots.map((time, rowIdx) => (
+          {TIME_SLOTS.map((slot) => (
             <div
-              key={time}
-              className="grid grid-cols-7 min-h-[92px] border-b border-slate-100 last:border-b-0 py-2 relative"
+              key={slot}
+              className="grid grid-cols-[96px_repeat(7,minmax(0,1fr))] border-b border-slate-100 last:border-b-0"
             >
-              {/* Time Label Column */}
-              <div className="text-xs font-bold text-slate-400 pl-2 select-none">{time}</div>
-
-              {/* Day Slot Cells */}
-              {weekDays.map((d, colIdx) => {
-                // Find matching appointment for this day & rough time
-                const matched = filtered.find((a) => {
-                  const dayMatch = a.appointmentDate === d.fullDate || (rowIdx === 1 && colIdx === 2);
-                  const timeMatch = a.timeSlot.includes(time.slice(0, 2)) || (rowIdx === 1 && colIdx === 2);
-                  return dayMatch && timeMatch;
-                });
-
-                // Fallback mock cards to faithfully match the visual reference screenshot
-                let cardData: any = matched;
-                if (!cardData && rowIdx === 0 && colIdx === 0) {
-                  cardData = {
-                    id: 'sample-1',
-                    appointmentCode: 'APT-9002',
-                    patientName: 'David Doe',
-                    reason: 'Hypertension',
-                    timeSlot: '10:00 - 11:00',
-                    doctorName: 'Dr. Alexander Reed',
-                  };
-                } else if (!cardData && rowIdx === 0 && colIdx === 2) {
-                  cardData = {
-                    id: 'sample-2',
-                    appointmentCode: 'APT-9003',
-                    patientName: 'Michael Lee',
-                    reason: 'Routine Checkup',
-                    timeSlot: '10:00 - 11:00',
-                    doctorName: 'Dr. Alexander Reed',
-                  };
-                } else if (!cardData && rowIdx === 1 && colIdx === 2) {
-                  cardData = {
-                    id: 'sample-3',
-                    appointmentCode: 'APT-128979',
-                    patientName: 'Sarah Smith',
-                    reason: 'Routine Checkup',
-                    timeSlot: '11:00 - 12:00',
-                    doctorName: 'Dr. William Scott',
-                    notes: 'Diagnosed with pneumonia 15 days ago.',
-                    isSelected: true,
-                  };
-                } else if (!cardData && rowIdx === 2 && colIdx === 1) {
-                  cardData = {
-                    id: 'sample-4',
-                    appointmentCode: 'APT-9005',
-                    patientName: 'Emily White',
-                    reason: 'Diabetes',
-                    timeSlot: '12:00 - 01:00',
-                    doctorName: 'Dr. Elena Rostova',
-                  };
-                } else if (!cardData && rowIdx === 3 && colIdx === 0) {
-                  cardData = {
-                    id: 'sample-5',
-                    appointmentCode: 'APT-9006',
-                    patientName: 'David Miller',
-                    reason: 'Skin Rash',
-                    timeSlot: '01:00 - 02:00',
-                    doctorName: 'Dr. Alexander Reed',
-                  };
-                } else if (!cardData && rowIdx === 3 && colIdx === 3) {
-                  cardData = {
-                    id: 'sample-6',
-                    appointmentCode: 'APT-9007',
-                    patientName: 'Linda Taylor',
-                    reason: 'Back Pain Symptoms',
-                    timeSlot: '01:00 - 02:00',
-                    doctorName: 'Dr. Alexander Reed',
-                  };
-                }
-
-                if (!cardData) {
-                  return (
-                    <div
-                      key={d.name}
-                      onClick={onBookNew}
-                      className="border-r border-slate-100 last:border-r-0 hover:bg-slate-50/50 transition-colors rounded-xl m-1 cursor-pointer"
-                      title="Click to schedule here"
-                    />
-                  );
-                }
-
-                const isDarkActive = cardData.isSelected || selectedApp?.id === cardData.id;
-
+              <div className="bg-slate-50/60 border-r border-slate-100 px-2 py-2 text-[10px] font-semibold text-slate-500">
+                {slot}
+              </div>
+              {weekDays.map((day) => {
+                const cellAppointments = appointmentsAt(day, slot);
                 return (
-                  <div key={d.name} className="px-1 relative">
-                    <div
-                      onClick={() => {
-                        setSelectedApp(cardData);
-                        if (onSelectAppointment) onSelectAppointment(cardData);
-                      }}
-                      className={`p-2.5 rounded-2xl border transition-all duration-200 cursor-pointer shadow-sm hover:scale-[1.02] ${
-                        isDarkActive
-                          ? 'bg-slate-900 border-slate-900 text-white shadow-lg'
-                          : 'bg-white border-blue-200/80 hover:border-blue-400 text-slate-800'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <Avatar name={cardData.patientName} size="sm" className="w-6 h-6 text-[9.5px]" />
-                        <span
-                          className={`text-xs font-bold truncate ${
-                            isDarkActive ? 'text-white' : 'text-slate-900'
-                          }`}
-                        >
-                          {cardData.patientName}
-                        </span>
-                      </div>
-                      <p
-                        className={`text-[11px] truncate font-medium ${
-                          isDarkActive ? 'text-slate-300' : 'text-slate-500'
-                        }`}
-                      >
-                        {cardData.reason}
-                      </p>
-                      <span
-                        className={`text-[9.5px] mt-1 block font-mono ${
-                          isDarkActive ? 'text-blue-300' : 'text-blue-600 font-semibold'
-                        }`}
-                      >
-                        {cardData.timeSlot}
-                      </span>
-                    </div>
+                  <div
+                    key={`${toISODate(day)}-${slot}`}
+                    className={`min-h-[48px] border-l border-slate-100 p-1 space-y-1 ${
+                      isToday(day) ? 'bg-sky-50/40' : ''
+                    }`}
+                  >
+                    {cellAppointments.map((appointment) => renderChip(appointment, true))}
                   </div>
                 );
               })}
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
 
-        {/* Floating Appointment Popover Card matching screenshot! */}
-        {selectedApp && (
-          <div className="absolute right-6 top-32 w-80 bg-white rounded-3xl border border-slate-200/90 p-5 shadow-[0_20px_50px_-12px_rgba(15,23,42,0.22)] z-30 anim-pop">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[11px] font-mono text-slate-400 font-bold">
-                  Appointment ID #{selectedApp.appointmentCode?.replace('APT-', '') || '128979'}
-                </span>
-                <div className="flex items-center gap-2.5 mt-2">
-                  <Avatar name={selectedApp.patientName} size="md" className="w-10 h-10" />
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">{selectedApp.patientName}</h4>
-                    <p className="text-xs text-slate-500">{selectedApp.reason}</p>
+  const renderMonthView = (): React.ReactNode => (
+    <div className="space-y-3">
+      {visibleAppointments.length === 0 && (
+        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-4 text-center text-sm text-slate-500">
+          No appointments scheduled for {formatMonthYear(cursor)}.
+        </div>
+      )}
+
+      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
+          {WEEKDAY_LABELS.map((label) => (
+            <div
+              key={label}
+              className="px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wide text-slate-400"
+            >
+              {label}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7">
+          {monthDays.map((day) => {
+            const dayAppointments = appointmentsOn(day);
+            const isCurrentMonth = day.getMonth() === cursor.getMonth();
+            return (
+              <div
+                key={toISODate(day)}
+                className={`min-h-[92px] sm:min-h-[112px] border-b border-r border-slate-100 p-1 sm:p-1.5 ${
+                  isCurrentMonth ? 'bg-white' : 'bg-slate-50/60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => openDay(day)}
+                    aria-label={`View ${formatDayLong(day)}`}
+                    className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-colors ${
+                      isToday(day)
+                        ? 'bg-sky-600 text-white'
+                        : isCurrentMonth
+                          ? 'text-slate-700 hover:bg-slate-100'
+                          : 'text-slate-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    {day.getDate()}
+                  </button>
+                  {dayAppointments.length > 0 && (
+                    <span className="text-[9px] font-semibold text-slate-400">
+                      {dayAppointments.length}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-1 space-y-1">
+                  {dayAppointments.slice(0, 3).map((appointment) =>
+                    renderChip(appointment, true)
+                  )}
+                  {dayAppointments.length > 3 && (
+                    <button
+                      type="button"
+                      onClick={() => openDay(day)}
+                      className="w-full text-left px-1 text-[10px] font-semibold text-sky-700 hover:underline"
+                    >
+                      +{dayAppointments.length - 3} more
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      {/* Toolbar */}
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center rounded-lg border border-slate-200 bg-white overflow-hidden">
+            <button
+              type="button"
+              onClick={() => move(-1)}
+              aria-label={`Previous ${view}`}
+              className="p-2 text-slate-500 hover:bg-slate-50"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={() => move(1)}
+              aria-label={`Next ${view}`}
+              className="p-2 text-slate-500 hover:bg-slate-50 border-l border-slate-200"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={goToToday}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            Today
+          </button>
+          <h3 className="text-sm sm:text-base font-bold text-slate-900">{headerLabel}</h3>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
+          <div className="relative">
+            <Search
+              size={14}
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              value={searchQ}
+              onChange={(event) => setSearchQ(event.target.value)}
+              placeholder="Search patient, doctor, reason…"
+              aria-label="Search appointments"
+              className="hc-input pl-8 pr-7 py-2 text-xs w-full sm:w-56"
+            />
+            {searchQ && (
+              <button
+                type="button"
+                onClick={() => setSearchQ('')}
+                aria-label="Clear search"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
+
+          <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
+            {(['day', 'week', 'month'] as ViewMode[]).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setView(mode)}
+                aria-pressed={view === mode}
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
+                  view === mode
+                    ? 'bg-sky-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleExport}
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            <Download size={14} /> Export
+          </button>
+
+          {onBookNew && (
+            <button
+              type="button"
+              onClick={onBookNew}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white hover:bg-sky-700"
+            >
+              <Plus size={14} /> New Appointment
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
+        <div className="min-w-0">
+          {view === 'day' && renderDayView()}
+          {view === 'week' && renderWeekView()}
+          {view === 'month' && renderMonthView()}
+        </div>
+
+        {/* Detail panel */}
+        <aside className="rounded-xl border border-slate-200 bg-white p-4 xl:sticky xl:top-4">
+          {selectedApp ? (
+            <div className="space-y-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Avatar name={selectedApp.patientName} size="md" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900 truncate">
+                      {selectedApp.patientName}
+                    </p>
+                    <p className="text-[11px] text-slate-500">{selectedApp.appointmentCode}</p>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedApp(null)}
+                  aria-label="Close appointment details"
+                  className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                >
+                  <X size={15} />
+                </button>
               </div>
-              <button
-                onClick={() => setSelectedApp(null)}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 text-xs"
-              >
-                ✕
-              </button>
-            </div>
 
-            <div className="mt-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-600 leading-relaxed">
-              {selectedApp.notes || 'Diagnosed with pneumonia 15 days ago. Patient reports routine recovery.'}
-            </div>
+              <StatusBadge status={selectedApp.status} />
 
-            <div className="mt-3.5 space-y-1.5 text-xs">
-              <div className="flex items-center gap-2 text-slate-600 font-medium">
-                <Calendar size={13} className="text-blue-600 shrink-0" />
-                <span>Wednesday 19 October, 2026</span>
+              <div className="space-y-2 text-xs text-slate-600">
+                <p className="flex items-start gap-2">
+                  <CalendarDays size={14} className="mt-0.5 text-slate-400 shrink-0" />
+                  <span>{formatDayLong(parseISODate(selectedApp.appointmentDate))}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <Clock size={14} className="mt-0.5 text-slate-400 shrink-0" />
+                  <span>{selectedApp.timeSlot}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <User size={14} className="mt-0.5 text-slate-400 shrink-0" />
+                  <span>{selectedApp.doctorName}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <FileText size={14} className="mt-0.5 text-slate-400 shrink-0" />
+                  <span>{selectedApp.reason}</span>
+                </p>
+                {selectedApp.notes && (
+                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+                    {selectedApp.notes}
+                  </p>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-slate-600 font-medium">
-                <Clock size={13} className="text-blue-600 shrink-0" />
-                <span>{selectedApp.timeSlot}</span>
-              </div>
-            </div>
 
-            <div className="mt-3 flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold">
-                In Person
-              </span>
-              <StatusBadge status={selectedApp.status || 'Confirmed'} />
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  if (onViewPatient) onViewPatient(selectedApp.patientId, selectedApp.patientName);
-                }}
-                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-xl text-xs transition-colors"
-              >
-                See Patient Details
-              </button>
-
-              {onStatusChange && selectedApp.status === 'Confirmed' && (
-                <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
+                {onViewPatient && (
                   <button
-                    onClick={() => onStatusChange(selectedApp.id, 'Completed')}
-                    className="py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-[11px]"
+                    type="button"
+                    onClick={() =>
+                      onViewPatient(selectedApp.patientId, selectedApp.patientName)
+                    }
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                   >
-                    Complete
+                    View Patient Record
                   </button>
+                )}
+
+                {onStatusChange && selectedApp.status === 'Pending' && (
                   <button
-                    onClick={() => onStatusChange(selectedApp.id, 'Cancelled')}
-                    className="py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-lg text-[11px]"
+                    type="button"
+                    onClick={() => {
+                      onStatusChange(selectedApp.id, 'Confirmed');
+                      setSelectedApp({ ...selectedApp, status: 'Confirmed' });
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
                   >
-                    Cancel
+                    <CheckCircle size={14} /> Confirm Appointment
                   </button>
-                </div>
-              )}
+                )}
+
+                {onStatusChange && selectedApp.status === 'Confirmed' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onStatusChange(selectedApp.id, 'Completed');
+                      setSelectedApp({ ...selectedApp, status: 'Completed' });
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+                  >
+                    <CheckCircle size={14} /> Mark Completed
+                  </button>
+                )}
+
+                {onStatusChange &&
+                  (selectedApp.status === 'Pending' || selectedApp.status === 'Confirmed') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onStatusChange(selectedApp.id, 'Cancelled');
+                        setSelectedApp({ ...selectedApp, status: 'Cancelled' });
+                      }}
+                      className="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100"
+                    >
+                      Cancel Appointment
+                    </button>
+                  )}
+              </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="py-8 text-center">
+              <CalendarDays className="mx-auto mb-2 text-slate-300" size={30} />
+              <p className="text-sm font-semibold text-slate-600">Appointment details</p>
+              <p className="mt-1 text-xs text-slate-400">
+                Select an appointment to see the patient, clinician and status.
+              </p>
+              <div className="mt-4 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                {visibleAppointments.length} appointment
+                {visibleAppointments.length === 1 ? '' : 's'} in this {view}.
+              </div>
+            </div>
+          )}
+        </aside>
       </div>
     </div>
   );

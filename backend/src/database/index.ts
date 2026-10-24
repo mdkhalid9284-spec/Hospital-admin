@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import {
   IUser,
   IPatient,
@@ -12,10 +11,12 @@ import {
   IMedicalDocument,
   IBill,
   IInsuranceClaim,
+  IInsurancePolicy,
   IAuditLog,
   INotification
 } from '../models/types.js';
 import { generateSeedData } from './seedData.js';
+import { ensureSampleDocumentFiles } from './sampleDocuments.js';
 import { config } from '../config/index.js';
 
 export interface IDatabaseStore {
@@ -30,6 +31,7 @@ export interface IDatabaseStore {
   documents: IMedicalDocument[];
   bills: IBill[];
   insuranceClaims: IInsuranceClaim[];
+  insurancePolicies: IInsurancePolicy[];
   auditLogs: IAuditLog[];
   notifications: INotification[];
 }
@@ -47,6 +49,7 @@ class HospitalDatabase {
     documents: [],
     bills: [],
     insuranceClaims: [],
+    insurancePolicies: [],
     auditLogs: [],
     notifications: []
   };
@@ -56,27 +59,13 @@ class HospitalDatabase {
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
-    // Ensure storage upload folder exists
+    // Ensure the private storage folder exists and the synthetic demo files
+    // referenced by the seed dataset are present.
     const storageDir = config.storage.localPath;
     if (!fs.existsSync(storageDir)) {
       fs.mkdirSync(storageDir, { recursive: true });
     }
-
-    // Create dummy sample files for seeded documents if not existing
-    const sampleEcg = path.join(storageDir, 'sample_ecg_report.pdf');
-    if (!fs.existsSync(sampleEcg)) {
-      fs.writeFileSync(
-        sampleEcg,
-        '%PDF-1.4\n1 0 obj\n<< /Title (HospitalCare Sample ECG Report) /Author (Dr. Alexander Reed) >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n'
-      );
-    }
-    const sampleOpd = path.join(storageDir, 'sample_opd_summary.pdf');
-    if (!fs.existsSync(sampleOpd)) {
-      fs.writeFileSync(
-        sampleOpd,
-        '%PDF-1.4\n1 0 obj\n<< /Title (HospitalCare Sample OPD Summary) /Author (General Hospital) >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n'
-      );
-    }
+    ensureSampleDocumentFiles();
 
     // Load initial seed dataset
     const seed = await generateSeedData();
@@ -97,11 +86,15 @@ class HospitalDatabase {
   public get documents(): IMedicalDocument[] { return this.data.documents; }
   public get bills(): IBill[] { return this.data.bills; }
   public get insuranceClaims(): IInsuranceClaim[] { return this.data.insuranceClaims; }
+  public get insurancePolicies(): IInsurancePolicy[] { return this.data.insurancePolicies; }
   public get auditLogs(): IAuditLog[] { return this.data.auditLogs; }
   public get notifications(): INotification[] { return this.data.notifications; }
 
   // Atomic state reset helper for automated test isolation
   public async resetForTesting(): Promise<void> {
+    // Tests do not call initialize(), so ensure the synthetic private files
+    // exist before any document download assertion runs.
+    ensureSampleDocumentFiles();
     const seed = await generateSeedData();
     this.data = seed;
   }
