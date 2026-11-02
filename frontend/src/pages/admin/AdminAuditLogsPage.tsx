@@ -122,7 +122,7 @@ export const AdminAuditLogsPage: React.FC = () => {
                       {log.actorRole}
                     </span>
                   </td>
-                  <td className="py-3.5 font-mono text-[11.5px] font-bold text-blue-700">
+                  <td className="py-3.5 font-mono text-[11.5px] font-bold text-[#0B3D20]">
                     {log.action}
                   </td>
                   <td className="py-3.5 text-slate-700 font-medium">

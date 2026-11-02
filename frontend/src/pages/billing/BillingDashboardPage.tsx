@@ -55,7 +55,7 @@ export const BillingDashboardPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Link
             to="/portal/billing/invoices"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14532D] hover:bg-[#0B3D20] text-white font-semibold text-sm shadow-md shadow-[#14532D]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <Plus className="w-4 h-4" /> Create Invoice
           </Link>
@@ -81,7 +81,7 @@ export const BillingDashboardPage: React.FC = () => {
         <div className="hc-kpi flex flex-col">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gross Billed</span>
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
@@ -154,7 +154,7 @@ export const BillingDashboardPage: React.FC = () => {
             </div>
             <Link
               to="/portal/billing/invoices"
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-xs font-semibold text-[#14532D] hover:text-[#0B3D20] flex items-center gap-1"
             >
               All Invoices <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
@@ -187,7 +187,7 @@ export const BillingDashboardPage: React.FC = () => {
                       <td className="py-3 px-3">
                         <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                           b.status === 'Paid' ? 'bg-emerald-50 text-emerald-700' :
-                          b.status === 'Partially Paid' ? 'bg-blue-50 text-blue-700' :
+                          b.status === 'Partially Paid' ? 'bg-[#EAF9D8] text-[#0B3D20]' :
                           'bg-amber-50 text-amber-700'
                         }`}>
                           {b.status}
@@ -219,7 +219,7 @@ export const BillingDashboardPage: React.FC = () => {
               </div>
               <Link
                 to="/portal/billing/insurance"
-                className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+                className="text-xs font-semibold text-[#14532D] hover:text-[#0B3D20]"
               >
                 Review All
               </Link>
@@ -250,7 +250,7 @@ export const BillingDashboardPage: React.FC = () => {
                       <span className="text-xs font-bold text-slate-900 block">${claim.claimAmount.toLocaleString()}</span>
                       <Link
                         to="/portal/billing/insurance"
-                        className="text-[11px] font-semibold text-blue-600 hover:underline mt-1 inline-block"
+                        className="text-[11px] font-semibold text-[#14532D] hover:underline mt-1 inline-block"
                       >
                         Process
                       </Link>
@@ -261,11 +261,11 @@ export const BillingDashboardPage: React.FC = () => {
             )}
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 bg-blue-50/40 rounded-2xl p-4">
+          <div className="mt-6 pt-4 border-t border-slate-100 bg-[#EAF9D8]/40 rounded-2xl p-4">
             <h4 className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-blue-600" /> HIPAA Billing & Audit Policy
+              <Shield className="w-4 h-4 text-[#14532D]" /> HIPAA Billing & Audit Policy
             </h4>
-            <p className="text-[11px] text-blue-700 mt-1">
+            <p className="text-[11px] text-[#0B3D20] mt-1">
               Billing staff accounts have access strictly to demographics, financial statements, and insurance documents. Clinical notes and psychiatric histories remain encrypted and inaccessible.
             </p>
           </div>

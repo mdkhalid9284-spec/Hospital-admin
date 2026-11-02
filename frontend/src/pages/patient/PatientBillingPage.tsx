@@ -118,7 +118,7 @@ export const PatientBillingPage: React.FC = () => {
         <button
           onClick={() => handleOpenClaimModal()}
           disabled={bills.length === 0}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md shadow-blue-500/20 transition-all disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98]"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#14532D] hover:bg-[#0B3D20] text-white font-medium shadow-md shadow-[#14532D]/20 transition-all disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98]"
         >
           <PlusCircle className="w-4 h-4" /> File Insurance Claim
         </button>
@@ -144,7 +144,7 @@ export const PatientBillingPage: React.FC = () => {
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Invoiced</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
@@ -236,7 +236,7 @@ export const PatientBillingPage: React.FC = () => {
                     <td className="py-4 px-5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                         bill.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                        bill.status === 'Partially Paid' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                        bill.status === 'Partially Paid' ? 'bg-[#EAF9D8] text-[#0B3D20] border border-[#C7FF75]' :
                         'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}>
                         {bill.status}
@@ -252,7 +252,7 @@ export const PatientBillingPage: React.FC = () => {
                       {bill.balance > 0 && (
                         <button
                           onClick={() => handleOpenClaimModal(bill)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] text-xs font-semibold transition-colors"
                         >
                           <Shield className="w-3.5 h-3.5" /> Claim
                         </button>
@@ -327,7 +327,7 @@ export const PatientBillingPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>

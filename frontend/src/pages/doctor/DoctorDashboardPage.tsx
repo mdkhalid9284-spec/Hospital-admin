@@ -124,10 +124,10 @@ export const DoctorDashboardPage: React.FC = () => {
         {/* Metric 1: Patients */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +3%
             </span>
-            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <div className="w-9 h-9 rounded-full bg-[#EAF9D8] flex items-center justify-center text-[#14532D]">
               <Users size={16} />
             </div>
           </div>
@@ -156,7 +156,7 @@ export const DoctorDashboardPage: React.FC = () => {
         {/* Metric 3: Reports */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +2%
             </span>
             <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
@@ -172,7 +172,7 @@ export const DoctorDashboardPage: React.FC = () => {
         {/* Metric 4: Active Today */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +3%
             </span>
             <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
@@ -203,7 +203,7 @@ export const DoctorDashboardPage: React.FC = () => {
               <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight">Upcoming Patients</h3>
               <button
                 onClick={() => navigate('/portal/doctor/patients')}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20] transition-colors"
               >
                 View assigned patients →
               </button>
@@ -249,7 +249,7 @@ export const DoctorDashboardPage: React.FC = () => {
                           onClick={() => navigate('/portal/doctor/records')}
                           className={`px-3.5 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
                             row.blue
-                              ? 'bg-[#1d6cf2] hover:bg-blue-700 text-white shadow-sm'
+                              ? 'bg-[#14532D] hover:bg-[#0B3D20] text-white shadow-sm'
                               : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                           }`}
                         >
@@ -313,7 +313,7 @@ export const DoctorDashboardPage: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-slate-300" />
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#1d6cf2] text-white shadow-md shadow-blue-500/30 flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-[#14532D] text-white shadow-md shadow-[#14532D]/20 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-white">Cold and Fever</p>
                   <p className="text-[11px] text-blue-100">Hannah Collins · Video · 11:00</p>

@@ -113,7 +113,7 @@ export const PatientProfilePage: React.FC = () => {
               
               <div className="relative pt-6">
                 <div className="w-20 h-20 rounded-2xl bg-white shadow-lg mx-auto p-1.5 border-2 border-white">
-                  <div className="w-full h-full rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-2xl">
+                  <div className="w-full h-full rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center font-bold text-2xl">
                     {patient.fullName.charAt(0)}
                   </div>
                 </div>
@@ -145,8 +145,8 @@ export const PatientProfilePage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6 text-left text-xs text-slate-500 bg-blue-50/50 p-3.5 rounded-xl border border-blue-100 flex items-start gap-2">
-                <Shield className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div className="mt-6 text-left text-xs text-slate-500 bg-[#EAF9D8]/50 p-3.5 rounded-xl border border-blue-100 flex items-start gap-2">
+                <Shield className="w-4 h-4 text-[#14532D] flex-shrink-0 mt-0.5" />
                 <span>Clinical identifiers and medical codes are managed exclusively by hospital admissions.</span>
               </div>
             </div>
@@ -157,7 +157,7 @@ export const PatientProfilePage: React.FC = () => {
             <form onSubmit={handleSaveProfile} className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
               <div>
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Edit3 className="w-4 h-4 text-blue-600" /> Contact & Residence Information
+                  <Edit3 className="w-4 h-4 text-[#14532D]" /> Contact & Residence Information
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">Used for appointment SMS updates and hospital mail</p>
               </div>
@@ -254,7 +254,7 @@ export const PatientProfilePage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/20 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#14532D] hover:bg-[#0B3D20] text-white font-semibold text-sm shadow-md shadow-[#14532D]/20 disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Save className="w-4 h-4" />
                   {isSaving ? 'Saving Changes...' : 'Save Profile Changes'}

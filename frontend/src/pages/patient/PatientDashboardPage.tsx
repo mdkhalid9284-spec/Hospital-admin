@@ -69,7 +69,7 @@ export const PatientDashboardPage: React.FC = () => {
     <div className="space-y-6 anim-fade-up">
       {/* Patient Hero Welcome Card */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 text-white rounded-[28px] p-6 sm:p-7 relative overflow-hidden shadow-xl">
-        <div className="absolute -top-24 -right-16 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -right-16 w-80 h-80 bg-[#EAF9D8]0/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
             <Avatar name={patient?.fullName || user?.fullName || 'Patient'} size="lg" className="w-16 h-16 text-base" />
@@ -102,7 +102,7 @@ export const PatientDashboardPage: React.FC = () => {
             </button>
             <button
               onClick={() => navigate('/portal/patient/appointments')}
-              className="px-4 py-2.5 bg-[#1d6cf2] hover:bg-blue-600 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/30 transition-all flex items-center gap-1.5"
+              className="px-4 py-2.5 bg-[#14532D] hover:bg-[#14532D] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all flex items-center gap-1.5"
             >
               <Calendar size={14} /> Book Consultation
             </button>
@@ -115,7 +115,7 @@ export const PatientDashboardPage: React.FC = () => {
         <div className="hc-kpi">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-400 uppercase">Upcoming Visits</span>
-            <span className="p-2 rounded-xl bg-blue-50 text-blue-600"><Calendar size={15} /></span>
+            <span className="p-2 rounded-xl bg-[#EAF9D8] text-[#14532D]"><Calendar size={15} /></span>
           </div>
           <p className="text-2xl font-bold text-slate-900 mt-2">{appointments.length}</p>
           <span className="text-[11px] text-slate-400 font-medium block mt-1">Confirmed appointments</span>
@@ -159,12 +159,12 @@ export const PatientDashboardPage: React.FC = () => {
           <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <Pill size={16} className="text-blue-600" />
+                <Pill size={16} className="text-[#14532D]" />
                 Current Prescriptions & Schedule
               </h3>
               <button
                 onClick={() => navigate('/portal/patient/records')}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700"
+                className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20]"
               >
                 View all history →
               </button>
@@ -175,19 +175,19 @@ export const PatientDashboardPage: React.FC = () => {
                 <p className="text-xs text-slate-400 py-4">No active prescriptions.</p>
               ) : (
                 prescriptions.slice(0, 2).map((rx) => (
-                  <div key={rx.id} className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-2">
+                  <div key={rx.id} className="p-4 rounded-2xl bg-[#EAF9D8]/50 border border-blue-100 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-900">
                         {rx.diagnosis} · <span className="font-medium text-slate-500">Dr. {rx.doctorName}</span>
                       </span>
-                      <span className="text-[10.5px] font-mono text-blue-700 font-bold bg-white px-2 py-0.5 rounded-full border border-blue-200">
+                      <span className="text-[10.5px] font-mono text-[#0B3D20] font-bold bg-white px-2 py-0.5 rounded-full border border-[#C7FF75]">
                         {rx.prescriptionCode}
                       </span>
                     </div>
                     <div className="space-y-1.5 pt-1">
                       {rx.medicines.map((m, i) => (
                         <div key={i} className="text-xs text-slate-700 flex items-start gap-1.5">
-                          <span className="text-blue-600 font-bold mt-0.5">•</span>
+                          <span className="text-[#14532D] font-bold mt-0.5">•</span>
                           <div>
                             <b className="text-slate-900">{m.medicineName}</b> {m.dosage} — {m.frequency} ({m.duration})
                             {m.instructions && <p className="text-[11px] text-slate-500 italic mt-0.5">{m.instructions}</p>}
@@ -204,7 +204,7 @@ export const PatientDashboardPage: React.FC = () => {
           {/* Clinical Doctor Observations */}
           <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
             <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight mb-3 flex items-center gap-2">
-              <FileText size={16} className="text-blue-600" />
+              <FileText size={16} className="text-[#14532D]" />
               Doctor Clinical Notes & Vitals
             </h3>
             <div className="space-y-3">
@@ -219,7 +219,7 @@ export const PatientDashboardPage: React.FC = () => {
                   <p className="text-slate-600 leading-relaxed">{r.notes}</p>
                   {r.vitalSigns && (
                     <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10.5px]">
-                      <span className="bg-white px-2 py-0.5 rounded border text-blue-700 font-bold">
+                      <span className="bg-white px-2 py-0.5 rounded border text-[#0B3D20] font-bold">
                         BP: {r.vitalSigns.bloodPressure}
                       </span>
                       <span className="bg-white px-2 py-0.5 rounded border text-emerald-700 font-bold">
@@ -247,7 +247,7 @@ export const PatientDashboardPage: React.FC = () => {
               <h3 className="text-[14px] font-bold text-slate-900">Upcoming Visits</h3>
               <button
                 onClick={() => navigate('/portal/patient/appointments')}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700"
+                className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20]"
               >
                 Book visit →
               </button>

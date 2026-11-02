@@ -156,7 +156,7 @@ export const DoctorDocumentsPage: React.FC = () => {
             setShowUpload(true);
           }}
           disabled={patients.length === 0}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95 disabled:opacity-50"
         >
           <Upload size={14} /> Upload Diagnostic File
         </button>
@@ -254,7 +254,7 @@ export const DoctorDocumentsPage: React.FC = () => {
                 <tr key={doc.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="py-3.5 pl-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#EAF9D8] text-[#0B3D20] flex items-center justify-center shrink-0">
                         <FileText size={15} />
                       </div>
                       <div>
@@ -279,7 +279,7 @@ export const DoctorDocumentsPage: React.FC = () => {
                   <td className="py-3.5 text-right pr-2">
                     <button
                       onClick={() => handleDownload(doc)}
-                      className="px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full font-bold text-xs transition-colors inline-flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] rounded-full font-bold text-xs transition-colors inline-flex items-center gap-1.5"
                     >
                       <Download size={13} /> Download File
                     </button>
@@ -356,7 +356,7 @@ export const DoctorDocumentsPage: React.FC = () => {
                   e.target.value = '';
                 }
               }}
-              className="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+              className="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#EAF9D8] file:text-[#0B3D20] hover:file:bg-blue-100 cursor-pointer"
             />
             {file && (
               <p className="mt-1 text-[10px] text-slate-400">

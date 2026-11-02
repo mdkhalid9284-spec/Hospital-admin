@@ -177,7 +177,7 @@ export const BillingInvoicesPage: React.FC = () => {
             setCreateError(null);
             setIsCreateOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#14532D] hover:bg-[#0B3D20] text-white font-medium shadow-md shadow-[#14532D]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <Plus className="w-4 h-4" /> Generate Invoice
         </button>
@@ -262,7 +262,7 @@ export const BillingInvoicesPage: React.FC = () => {
                     <td className="py-4 px-5">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                         b.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                        b.status === 'Partially Paid' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                        b.status === 'Partially Paid' ? 'bg-[#EAF9D8] text-[#0B3D20] border border-[#C7FF75]' :
                         'bg-amber-50 text-amber-700 border border-amber-200'
                       }`}>
                         {b.status}
@@ -302,7 +302,7 @@ export const BillingInvoicesPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 my-8">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center">
                   <DollarSign className="w-5 h-5" />
                 </div>
                 <div>
@@ -348,7 +348,7 @@ export const BillingInvoicesPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddLineItem}
-                    className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+                    className="text-[#14532D] hover:text-[#0B3D20] font-semibold flex items-center gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add Item
                   </button>
@@ -468,7 +468,7 @@ export const BillingInvoicesPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-md shadow-blue-500/20 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-[#14532D] hover:bg-[#0B3D20] text-white text-sm font-semibold shadow-md shadow-[#14532D]/20 disabled:opacity-50"
                 >
                   {isCreating ? 'Generating...' : 'Confirm & Bill'}
                 </button>
@@ -568,7 +568,7 @@ export const BillingInvoicesPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#EAF9D8] text-[#14532D] flex items-center justify-center">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>

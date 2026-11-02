@@ -38,7 +38,7 @@ export const AdminSettingsPage: React.FC = () => {
       {/* Hospital Identity Settings */}
       <form onSubmit={handleSave} className="bg-white rounded-[28px] border border-slate-200/90 p-6 shadow-sm space-y-4">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <Hospital size={16} className="text-blue-600" /> Facility Profile
+          <Hospital size={16} className="text-[#14532D]" /> Facility Profile
         </h3>
 
         <Field label="Hospital Facility Name">

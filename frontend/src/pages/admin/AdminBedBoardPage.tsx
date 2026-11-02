@@ -89,8 +89,8 @@ export const AdminBedBoardPage: React.FC = () => {
           <p className="text-2xl font-bold text-rose-600 mt-1">{stats.occupiedBeds} Beds</p>
         </div>
         <div className="bg-white rounded-[24px] border border-slate-200/90 p-4 shadow-sm">
-          <p className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Occupancy Rate</p>
-          <p className="text-2xl font-bold text-blue-700 mt-1">{stats.occupancyRate}%</p>
+          <p className="text-[11px] font-bold text-[#14532D] uppercase tracking-wider">Occupancy Rate</p>
+          <p className="text-2xl font-bold text-[#0B3D20] mt-1">{stats.occupancyRate}%</p>
         </div>
       </div>
 
@@ -122,7 +122,7 @@ export const AdminBedBoardPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
               <div>
                 <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                  <BedDouble size={18} className="text-blue-600" />
+                  <BedDouble size={18} className="text-[#14532D]" />
                   {ward.name}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5 font-medium">
@@ -134,7 +134,7 @@ export const AdminBedBoardPage: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-32 sm:w-44 h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
+                    className="h-full bg-[#14532D] rounded-full transition-all duration-500"
                     style={{ width: `${ward.totalBeds > 0 ? (ward.occupiedBeds / ward.totalBeds) * 100 : 0}%` }}
                   />
                 </div>

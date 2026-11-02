@@ -34,7 +34,6 @@ export const TopConsultationsRadar: React.FC<{
     };
   };
 
-  // Concentric radar polygons
   const levels = [0.25, 0.5, 0.75, 1];
 
   const polygonPoints = data
@@ -47,19 +46,19 @@ export const TopConsultationsRadar: React.FC<{
 
   return (
     <div
-      className={`relative bg-white/95 rounded-[28px] border border-slate-200/90 p-5 shadow-[0_16px_36px_-12px_rgba(15,23,42,0.12)] transition-all duration-300 hover:shadow-[0_22px_44px_-10px_rgba(15,23,42,0.16)] ${className}`}
+      className={`relative bg-white rounded-[24px] border border-[#E3E8DE] p-5 shadow-sm transition-all duration-300 hover:shadow-md ${className}`}
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[13.5px] font-bold text-slate-800">Top Consultations</p>
+          <p className="text-[13.5px] font-bold text-[#26352A]">Top Consultations</p>
           <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="text-[26px] font-bold tracking-tight text-slate-900 leading-none">{total}</span>
-            <span className="text-[11px] text-slate-400 font-medium">Total Consultations</span>
+            <span className="text-[26px] font-bold tracking-tight text-[#14532D] leading-none">{total}</span>
+            <span className="text-[11px] text-[#667367] font-medium">Cases this cycle</span>
           </div>
         </div>
         {hovered && (
-          <div className="px-2.5 py-1 rounded-full bg-slate-900 text-white text-[11px] font-bold anim-pop shadow-sm">
-            {hovered.condition}: {hovered.count} cases
+          <div className="px-2.5 py-1 rounded-full bg-[#14532D] text-[#C7FF75] text-[11px] font-bold anim-pop shadow-sm">
+            {hovered.condition}: {hovered.count}
           </div>
         )}
       </div>
@@ -67,17 +66,13 @@ export const TopConsultationsRadar: React.FC<{
       <div className="relative mt-2 flex items-center justify-center">
         <svg viewBox="0 0 260 220" className="w-full max-w-[280px] h-[190px] overflow-visible">
           <defs>
-            <linearGradient id="radarGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.75" />
-              <stop offset="50%" stopColor="#2563eb" stopOpacity="0.65" />
-              <stop offset="100%" stopColor="#1d4ed8" stopOpacity="0.85" />
+            <linearGradient id="radarGradForest" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#C7FF75" stopOpacity="0.8" />
+              <stop offset="60%" stopColor="#14532D" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#0B3D20" stopOpacity="0.85" />
             </linearGradient>
-            <linearGradient id="facetHighlight" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#2563eb" stopOpacity="0.1" />
-            </linearGradient>
-            <filter id="radarGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#2563eb" floodOpacity="0.35" />
+            <filter id="radarForestGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#14532D" floodOpacity="0.25" />
             </filter>
           </defs>
 
@@ -92,7 +87,7 @@ export const TopConsultationsRadar: React.FC<{
                 })
                 .join(' ')}
               fill="none"
-              stroke="#e2e8f0"
+              stroke="#E3E8DE"
               strokeWidth="1"
               strokeDasharray={idx === levels.length - 1 ? 'none' : '2,2'}
             />
@@ -108,26 +103,20 @@ export const TopConsultationsRadar: React.FC<{
                 y1={cy}
                 x2={pt.x}
                 y2={pt.y}
-                stroke="#e2e8f0"
+                stroke="#E3E8DE"
                 strokeWidth="1"
               />
             );
           })}
 
-          {/* Radar shaded polygon with 3D drop shadow */}
+          {/* Radar shaded polygon */}
           <polygon
             points={polygonPoints}
-            fill="url(#radarGrad3D)"
-            stroke="#1d4ed8"
+            fill="url(#radarGradForest)"
+            stroke="#14532D"
             strokeWidth="2"
-            filter="url(#radarGlow)"
+            filter="url(#radarForestGlow)"
             className="transition-all duration-300"
-          />
-
-          {/* Highlight facet overlay for dimensional glass look */}
-          <polygon
-            points={`${cx},${cy} ${polygonPoints.split(' ')[0]} ${polygonPoints.split(' ')[1]}`}
-            fill="url(#facetHighlight)"
           />
 
           {/* Vertices */}
@@ -140,27 +129,25 @@ export const TopConsultationsRadar: React.FC<{
 
             return (
               <g key={idx}>
-                {/* Vertex node circle */}
                 <circle
                   cx={pt.x}
                   cy={pt.y}
                   r={isHovered ? 6 : 4}
-                  fill="#ffffff"
-                  stroke="#1d4ed8"
+                  fill="#FFFFFF"
+                  stroke="#14532D"
                   strokeWidth={isHovered ? 3 : 2}
                   className="cursor-pointer transition-all duration-200"
                   onMouseEnter={() => setHovered(item)}
                   onMouseLeave={() => setHovered(null)}
                 />
 
-                {/* Condition label */}
                 <text
                   x={labelPt.x}
                   y={labelPt.y}
                   textAnchor="middle"
                   alignmentBaseline="middle"
                   className={`text-[10px] font-semibold select-none transition-colors ${
-                    isHovered ? 'fill-blue-600 font-bold' : 'fill-slate-600'
+                    isHovered ? 'fill-[#14532D] font-bold' : 'fill-[#667367]'
                   }`}
                   style={{ fontSize: '9.5px' }}
                 >

@@ -8,7 +8,8 @@ import { UserRole } from './types';
 // Keep for legacy compatibility — pages still import this
 export const GlobalSearchContext = React.createContext<{ query: string }>({ query: '' });
 
-// ─── Auth ────────────────────────────────────────────────────────────────────
+// ─── Landing & Auth ──────────────────────────────────────────────────────────
+import { LandingPage } from './pages/LandingPage';
 import { Login } from './pages/Login';
 
 // ─── Admin Portal ────────────────────────────────────────────────────────────
@@ -54,7 +55,7 @@ const RoleGuard: React.FC<{ roles: UserRole[]; children: React.ReactNode }> = ({
   if (isLoading) {
     return (
       <div className="p-16 text-center">
-        <div className="w-8 h-8 rounded-full border-2 border-blue-600 border-t-transparent animate-spin mx-auto" />
+        <div className="w-8 h-8 rounded-full border-2 border-[#14532D] border-t-transparent animate-spin mx-auto" />
       </div>
     );
   }
@@ -79,13 +80,13 @@ export const App: React.FC = () => (
   <AuthProvider>
     <BrowserRouter>
       <Routes>
-        {/* Public */}
+        {/* Public Landing & Authentication */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Protected */}
+        {/* Protected Operational Application */}
         <Route element={<ProtectedRoute />}>
           {/* Legacy route redirects */}
-          <Route path="/" element={<DashboardRedirect />} />
           <Route path="/dashboard" element={<DashboardRedirect />} />
           <Route path="/patients" element={<DashboardRedirect />} />
           <Route path="/billing" element={<DashboardRedirect />} />

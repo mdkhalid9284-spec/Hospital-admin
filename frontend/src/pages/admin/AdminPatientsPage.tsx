@@ -199,7 +199,7 @@ export const AdminPatientsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setShowRegisterModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
           >
             <Plus size={14} /> Register Patient
           </button>
@@ -310,7 +310,7 @@ export const AdminPatientsPage: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openProfile(p)}
-                          className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full font-bold text-[11px] transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] rounded-full font-bold text-[11px] transition-colors flex items-center gap-1"
                         >
                           <Eye size={13} /> View 3D Profile
                         </button>

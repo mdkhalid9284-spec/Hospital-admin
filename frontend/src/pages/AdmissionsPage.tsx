@@ -97,7 +97,7 @@ export const AdmissionsPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-100">
                   {list.map((a) => (
                     <tr key={a.id} className="hover:bg-slate-50/70">
-                      <td><span className="font-mono text-xs font-bold text-sky-700">{a.admissionCode}</span></td>
+                      <td><span className="font-mono text-xs font-bold text-[#0B3D20]">{a.admissionCode}</span></td>
                       <td><div className="flex items-center gap-2.5"><Avatar name={a.patientName} size="sm" tone="bg-violet-50 text-violet-700 border-violet-200" /><div><p className="font-bold text-slate-900 text-[13px]">{a.patientName}</p><p className="text-[11px] text-slate-400 truncate max-w-[220px]">{a.reason}</p></div></div></td>
                       <td className="text-xs"><p className="font-bold text-slate-800">{a.wardName}</p><p className="text-slate-500">Rm {a.roomNumber} · Bed {a.bedNumber} · {a.doctorName}</p></td>
                       <td className="text-xs text-slate-500">{new Date(a.admissionDate).toLocaleDateString()}</td>

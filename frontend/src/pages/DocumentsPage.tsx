@@ -8,7 +8,7 @@ import { cn } from '../components/ui/primitives';
 
 const catTone = (c: string) =>
   c === 'Scan' ? 'bg-violet-50 text-violet-700 border-violet-200'
-  : c === 'Report' ? 'bg-sky-50 text-sky-700 border-sky-200'
+  : c === 'Report' ? 'bg-[#EAF9D8] text-[#0B3D20] border-sky-200'
   : c === 'Prescription' ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
   : c === 'Bill' ? 'bg-amber-50 text-amber-700 border-amber-200'
   : c === 'Insurance' ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
@@ -121,7 +121,7 @@ export const DocumentsPage: React.FC = () => {
                 <span className="block text-[11px] text-slate-400 mt-1">{d.patientName || 'Patient'} · {new Date(d.createdAt).toLocaleDateString()}</span>
               </span>
               <span className="flex flex-col gap-1.5 shrink-0">
-                <a href={`/api/documents/${d.id}/download`} target="_blank" rel="noreferrer" title="Download" className="w-8 h-8 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 flex items-center justify-center transition-colors"><Download size={14} /></a>
+                <a href={`/api/documents/${d.id}/download`} target="_blank" rel="noreferrer" title="Download" className="w-8 h-8 rounded-xl bg-[#EAF9D8] hover:bg-sky-100 text-[#0B3D20] flex items-center justify-center transition-colors"><Download size={14} /></a>
                 {(user?.role === 'admin' || user?.id === d.uploadedBy) && <button onClick={() => del(d.id)} title="Delete" className="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition-colors"><Trash2 size={14} /></button>}
               </span>
             </Card>
@@ -141,7 +141,7 @@ export const DocumentsPage: React.FC = () => {
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
             onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) setFile(f); }}
-            className={cn('rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer', dragOver ? 'border-sky-500 bg-sky-50' : 'border-slate-200 bg-slate-50/60 hover:border-slate-300')}
+            className={cn('rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer', dragOver ? 'border-sky-500 bg-[#EAF9D8]' : 'border-slate-200 bg-slate-50/60 hover:border-slate-300')}
           >
             <input id="doc-file" type="file" required={!file} accept=".pdf,.png,.jpg,.jpeg,.webp" onChange={(e) => setFile(e.target.files?.[0] || null)} className="hidden" />
             <label htmlFor="doc-file" className="cursor-pointer">
@@ -152,7 +152,7 @@ export const DocumentsPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Category *"><select value={category} onChange={(e) => setCategory(e.target.value as DocumentCategory)} className={inputCls}>{(['Report', 'Scan', 'Prescription', 'Bill', 'Insurance', 'Other'] as DocumentCategory[]).map((c) => <option key={c} value={c}>{c}</option>)}</select></Field>
-            <label className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3.5 cursor-pointer"><input type="checkbox" checked={isExt} onChange={(e) => setIsExt(e.target.checked)} className="rounded text-sky-600" /> External / prior-hospital record</label>
+            <label className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-3.5 cursor-pointer"><input type="checkbox" checked={isExt} onChange={(e) => setIsExt(e.target.checked)} className="rounded text-[#14532D]" /> External / prior-hospital record</label>
           </div>
           <div className="flex justify-end gap-2"><button type="button" onClick={() => setShowUp(false)} className="hc-btn-ghost">Cancel</button><button type="submit" disabled={submitting || !file} className="hc-btn-blue">{submitting ? 'Uploading…' : 'Upload Securely'}</button></div>
         </form>

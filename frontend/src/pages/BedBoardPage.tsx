@@ -58,7 +58,7 @@ export const BedBoardPage: React.FC = () => {
           <Card className="p-4"><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total capacity</p><p className="text-2xl font-bold text-slate-900 mt-1">{stats.totalBeds} <span className="text-sm font-medium text-slate-400">beds</span></p></Card>
           <Card className="p-4 !border-emerald-200 !bg-emerald-50/40"><p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Available</p><p className="text-2xl font-bold text-emerald-600 mt-1">{stats.availableBeds} <span className="text-sm font-medium">ready</span></p></Card>
           <Card className="p-4 !border-rose-200 !bg-rose-50/40"><p className="text-[11px] font-bold uppercase tracking-wider text-rose-600">Occupied</p><p className="text-2xl font-bold text-rose-600 mt-1">{stats.occupiedBeds} <span className="text-sm font-medium">inpatients</span></p></Card>
-          <Card className="p-4 !bg-slate-900 !border-slate-900 text-white"><p className="text-[11px] font-bold uppercase tracking-wider text-sky-300">Occupancy</p><p className="text-2xl font-bold mt-1">{stats.occupancyRate}%</p><div className="h-1.5 bg-white/15 rounded-full mt-2 overflow-hidden"><div className="h-full bg-sky-400 rounded-full" style={{ width: `${stats.occupancyRate}%` }} /></div></Card>
+          <Card className="p-4 !bg-slate-900 !border-slate-900 text-white"><p className="text-[11px] font-bold uppercase tracking-wider text-[#C7FF75]">Occupancy</p><p className="text-2xl font-bold mt-1">{stats.occupancyRate}%</p><div className="h-1.5 bg-white/15 rounded-full mt-2 overflow-hidden"><div className="h-full bg-sky-400 rounded-full" style={{ width: `${stats.occupancyRate}%` }} /></div></Card>
         </div>
       )}
 
@@ -84,7 +84,7 @@ export const BedBoardPage: React.FC = () => {
                   <div className="flex items-center gap-2 flex-wrap"><h3 className="font-bold text-slate-900 text-[15px]">{ward.name}</h3><Badge tone="blue">{ward.type}</Badge><Badge>{ward.availableBeds} free / {ward.totalBeds}</Badge></div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-40 sm:w-52 h-2 bg-slate-200 rounded-full overflow-hidden"><div className={cn('h-full rounded-full transition-all', ward.occupiedBeds / ward.totalBeds > 0.8 ? 'bg-rose-500' : 'bg-sky-500')} style={{ width: `${(ward.occupiedBeds / ward.totalBeds) * 100}%` }} /></div>
+                  <div className="w-40 sm:w-52 h-2 bg-slate-200 rounded-full overflow-hidden"><div className={cn('h-full rounded-full transition-all', ward.occupiedBeds / ward.totalBeds > 0.8 ? 'bg-rose-500' : 'bg-[#EAF9D8]0')} style={{ width: `${(ward.occupiedBeds / ward.totalBeds) * 100}%` }} /></div>
                   <span className="text-[11px] font-bold text-slate-500">{Math.round((ward.occupiedBeds / ward.totalBeds) * 100)}%</span>
                 </div>
               </div>

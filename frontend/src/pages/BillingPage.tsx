@@ -93,7 +93,7 @@ export const BillingPage: React.FC = () => {
         title="Billing & Insurance"
         subtitle="Authoritative server-side totals · line items, tax, discounts and claim lifecycle"
         icon={<Receipt size={18} />}
-        actions={canEdit ? <><button onClick={() => setShowClaim(true)} className="hc-btn-dark !py-2.5 text-[13px]"><FileCheck size={15} className="text-sky-400" /> Insurance Claim</button><button onClick={() => setShowBill(true)} className="hc-btn-blue !py-2.5 text-[13px]"><Plus size={15} /> New Invoice</button></> : undefined}
+        actions={canEdit ? <><button onClick={() => setShowClaim(true)} className="hc-btn-dark !py-2.5 text-[13px]"><FileCheck size={15} className="text-[#C7FF75]" /> Insurance Claim</button><button onClick={() => setShowBill(true)} className="hc-btn-blue !py-2.5 text-[13px]"><Plus size={15} /> New Invoice</button></> : undefined}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 stagger">
@@ -121,7 +121,7 @@ export const BillingPage: React.FC = () => {
                   <tbody className="divide-y divide-slate-100">
                     {invoiceList.map((b) => (
                       <tr key={b.id} className="hover:bg-slate-50/70 cursor-pointer" onClick={() => setDetail(b)}>
-                        <td className="font-mono text-xs font-bold text-sky-700">{b.billCode}</td>
+                        <td className="font-mono text-xs font-bold text-[#0B3D20]">{b.billCode}</td>
                         <td><div className="flex items-center gap-2"><Avatar name={b.patientName} size="sm" /><span className="font-bold text-[13px] text-slate-900">{b.patientName}</span></div></td>
                         <td className="!text-right font-bold text-slate-900 tabular-nums">${b.total.toFixed(2)}</td>
                         <td className="!text-right text-xs tabular-nums"><span className="text-emerald-600 font-bold">${b.amountPaid.toFixed(2)}</span> <span className="text-slate-300">/</span> <span className="text-rose-600 font-bold">${b.balance.toFixed(2)}</span></td>
@@ -137,7 +137,7 @@ export const BillingPage: React.FC = () => {
               <div className="md:hidden divide-y divide-slate-100">
                 {invoiceList.map((b) => (
                   <button key={b.id} onClick={() => setDetail(b)} className="w-full text-left p-4 active:bg-slate-50">
-                    <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-bold text-sky-700">{b.billCode}</span><StatusBadge status={b.status} /></div>
+                    <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-bold text-[#0B3D20]">{b.billCode}</span><StatusBadge status={b.status} /></div>
                     <p className="font-bold text-[14px] text-slate-900 mt-1">{b.patientName}</p>
                     <p className="text-xs text-slate-500 tabular-nums mt-0.5">Total ${b.total.toFixed(2)} · <span className="text-rose-600 font-bold">Due ${b.balance.toFixed(2)}</span></p>
                   </button>
@@ -174,7 +174,7 @@ export const BillingPage: React.FC = () => {
           <div className="absolute inset-0 bg-slate-950/50" onClick={() => setDetail(null)} />
           <aside className="absolute right-0 top-0 bottom-0 w-full sm:w-[480px] bg-white shadow-2xl overflow-y-auto anim-drawer">
             <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-slate-50/60">
-              <div><p className="font-mono text-xs font-bold text-sky-600">{detail.billCode}</p><h3 className="text-lg font-bold text-slate-900">{detail.patientName}</h3><StatusBadge status={detail.status} /></div>
+              <div><p className="font-mono text-xs font-bold text-[#14532D]">{detail.billCode}</p><h3 className="text-lg font-bold text-slate-900">{detail.patientName}</h3><StatusBadge status={detail.status} /></div>
               <button onClick={() => setDetail(null)} className="hc-icon-btn !w-8 !h-8"><X size={14} /></button>
             </div>
             <div className="p-6">
@@ -202,7 +202,7 @@ export const BillingPage: React.FC = () => {
           {modalError && <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-xl">{modalError}</div>}
           <Field label="Patient *"><select required value={billForm.patientId} onChange={(e) => setBillForm({ ...billForm, patientId: e.target.value })} className={inputCls}><option value="">Choose patient…</option>{patients.map((p) => <option key={p.id} value={p.id}>{p.fullName} ({p.patientCode})</option>)}</select></Field>
           <div className="space-y-2">
-            <div className="flex items-center justify-between"><span className="hc-label !mb-0">Line items</span><button type="button" onClick={() => setBillForm({ ...billForm, items: [...billForm.items, { description: '', category: 'Services', quantity: 1, unitPrice: 50 }] })} className="text-xs font-bold text-sky-600 hover:underline">+ Add item</button></div>
+            <div className="flex items-center justify-between"><span className="hc-label !mb-0">Line items</span><button type="button" onClick={() => setBillForm({ ...billForm, items: [...billForm.items, { description: '', category: 'Services', quantity: 1, unitPrice: 50 }] })} className="text-xs font-bold text-[#14532D] hover:underline">+ Add item</button></div>
             {billForm.items.map((it, idx) => (
               <div key={idx} className="p-2.5 bg-slate-50 rounded-2xl border border-slate-200 flex gap-2">
                 <input required value={it.description} onChange={(e) => { const u = [...billForm.items]; u[idx].description = e.target.value; setBillForm({ ...billForm, items: u }); }} placeholder="Description" className="flex-1 min-w-0 px-2.5 py-2 bg-white border border-slate-200 rounded-xl text-[13px]" />

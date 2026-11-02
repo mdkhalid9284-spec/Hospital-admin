@@ -165,7 +165,7 @@ export const AdminAnalyticsPage: React.FC = () => {
                 aria-pressed={dateRange === option.key}
                 className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
                   dateRange === option.key
-                    ? 'bg-sky-600 text-white shadow-sm'
+                    ? 'bg-[#14532D] text-white shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
@@ -236,7 +236,7 @@ export const AdminAnalyticsPage: React.FC = () => {
                 value: money(metrics.grossBilled),
                 hint: `${metrics.revenueTrend.length} trend buckets`,
                 icon: DollarSign,
-                tone: 'bg-sky-50 text-sky-700 border-sky-200',
+                tone: 'bg-[#EAF9D8] text-[#0B3D20] border-sky-200',
               },
               {
                 label: 'Realized Cash',
@@ -337,7 +337,7 @@ export const AdminAnalyticsPage: React.FC = () => {
           <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <TrendingUp size={16} className="text-sky-600" />
+                <TrendingUp size={16} className="text-[#14532D]" />
                 <h2 className="text-sm font-bold text-slate-900">Revenue Trend</h2>
               </div>
               <div className="flex items-center gap-3 text-[10px] font-semibold text-slate-500">
@@ -345,7 +345,7 @@ export const AdminAnalyticsPage: React.FC = () => {
                   <span className="h-2 w-2 rounded-sm bg-sky-200" /> Billed
                 </span>
                 <span className="inline-flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-sm bg-sky-600" /> Collected
+                  <span className="h-2 w-2 rounded-sm bg-[#14532D]" /> Collected
                 </span>
               </div>
             </div>
@@ -372,7 +372,7 @@ export const AdminAnalyticsPage: React.FC = () => {
                           style={{ height: `${Math.max(2, (point.billed / maxRevenue) * 100)}%` }}
                         />
                         <div
-                          className="flex-1 rounded-t bg-sky-600 transition-all group-hover:bg-sky-700"
+                          className="flex-1 rounded-t bg-[#14532D] transition-all group-hover:bg-sky-700"
                           style={{
                             height: `${Math.max(2, (point.collected / maxRevenue) * 100)}%`,
                           }}

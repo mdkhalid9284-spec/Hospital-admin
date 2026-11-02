@@ -64,13 +64,13 @@ const shortTime = (slot: string): string => slot.split(' - ')[0];
 const chipTone = (status: string): string => {
   switch (status) {
     case 'Confirmed':
-      return 'bg-sky-50 border-sky-200 text-sky-800 hover:bg-sky-100';
+      return 'bg-[#EAF9D8] border-[#C7FF75] text-[#0B3D20] hover:bg-[#d6f5b3]';
     case 'Pending':
-      return 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100';
+      return 'bg-[#FEF9C3] border-[#FDE047] text-[#9A6700] hover:bg-[#fef08a]';
     case 'Completed':
-      return 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100';
+      return 'bg-[#14532D] border-[#14532D] text-[#C7FF75] hover:bg-[#0B3D20]';
     default:
-      return 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200';
+      return 'bg-[#F5F6F2] border-[#E3E8DE] text-[#667367] hover:bg-[#E3E8DE]';
   }
 };
 
@@ -319,16 +319,16 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                 key={toISODate(day)}
                 type="button"
                 onClick={() => openDay(day)}
-                className={`px-1 py-2 text-center border-l border-slate-100 hover:bg-sky-50 transition-colors ${
-                  isToday(day) ? 'bg-sky-100/70' : ''
+                className={`px-1 py-2 text-center border-l border-[#E3E8DE] hover:bg-[#F7F8EF] transition-colors ${
+                  isToday(day) ? 'bg-[#EAF9D8]/70' : ''
                 }`}
               >
-                <div className="text-[10px] font-semibold uppercase text-slate-400">
+                <div className="text-[10px] font-semibold uppercase text-[#667367]">
                   {WEEKDAY_LABELS[(day.getDay() + 6) % 7]}
                 </div>
                 <div
                   className={`mx-auto mt-0.5 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                    isToday(day) ? 'bg-sky-600 text-white' : 'text-slate-700'
+                    isToday(day) ? 'bg-[#14532D] text-[#C7FF75]' : 'text-[#26352A]'
                   }`}
                 >
                   {day.getDate()}
@@ -350,8 +350,8 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                 return (
                   <div
                     key={`${toISODate(day)}-${slot}`}
-                    className={`min-h-[48px] border-l border-slate-100 p-1 space-y-1 ${
-                      isToday(day) ? 'bg-sky-50/40' : ''
+                    className={`min-h-[48px] border-l border-[#E3E8DE] p-1 space-y-1 ${
+                      isToday(day) ? 'bg-[#EAF9D8]/40' : ''
                     }`}
                   >
                     {cellAppointments.map((appointment) => renderChip(appointment, true))}
@@ -368,17 +368,17 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
   const renderMonthView = (): React.ReactNode => (
     <div className="space-y-3">
       {visibleAppointments.length === 0 && (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-4 text-center text-sm text-slate-500">
+        <div className="rounded-xl border border-dashed border-[#E3E8DE] bg-[#F5F6F2] px-4 py-4 text-center text-sm text-[#667367]">
           No appointments scheduled for {formatMonthYear(cursor)}.
         </div>
       )}
 
-      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-        <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
+      <div className="rounded-xl border border-[#E3E8DE] bg-white overflow-hidden">
+        <div className="grid grid-cols-7 bg-[#F5F6F2] border-b border-[#E3E8DE]">
           {WEEKDAY_LABELS.map((label) => (
             <div
               key={label}
-              className="px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wide text-slate-400"
+              className="px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wide text-[#667367]"
             >
               {label}
             </div>
@@ -392,8 +392,8 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
             return (
               <div
                 key={toISODate(day)}
-                className={`min-h-[92px] sm:min-h-[112px] border-b border-r border-slate-100 p-1 sm:p-1.5 ${
-                  isCurrentMonth ? 'bg-white' : 'bg-slate-50/60'
+                className={`min-h-[92px] sm:min-h-[112px] border-b border-r border-[#E3E8DE] p-1 sm:p-1.5 ${
+                  isCurrentMonth ? 'bg-white' : 'bg-[#F9FAF6]'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -403,16 +403,16 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                     aria-label={`View ${formatDayLong(day)}`}
                     className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-colors ${
                       isToday(day)
-                        ? 'bg-sky-600 text-white'
+                        ? 'bg-[#14532D] text-[#C7FF75]'
                         : isCurrentMonth
-                          ? 'text-slate-700 hover:bg-slate-100'
-                          : 'text-slate-300 hover:bg-slate-100'
+                          ? 'text-[#26352A] hover:bg-[#F5F6F2]'
+                          : 'text-[#8A998B] hover:bg-[#F5F6F2]'
                     }`}
                   >
                     {day.getDate()}
                   </button>
                   {dayAppointments.length > 0 && (
-                    <span className="text-[9px] font-semibold text-slate-400">
+                    <span className="text-[9px] font-semibold text-[#667367]">
                       {dayAppointments.length}
                     </span>
                   )}
@@ -426,7 +426,7 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                     <button
                       type="button"
                       onClick={() => openDay(day)}
-                      className="w-full text-left px-1 text-[10px] font-semibold text-sky-700 hover:underline"
+                      className="w-full text-left px-1 text-[10px] font-semibold text-[#14532D] hover:underline"
                     >
                       +{dayAppointments.length - 3} more
                     </button>
@@ -445,12 +445,12 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
       {/* Toolbar */}
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center rounded-lg border border-slate-200 bg-white overflow-hidden">
+          <div className="flex items-center rounded-lg border border-[#E3E8DE] bg-white overflow-hidden">
             <button
               type="button"
               onClick={() => move(-1)}
               aria-label={`Previous ${view}`}
-              className="p-2 text-slate-500 hover:bg-slate-50"
+              className="p-2 text-[#667367] hover:bg-[#F5F6F2]"
             >
               <ChevronLeft size={16} />
             </button>
@@ -458,7 +458,7 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
               type="button"
               onClick={() => move(1)}
               aria-label={`Next ${view}`}
-              className="p-2 text-slate-500 hover:bg-slate-50 border-l border-slate-200"
+              className="p-2 text-[#667367] hover:bg-[#F5F6F2] border-l border-[#E3E8DE]"
             >
               <ChevronRight size={16} />
             </button>
@@ -466,18 +466,18 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
           <button
             type="button"
             onClick={goToToday}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-lg border border-[#E3E8DE] bg-white px-3 py-2 text-xs font-semibold text-[#26352A] hover:bg-[#F5F6F2]"
           >
             Today
           </button>
-          <h3 className="text-sm sm:text-base font-bold text-slate-900">{headerLabel}</h3>
+          <h3 className="text-sm sm:text-base font-bold text-[#26352A]">{headerLabel}</h3>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
           <div className="relative">
             <Search
               size={14}
-              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8A998B]"
             />
             <input
               value={searchQ}
@@ -491,24 +491,24 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                 type="button"
                 onClick={() => setSearchQ('')}
                 aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8A998B] hover:text-[#26352A]"
               >
                 <X size={13} />
               </button>
             )}
           </div>
 
-          <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
+          <div className="inline-flex rounded-full border border-[#E3E8DE] bg-white p-0.5">
             {(['day', 'week', 'month'] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
                 type="button"
                 onClick={() => setView(mode)}
                 aria-pressed={view === mode}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
+                className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
                   view === mode
-                    ? 'bg-sky-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-50'
+                    ? 'bg-[#14532D] text-white shadow-xs'
+                    : 'text-[#667367] hover:bg-[#F5F6F2]'
                 }`}
               >
                 {mode}
@@ -519,7 +519,7 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
           <button
             type="button"
             onClick={handleExport}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#E3E8DE] bg-white px-3.5 py-2 text-xs font-semibold text-[#26352A] hover:bg-[#F5F6F2]"
           >
             <Download size={14} /> Export
           </button>
@@ -528,7 +528,7 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
             <button
               type="button"
               onClick={onBookNew}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white hover:bg-sky-700"
+              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#14532D] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0B3D20] shadow-sm"
             >
               <Plus size={14} /> New Appointment
             </button>

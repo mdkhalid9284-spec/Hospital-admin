@@ -58,10 +58,10 @@ const PatientProfile: React.FC<{ patient: IPatient; onClose: () => void }> = ({ 
       <aside className="absolute right-0 top-0 bottom-0 w-full sm:w-[560px] bg-[#f8fafc] shadow-2xl overflow-y-auto anim-drawer">
         {/* Identity header */}
         <div className="bg-slate-900 text-white p-6 relative overflow-hidden">
-          <div className="absolute -top-16 -right-16 w-56 h-56 bg-sky-500/25 rounded-full blur-3xl" />
+          <div className="absolute -top-16 -right-16 w-56 h-56 bg-[#EAF9D8]0/25 rounded-full blur-3xl" />
           <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"><X size={15} /></button>
           <div className="relative flex items-center gap-4">
-            <Avatar name={patient.fullName} size="lg" className="!bg-sky-500 !text-white !border-sky-400" />
+            <Avatar name={patient.fullName} size="lg" className="!bg-[#EAF9D8]0 !text-white !border-sky-400" />
             <div className="min-w-0">
               <h2 className="text-lg font-bold truncate">{patient.fullName}</h2>
               <p className="text-xs text-slate-300 font-mono">{patient.patientCode} · {patient.gender} · {age(patient.dob)}</p>
@@ -81,11 +81,11 @@ const PatientProfile: React.FC<{ patient: IPatient; onClose: () => void }> = ({ 
               {tab === 'overview' && (
                 <div className="space-y-3">
                   <Card className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div className="flex gap-2.5"><Phone size={15} className="text-sky-600 mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Phone</p><p className="font-semibold text-slate-900">{patient.phone}</p></div></div>
-                    <div className="flex gap-2.5"><Mail size={15} className="text-sky-600 mt-0.5 shrink-0" /><div className="min-w-0"><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email</p><p className="font-semibold text-slate-900 truncate">{patient.email}</p></div></div>
-                    <div className="flex gap-2.5"><CalendarDays size={15} className="text-sky-600 mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Date of birth</p><p className="font-semibold text-slate-900">{patient.dob || '—'}</p></div></div>
-                    <div className="flex gap-2.5"><Droplet size={15} className="text-sky-600 mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Blood group</p><p className="font-semibold text-slate-900">{patient.bloodGroup || '—'}</p></div></div>
-                    <div className="sm:col-span-2 flex gap-2.5"><MapPin size={15} className="text-sky-600 mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Address</p><p className="font-semibold text-slate-900">{patient.address || '—'}</p></div></div>
+                    <div className="flex gap-2.5"><Phone size={15} className="text-[#14532D] mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Phone</p><p className="font-semibold text-slate-900">{patient.phone}</p></div></div>
+                    <div className="flex gap-2.5"><Mail size={15} className="text-[#14532D] mt-0.5 shrink-0" /><div className="min-w-0"><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Email</p><p className="font-semibold text-slate-900 truncate">{patient.email}</p></div></div>
+                    <div className="flex gap-2.5"><CalendarDays size={15} className="text-[#14532D] mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Date of birth</p><p className="font-semibold text-slate-900">{patient.dob || '—'}</p></div></div>
+                    <div className="flex gap-2.5"><Droplet size={15} className="text-[#14532D] mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Blood group</p><p className="font-semibold text-slate-900">{patient.bloodGroup || '—'}</p></div></div>
+                    <div className="sm:col-span-2 flex gap-2.5"><MapPin size={15} className="text-[#14532D] mt-0.5 shrink-0" /><div><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Address</p><p className="font-semibold text-slate-900">{patient.address || '—'}</p></div></div>
                   </Card>
                   {patient.emergencyContact && (
                     <Card className="p-5 !border-rose-200 !bg-rose-50/50">
@@ -114,7 +114,7 @@ const PatientProfile: React.FC<{ patient: IPatient; onClose: () => void }> = ({ 
                   {rx.length === 0 && <Card><EmptyState icon={<Pill size={20} />} title="No prescriptions" hint="Digital prescriptions will appear here." /></Card>}
                   {rx.map((p) => (
                     <Card key={p.id} className="p-4">
-                      <div className="flex items-center justify-between"><span className="font-mono text-xs font-bold text-sky-700">{p.prescriptionCode}</span><span className="text-[11px] text-slate-400">{new Date(p.prescribedAt).toLocaleDateString()}</span></div>
+                      <div className="flex items-center justify-between"><span className="font-mono text-xs font-bold text-[#0B3D20]">{p.prescriptionCode}</span><span className="text-[11px] text-slate-400">{new Date(p.prescribedAt).toLocaleDateString()}</span></div>
                       <p className="text-[13px] font-semibold text-slate-900 mt-1">{p.diagnosis}</p>
                       <div className="mt-2 bg-slate-50 rounded-xl border border-slate-100 divide-y divide-slate-100">
                         {p.medicines.map((m, i) => <div key={i} className="px-3 py-2 flex justify-between text-xs"><span className="font-bold text-slate-900">{m.medicineName} ({m.dosage})</span><span className="text-slate-500">{m.frequency} · {m.duration}</span></div>)}
@@ -236,7 +236,7 @@ export const PatientsPage: React.FC = () => {
                 <tbody className="divide-y divide-slate-100">
                   {filtered.map((p) => (
                     <tr key={p.id} className="hover:bg-slate-50/70 transition-colors cursor-pointer" onClick={() => setSelected(p)}>
-                      <td><div className="flex items-center gap-3"><Avatar name={p.fullName} size="sm" /><div><p className="font-bold text-slate-900 text-[13.5px]">{p.fullName}</p><p className="font-mono text-[11px] text-sky-600 font-semibold">{p.patientCode}</p></div></div></td>
+                      <td><div className="flex items-center gap-3"><Avatar name={p.fullName} size="sm" /><div><p className="font-bold text-slate-900 text-[13.5px]">{p.fullName}</p><p className="font-mono text-[11px] text-[#14532D] font-semibold">{p.patientCode}</p></div></div></td>
                       <td className="text-slate-600 capitalize text-[13px]">{age(p.dob)} · {p.gender}</td>
                       <td className="text-xs"><p className="text-slate-800 font-medium">{p.phone}</p><p className="text-slate-400 truncate max-w-[200px]">{p.email}</p></td>
                       <td>{p.currentAdmissionId ? <StatusBadge status="Admitted" /> : <Badge>Outpatient</Badge>}</td>

@@ -127,7 +127,7 @@ export const DoctorRecordsPage: React.FC = () => {
         {selectedPatient && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
           >
             <FilePlus size={14} /> New Clinical Note
           </button>
@@ -218,7 +218,7 @@ export const DoctorRecordsPage: React.FC = () => {
 
                   {r.vitalSigns && (
                     <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-200/60 text-[11px] font-mono">
-                      <span className="px-2 py-0.5 bg-white border rounded-md text-blue-700 font-bold">
+                      <span className="px-2 py-0.5 bg-white border rounded-md text-[#0B3D20] font-bold">
                         BP: {r.vitalSigns.bloodPressure || '—'}
                       </span>
                       <span className="px-2 py-0.5 bg-white border rounded-md text-emerald-700 font-bold">

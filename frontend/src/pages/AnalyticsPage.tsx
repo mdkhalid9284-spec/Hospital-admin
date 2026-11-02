@@ -57,17 +57,17 @@ export const AnalyticsPage: React.FC = () => {
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 stagger">
         <Card className="p-5"><p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Active inpatients</p><p className="text-[28px] font-bold text-slate-900 tabular-nums mt-1">{m.currentAdmissions}</p><p className="text-xs text-slate-500">Across all wards</p></Card>
-        <Card className="p-5 !bg-slate-900 !border-slate-900 text-white"><p className="text-[11px] font-bold uppercase tracking-wider text-sky-300">Occupancy</p><p className="text-[28px] font-bold tabular-nums mt-1">{m.occupancyRate}%</p><p className="text-xs text-slate-300">{m.availableBeds} beds ready · {m.totalBeds} total</p></Card>
+        <Card className="p-5 !bg-slate-900 !border-slate-900 text-white"><p className="text-[11px] font-bold uppercase tracking-wider text-[#C7FF75]">Occupancy</p><p className="text-[28px] font-bold tabular-nums mt-1">{m.occupancyRate}%</p><p className="text-xs text-slate-300">{m.availableBeds} beds ready · {m.totalBeds} total</p></Card>
         <Card className="p-5 !border-emerald-200"><p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Realized revenue</p><p className="text-[28px] font-bold text-emerald-600 tabular-nums mt-1">${m.totalRevenue.toFixed(0)}</p><p className="text-xs text-slate-500">Collection rate {collRate}%</p></Card>
         <Card className="p-5 !border-amber-200"><p className="text-[11px] font-bold uppercase tracking-wider text-amber-600">Pending dues</p><p className="text-[28px] font-bold text-amber-600 tabular-nums mt-1">${m.pendingRevenue.toFixed(0)}</p><p className="text-xs text-slate-500">{m.pendingInsuranceClaims} claims in review</p></Card>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <Card className="p-6 flex flex-col items-center">
-          <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 self-start mb-2"><BedDouble size={16} className="text-sky-600" /> Bed Occupancy</h3>
+          <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 self-start mb-2"><BedDouble size={16} className="text-[#14532D]" /> Bed Occupancy</h3>
           <Donut pct={m.occupancyRate} />
           <div className="flex gap-4 mt-3 text-xs font-semibold">
-            <span className="flex items-center gap-1.5 text-slate-600"><span className="w-2.5 h-2.5 rounded-full bg-sky-600" /> {m.occupiedBeds} occupied</span>
+            <span className="flex items-center gap-1.5 text-slate-600"><span className="w-2.5 h-2.5 rounded-full bg-[#14532D]" /> {m.occupiedBeds} occupied</span>
             <span className="flex items-center gap-1.5 text-slate-600"><span className="w-2.5 h-2.5 rounded-full bg-slate-200" /> {m.availableBeds} free</span>
           </div>
         </Card>

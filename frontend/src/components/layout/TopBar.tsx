@@ -2,34 +2,34 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
-import { Menu, Search, Bell, X, ChevronRight } from 'lucide-react';
+import { Menu, Search, Bell, X, ChevronRight, ShieldCheck } from 'lucide-react';
 
 const ROUTE_LABELS: Record<string, string> = {
-  '/portal/admin/dashboard': 'Dashboard',
-  '/portal/admin/patients': 'Patients',
-  '/portal/admin/doctors': 'Doctors & Staff',
-  '/portal/admin/admissions': 'Admissions',
-  '/portal/admin/bed-board': 'Beds & Wards',
-  '/portal/admin/appointments': 'Appointments',
-  '/portal/admin/analytics': 'Analytics & Reports',
-  '/portal/admin/audit-logs': 'Audit Logs',
-  '/portal/admin/settings': 'Settings',
-  '/portal/doctor/dashboard': 'Dashboard',
-  '/portal/doctor/patients': 'My Patients',
-  '/portal/doctor/appointments': 'Appointments',
-  '/portal/doctor/records': 'Clinical Notes',
-  '/portal/doctor/prescriptions': 'Prescriptions',
-  '/portal/doctor/documents': 'Documents',
-  '/portal/patient/dashboard': 'Dashboard',
-  '/portal/patient/appointments': 'My Appointments',
-  '/portal/patient/doctors': 'My Doctors',
-  '/portal/patient/records': 'Medical Records',
-  '/portal/patient/documents': 'Documents',
-  '/portal/patient/billing': 'Bills & Insurance',
-  '/portal/patient/profile': 'My Profile',
-  '/portal/billing/dashboard': 'Dashboard',
-  '/portal/billing/invoices': 'Invoices',
-  '/portal/billing/patients': 'Patient Accounts',
+  '/portal/admin/dashboard': 'Operational Dashboard',
+  '/portal/admin/patients': 'Patient Directory',
+  '/portal/admin/doctors': 'Doctors & Medical Staff',
+  '/portal/admin/admissions': 'Inpatient Admissions',
+  '/portal/admin/bed-board': 'Live Beds & Wards',
+  '/portal/admin/appointments': 'Clinical Schedule',
+  '/portal/admin/analytics': 'Hospital Analytics',
+  '/portal/admin/audit-logs': 'Security Audit Logs',
+  '/portal/admin/settings': 'System Settings',
+  '/portal/doctor/dashboard': 'Doctor Dashboard',
+  '/portal/doctor/patients': 'Assigned Patients',
+  '/portal/doctor/appointments': 'Consultation Schedule',
+  '/portal/doctor/records': 'Clinical Notes & Findings',
+  '/portal/doctor/prescriptions': 'Prescriptions Authoring',
+  '/portal/doctor/documents': 'Diagnostic Documents',
+  '/portal/patient/dashboard': 'Health Overview',
+  '/portal/patient/appointments': 'My Consultations',
+  '/portal/patient/doctors': 'My Care Team',
+  '/portal/patient/records': 'Medical History',
+  '/portal/patient/documents': 'Test Reports & Files',
+  '/portal/patient/billing': 'Invoices & Coverage',
+  '/portal/patient/profile': 'Patient Profile',
+  '/portal/billing/dashboard': 'Revenue Dashboard',
+  '/portal/billing/invoices': 'Invoices & Billing',
+  '/portal/billing/patients': 'Patient Billing Accounts',
   '/portal/billing/insurance': 'Insurance Claims',
   '/portal/billing/reports': 'Financial Reports',
 };
@@ -38,7 +38,7 @@ const PORTAL_LABELS: Record<UserRole, string> = {
   admin: 'Administration',
   doctor: 'Clinical Portal',
   patient: 'Patient Portal',
-  billing: 'Finance & Billing',
+  billing: 'Finance & Claims',
 };
 
 interface TopBarProps {
@@ -56,7 +56,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onMobileMenuOpen }) => {
   const notifRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
@@ -77,7 +76,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onMobileMenuOpen }) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     const q = searchQuery.toLowerCase();
-    // Route-aware search per role
     if (role === 'admin') {
       if (q.includes('bed') || q.includes('ward')) navigate('/portal/admin/bed-board');
       else if (q.includes('doctor') || q.includes('staff')) navigate('/portal/admin/doctors');
@@ -106,57 +104,56 @@ export const TopBar: React.FC<TopBarProps> = ({ onMobileMenuOpen }) => {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 h-14 flex items-center justify-between gap-4 flex-shrink-0"
-      style={{ boxShadow: '0 1px 8px -2px rgba(15,23,42,0.06)' }}>
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E3E8DE] px-4 sm:px-6 h-14 flex items-center justify-between gap-4 flex-shrink-0"
+      style={{ boxShadow: '0 1px 6px -2px rgba(38, 53, 42, 0.04)' }}>
 
-      {/* Left: Mobile hamburger + breadcrumb */}
+      {/* Left: Mobile menu toggle + breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onMobileMenuOpen}
-          className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors flex-shrink-0"
+          className="lg:hidden w-8 h-8 rounded-full flex items-center justify-center text-[#667367] hover:bg-[#F5F6F2] hover:text-[#26352A] transition-colors flex-shrink-0"
           aria-label="Open navigation"
         >
-          <Menu size={20} />
+          <Menu size={18} />
         </button>
 
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-sm min-w-0">
-          <span className="text-slate-400 font-medium hidden sm:block truncate">{portalLabel}</span>
-          <ChevronRight size={14} className="text-slate-300 hidden sm:block flex-shrink-0" />
-          <span className="font-semibold text-slate-900 truncate">{pageLabel}</span>
+        <div className="flex items-center gap-1.5 text-xs min-w-0">
+          <span className="text-[#667367] font-medium hidden sm:block truncate">{portalLabel}</span>
+          <ChevronRight size={13} className="text-[#8A998B] hidden sm:block flex-shrink-0" />
+          <span className="font-bold text-[#26352A] truncate">{pageLabel}</span>
         </div>
       </div>
 
-      {/* Right: Search + Notifications */}
+      {/* Right: Search, Notifications, User Status */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {/* Search */}
+        {/* Quick Search */}
         <div ref={searchRef} className="relative">
           {searchOpen ? (
-            <form onSubmit={handleSearch} className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 w-56 sm:w-72">
-              <Search size={14} className="text-slate-400 flex-shrink-0" />
+            <form onSubmit={handleSearch} className="flex items-center gap-2 bg-[#F5F6F2] border border-[#E3E8DE] rounded-full px-3 py-1.5 w-56 sm:w-72">
+              <Search size={14} className="text-[#667367] flex-shrink-0" />
               <input
                 autoFocus
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search…"
-                className="bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none w-full"
+                placeholder="Search patients, beds, clinical records…"
+                className="bg-transparent text-xs text-[#26352A] placeholder:text-[#8A998B] focus:outline-none w-full"
               />
               <button
                 type="button"
                 onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
-                className="text-slate-400 hover:text-slate-600 flex-shrink-0"
+                className="text-[#667367] hover:text-[#26352A] flex-shrink-0"
               >
-                <X size={14} />
+                <X size={13} />
               </button>
             </form>
           ) : (
             <button
               onClick={() => setSearchOpen(true)}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[#667367] hover:bg-[#F5F6F2] hover:text-[#26352A] transition-colors"
               aria-label="Search"
             >
-              <Search size={18} />
+              <Search size={16} />
             </button>
           )}
         </div>
@@ -165,32 +162,31 @@ export const TopBar: React.FC<TopBarProps> = ({ onMobileMenuOpen }) => {
         <div ref={notifRef} className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors relative"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#667367] hover:bg-[#F5F6F2] hover:text-[#26352A] transition-colors relative"
             aria-label="Notifications"
           >
-            <Bell size={18} />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white" />
+            <Bell size={16} />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#14532D] ring-2 ring-white" />
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 top-11 w-80 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden"
-              style={{ animation: 'popIn 0.18s ease both' }}>
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Notifications</span>
-                <span className="text-[10px] font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">3 new</span>
+            <div className="absolute right-0 top-11 w-80 bg-white rounded-2xl border border-[#E3E8DE] shadow-xl z-50 overflow-hidden anim-pop">
+              <div className="px-4 py-3 border-b border-[#E3E8DE] bg-[#F9FAF6] flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#26352A] uppercase tracking-wider">Clinical Updates</span>
+                <span className="text-[10px] font-bold bg-[#EAF9D8] text-[#0B3D20] px-2 py-0.5 rounded-full border border-[#C7FF75]">3 active</span>
               </div>
-              <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+              <div className="divide-y divide-[#E3E8DE]/60 max-h-72 overflow-y-auto">
                 {[
-                  { title: 'Appointment reminder', sub: 'Dr. Smith at 2:00 PM today', time: '5 min ago', dot: 'bg-blue-500' },
-                  { title: 'Lab report ready', sub: 'CBC panel results available', time: '1 hr ago', dot: 'bg-emerald-500' },
-                  { title: 'Prescription updated', sub: 'New dosage instructions', time: '3 hrs ago', dot: 'bg-amber-500' },
+                  { title: 'Shift Telemetry Check', sub: 'ICU Ward occupancy at 82%', time: '8 min ago', color: 'bg-[#14532D]' },
+                  { title: 'Lab Panel Completed', sub: 'Fasting lipid & HbA1c ready', time: '45 min ago', color: 'bg-[#14532D]' },
+                  { title: 'Scheduled Consultation', sub: 'Dr. Nilson · Video checkup in 1 hr', time: '1 hr ago', color: 'bg-[#C7FF75]' },
                 ].map((n, i) => (
-                  <div key={i} className="flex gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer">
-                    <span className={`w-2 h-2 rounded-full ${n.dot} mt-1.5 flex-shrink-0`} />
+                  <div key={i} className="flex gap-3 px-4 py-3 hover:bg-[#F7F8EF] cursor-pointer transition-colors">
+                    <span className={`w-2 h-2 rounded-full ${n.color} mt-1.5 flex-shrink-0`} />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-slate-900 truncate">{n.title}</p>
-                      <p className="text-[11px] text-slate-500 truncate mt-0.5">{n.sub}</p>
-                      <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
+                      <p className="text-xs font-bold text-[#26352A] truncate">{n.title}</p>
+                      <p className="text-[11px] text-[#667367] truncate mt-0.5">{n.sub}</p>
+                      <p className="text-[10px] text-[#8A998B] mt-1">{n.time}</p>
                     </div>
                   </div>
                 ))}
@@ -199,12 +195,12 @@ export const TopBar: React.FC<TopBarProps> = ({ onMobileMenuOpen }) => {
           )}
         </div>
 
-        {/* User pill — display only, no role switching */}
-        <div className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-full cursor-default select-none">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 text-white flex items-center justify-center text-[11px] font-bold flex-shrink-0">
+        {/* User Pill */}
+        <div className="flex items-center gap-2 pl-2 pr-3 py-1 bg-[#F5F6F2] border border-[#E3E8DE] rounded-full select-none">
+          <div className="w-6 h-6 rounded-full bg-[#14532D] text-[#C7FF75] flex items-center justify-center text-[10px] font-bold flex-shrink-0">
             {user?.fullName?.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() ?? 'U'}
           </div>
-          <span className="hidden sm:block text-[12px] font-semibold text-slate-800 max-w-[120px] truncate">
+          <span className="hidden sm:block text-[11.5px] font-bold text-[#26352A] max-w-[120px] truncate">
             {user?.fullName ?? 'User'}
           </span>
         </div>

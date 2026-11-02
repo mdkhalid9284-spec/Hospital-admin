@@ -175,7 +175,7 @@ export const DoctorPrescriptionsPage: React.FC = () => {
 
         <button
           onClick={openBuilder}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Compose Prescription
         </button>
@@ -231,7 +231,7 @@ export const DoctorPrescriptionsPage: React.FC = () => {
             >
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                  <span className="font-mono text-xs font-bold text-[#0B3D20] bg-[#EAF9D8] px-2.5 py-0.5 rounded-full border border-[#C7FF75]">
                     {rx.prescriptionCode}
                   </span>
                   <span className="text-xs font-bold text-slate-900">
@@ -314,7 +314,7 @@ export const DoctorPrescriptionsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={addMedicineRow}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20] flex items-center gap-1"
               >
                 <Plus size={13} /> Add Medicine
               </button>
@@ -394,8 +394,8 @@ export const DoctorPrescriptionsPage: React.FC = () => {
           </Field>
 
           {/* Live preview of exactly what will be persisted and printed */}
-          <div className="rounded-2xl border border-sky-200 bg-sky-50/60 p-4">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-sky-700">
+          <div className="rounded-2xl border border-sky-200 bg-[#EAF9D8]/60 p-4">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#0B3D20]">
               Live prescription preview
             </p>
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
@@ -439,7 +439,7 @@ export const DoctorPrescriptionsPage: React.FC = () => {
                 </p>
               </div>
             </div>
-            <p className="mt-2 border-t border-sky-200/70 pt-2 text-[10px] text-sky-800">
+            <p className="mt-2 border-t border-sky-200/70 pt-2 text-[10px] text-[#0B3D20]">
               {medicines.filter((medicine) => medicine.medicineName.trim()).length} medicine(s)
               {generalAdvice.trim() ? ' · advice included' : ''}
             </p>
@@ -523,7 +523,7 @@ export const DoctorPrescriptionsPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Diagnosis</p>
-                  <p className="font-bold text-blue-700">{viewRx.diagnosis}</p>
+                  <p className="font-bold text-[#0B3D20]">{viewRx.diagnosis}</p>
                 </div>
               </div>
 
@@ -551,9 +551,9 @@ export const DoctorPrescriptionsPage: React.FC = () => {
               </div>
 
               {viewRx.generalAdvice && (
-                <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl">
+                <div className="p-3 bg-[#EAF9D8]/60 border border-blue-100 rounded-xl">
                   <p className="font-bold text-blue-900 text-[11px]">General Advice:</p>
-                  <p className="text-blue-800 text-[11px] mt-0.5">{viewRx.generalAdvice}</p>
+                  <p className="text-[#0B3D20] text-[11px] mt-0.5">{viewRx.generalAdvice}</p>
                 </div>
               )}
             </div>

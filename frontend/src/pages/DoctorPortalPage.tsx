@@ -76,7 +76,7 @@ export const DoctorPortalPage: React.FC = () => {
         title="Clinical Console"
         subtitle="Assigned patients, observations with vitals, and multi-drug prescriptions"
         icon={<Stethoscope size={18} />}
-        actions={selected ? <><button onClick={() => setShowNote(true)} className="hc-btn-dark !py-2.5 text-[13px]"><FilePlus size={15} className="text-sky-400" /> Clinical Note</button><button onClick={() => setShowRx(true)} className="hc-btn-blue !py-2.5 text-[13px]"><Pill size={15} /> Prescribe</button></> : undefined}
+        actions={selected ? <><button onClick={() => setShowNote(true)} className="hc-btn-dark !py-2.5 text-[13px]"><FilePlus size={15} className="text-[#C7FF75]" /> Clinical Note</button><button onClick={() => setShowRx(true)} className="hc-btn-blue !py-2.5 text-[13px]"><Pill size={15} /> Prescribe</button></> : undefined}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
@@ -88,7 +88,7 @@ export const DoctorPortalPage: React.FC = () => {
             : list.length === 0 ? <p className="text-xs text-slate-400 text-center py-8">No patients assigned.</p>
             : list.map((p) => (
               <button key={p.id} onClick={() => setSelected(p)} className={cn('w-full text-left p-3 rounded-xl border transition-all flex items-center gap-3', selected?.id === p.id ? 'bg-slate-900 border-slate-900 text-white shadow-md' : 'bg-white border-slate-200 hover:border-slate-300')}>
-                <Avatar name={p.fullName} size="sm" tone={selected?.id === p.id ? '!bg-sky-500 !text-white !border-sky-400' : undefined} />
+                <Avatar name={p.fullName} size="sm" tone={selected?.id === p.id ? '!bg-[#EAF9D8]0 !text-white !border-sky-400' : undefined} />
                 <span className="flex-1 min-w-0"><span className={cn('block font-bold text-[13.5px] truncate', selected?.id === p.id ? 'text-white' : 'text-slate-900')}>{p.fullName}</span><span className={cn('block text-[11px] font-mono truncate', selected?.id === p.id ? 'text-slate-300' : 'text-slate-400')}>{p.patientCode} · {p.gender}</span></span>
                 {p.currentAdmissionId && <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" title="Admitted" />}
               </button>
@@ -101,19 +101,19 @@ export const DoctorPortalPage: React.FC = () => {
             <>
               <Card className="p-5 flex flex-col sm:flex-row sm:items-center gap-4 justify-between !bg-slate-900 !border-slate-900 text-white">
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <Avatar name={selected.fullName} size="lg" className="!bg-sky-500 !text-white !border-sky-400" />
+                  <Avatar name={selected.fullName} size="lg" className="!bg-[#EAF9D8]0 !text-white !border-sky-400" />
                   <div className="min-w-0"><h2 className="text-[17px] font-bold truncate">{selected.fullName}</h2><p className="text-xs text-slate-300 font-mono truncate">{selected.patientCode} · DOB {selected.dob} · {selected.bloodGroup || '—'}</p></div>
                 </div>
                 {selected.currentAdmissionId ? <Badge tone="emerald">Active inpatient</Badge> : <Badge tone="slate" className="!bg-white/10 !text-slate-200 !border-white/15">Outpatient</Badge>}
               </Card>
 
               <Card className="p-5">
-                <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 mb-3"><Pill size={16} className="text-sky-600" /> Prescriptions <Badge>{rx.length}</Badge></h3>
+                <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 mb-3"><Pill size={16} className="text-[#14532D]" /> Prescriptions <Badge>{rx.length}</Badge></h3>
                 {rx.length === 0 ? <p className="text-xs text-slate-400 py-2">No prescriptions yet — issue the first one above.</p> : (
                   <div className="space-y-2.5">
                     {rx.map((r) => (
                       <div key={r.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-[13px]">
-                        <div className="flex items-center justify-between gap-2"><span className="font-mono font-bold text-sky-700 text-xs">{r.prescriptionCode}</span><span className="text-[11px] text-slate-400">{new Date(r.prescribedAt).toLocaleDateString()}</span></div>
+                        <div className="flex items-center justify-between gap-2"><span className="font-mono font-bold text-[#0B3D20] text-xs">{r.prescriptionCode}</span><span className="text-[11px] text-slate-400">{new Date(r.prescribedAt).toLocaleDateString()}</span></div>
                         <p className="font-bold text-slate-900 mt-1">{r.diagnosis}</p>
                         <div className="mt-2 bg-white rounded-xl border divide-y divide-slate-100">
                           {r.medicines.map((m, i) => <div key={i} className="px-3 py-2 flex flex-col sm:flex-row sm:justify-between gap-0.5 text-xs"><span className="font-bold text-slate-900">{m.medicineName} ({m.dosage})</span><span className="text-slate-500">{m.frequency} · {m.duration}</span></div>)}
@@ -126,13 +126,13 @@ export const DoctorPortalPage: React.FC = () => {
               </Card>
 
               <Card className="p-5">
-                <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 mb-3"><HeartPulse size={16} className="text-sky-600" /> Clinical Notes <Badge>{records.length}</Badge></h3>
+                <h3 className="font-bold text-[14px] text-slate-900 flex items-center gap-2 mb-3"><HeartPulse size={16} className="text-[#14532D]" /> Clinical Notes <Badge>{records.length}</Badge></h3>
                 <div className="relative space-y-0">
                   {records.length === 0 && <p className="text-xs text-slate-400 py-2">No notes yet — record the first observation above.</p>}
                   {records.map((rec, i) => (
                     <div key={rec.id} className="relative pl-7 pb-5 last:pb-0">
                       {i !== records.length - 1 && <span className="absolute left-[9px] top-6 bottom-0 w-px bg-slate-200" />}
-                      <span className="absolute left-1 top-1.5 w-4 h-4 rounded-full bg-sky-600 ring-4 ring-sky-100" />
+                      <span className="absolute left-1 top-1.5 w-4 h-4 rounded-full bg-[#14532D] ring-4 ring-sky-100" />
                       <div className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-colors">
                         <div className="flex items-center justify-between gap-2"><p className="font-bold text-[13.5px] text-slate-900">{rec.title}</p><span className="text-[11px] text-slate-400 shrink-0">{new Date(rec.createdAt).toLocaleDateString()}</span></div>
                         <p className="text-[13px] text-slate-600 mt-1 leading-relaxed">{rec.notes}</p>
@@ -169,7 +169,7 @@ export const DoctorPortalPage: React.FC = () => {
           {modalError && <div className="p-2.5 bg-rose-50 text-rose-700 text-xs rounded-xl">{modalError}</div>}
           <Field label="Diagnosis *"><input required value={rxForm.diagnosis} onChange={(e) => setRxForm({ ...rxForm, diagnosis: e.target.value })} className={inputCls} placeholder="e.g. Essential hypertension" /></Field>
           <div className="space-y-2.5">
-            <div className="flex items-center justify-between"><span className="hc-label !mb-0">Medicines</span><button type="button" onClick={() => setRxForm({ ...rxForm, medicines: [...rxForm.medicines, { medicineName: '', dosage: '', frequency: 'Once daily', duration: '7 days', instructions: 'As directed' }] })} className="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1"><Plus size={13} /> Add medicine</button></div>
+            <div className="flex items-center justify-between"><span className="hc-label !mb-0">Medicines</span><button type="button" onClick={() => setRxForm({ ...rxForm, medicines: [...rxForm.medicines, { medicineName: '', dosage: '', frequency: 'Once daily', duration: '7 days', instructions: 'As directed' }] })} className="text-xs font-bold text-[#14532D] hover:underline flex items-center gap-1"><Plus size={13} /> Add medicine</button></div>
             {rxForm.medicines.map((m, idx) => (
               <div key={idx} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex gap-2">

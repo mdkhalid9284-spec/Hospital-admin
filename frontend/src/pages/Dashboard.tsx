@@ -30,11 +30,11 @@ const Stat: React.FC<{ label: string; value: string; sub: string; icon: React.Re
   <Card hover className={`p-5 ${dark ? '!bg-slate-900 !border-slate-900 text-white' : ''}`}>
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <p className={`text-[11px] font-bold uppercase tracking-wider ${dark ? 'text-sky-300' : 'text-slate-400'}`}>{label}</p>
+        <p className={`text-[11px] font-bold uppercase tracking-wider ${dark ? 'text-[#C7FF75]' : 'text-slate-400'}`}>{label}</p>
         <p className={`text-[26px] font-bold tracking-tight mt-1 truncate ${dark ? 'text-white' : 'text-slate-900'}`}>{value}</p>
         <p className={`text-xs mt-1 font-medium ${dark ? 'text-slate-300' : 'text-slate-500'}`}>{sub}</p>
       </div>
-      <span className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${dark ? 'bg-sky-500/20 text-sky-300' : tint}`}>{icon}</span>
+      <span className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${dark ? 'bg-[#EAF9D8]0/20 text-[#C7FF75]' : tint}`}>{icon}</span>
     </div>
   </Card>
 );
@@ -92,11 +92,11 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-5">
       {/* Hero */}
       <Card className="!bg-slate-900 !border-slate-900 text-white p-6 sm:p-7 relative overflow-hidden">
-        <div className="absolute -top-24 -right-16 w-80 h-80 bg-sky-500/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -right-16 w-80 h-80 bg-[#EAF9D8]0/25 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-28 left-1/3 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div>
-            <Badge tone="dark" className="!bg-white/10 !border-white/15 !text-sky-200"><Sparkles size={12} /> {role?.toUpperCase()} CONSOLE · {todayStr()}</Badge>
+            <Badge tone="dark" className="!bg-white/10 !border-white/15 !text-[#C7FF75]"><Sparkles size={12} /> {role?.toUpperCase()} CONSOLE · {todayStr()}</Badge>
             <h1 className="text-[24px] sm:text-[28px] font-bold tracking-tight mt-2.5">Welcome back, {user?.fullName?.split(' ')[0]}</h1>
             <p className="text-[13px] text-slate-300 mt-1 max-w-lg">
               {role === 'admin' && 'Live hospital operations — beds, admissions, schedule and revenue at a glance.'}
@@ -106,10 +106,10 @@ export const Dashboard: React.FC = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {role === 'admin' && <Link to="/admissions" className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-[13px] flex items-center gap-2 transition-all"><UserCheck size={16} /> Start Admission</Link>}
-            {role === 'doctor' && <Link to="/doctor-portal" className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-[13px] transition-all">Open Clinical Portal</Link>}
-            {role === 'patient' && <Link to="/appointments" className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-[13px] flex items-center gap-2 transition-all"><CalendarDays size={16} /> Book Appointment</Link>}
-            {role === 'billing' && <Link to="/billing" className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-[13px] transition-all">New Invoice</Link>}
+            {role === 'admin' && <Link to="/admissions" className="px-4 py-2.5 bg-[#C7FF75] hover:bg-[#bbf654] text-slate-950 font-bold rounded-xl text-[13px] flex items-center gap-2 transition-all"><UserCheck size={16} /> Start Admission</Link>}
+            {role === 'doctor' && <Link to="/doctor-portal" className="px-4 py-2.5 bg-[#C7FF75] hover:bg-[#bbf654] text-slate-950 font-bold rounded-xl text-[13px] transition-all">Open Clinical Portal</Link>}
+            {role === 'patient' && <Link to="/appointments" className="px-4 py-2.5 bg-[#C7FF75] hover:bg-[#bbf654] text-slate-950 font-bold rounded-xl text-[13px] flex items-center gap-2 transition-all"><CalendarDays size={16} /> Book Appointment</Link>}
+            {role === 'billing' && <Link to="/billing" className="px-4 py-2.5 bg-[#C7FF75] hover:bg-[#bbf654] text-slate-950 font-bold rounded-xl text-[13px] transition-all">New Invoice</Link>}
             <Link to={role === 'patient' ? '/patient-portal' : '/analytics'} className="px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold rounded-xl text-[13px] transition-all">View {role === 'patient' ? 'Health Portal' : 'Analytics'}</Link>
           </div>
         </div>
@@ -128,8 +128,8 @@ export const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             <Card className="xl:col-span-2 p-0 overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-5 pb-3">
-                <h3 className="font-bold text-slate-900 text-[15px] flex items-center gap-2"><Activity size={17} className="text-sky-600" /> Occupancy vs Capacity</h3>
-                <Link to="/bed-board" className="text-xs font-bold text-sky-600 hover:underline flex items-center gap-1">Bed board <ArrowRight size={13} /></Link>
+                <h3 className="font-bold text-slate-900 text-[15px] flex items-center gap-2"><Activity size={17} className="text-[#14532D]" /> Occupancy vs Capacity</h3>
+                <Link to="/bed-board" className="text-xs font-bold text-[#14532D] hover:underline flex items-center gap-1">Bed board <ArrowRight size={13} /></Link>
               </div>
               <div className="px-5 pb-5">
                 <div className="flex items-end gap-2 h-36 mt-2">
@@ -152,7 +152,7 @@ export const Dashboard: React.FC = () => {
               </div>
             </Card>
             <Card className="p-5">
-              <h3 className="font-bold text-slate-900 text-[15px] flex items-center gap-2 mb-1"><Clock size={16} className="text-sky-600" /> Today's Schedule</h3>
+              <h3 className="font-bold text-slate-900 text-[15px] flex items-center gap-2 mb-1"><Clock size={16} className="text-[#14532D]" /> Today's Schedule</h3>
               <p className="text-xs text-slate-400 mb-3">{appointments.length} consultations on the board</p>
               <div className="space-y-2.5 max-h-[280px] overflow-y-auto pr-1">
                 {appointments.length === 0 && <p className="text-xs text-slate-400 py-6 text-center">No consultations scheduled.</p>}
@@ -175,7 +175,7 @@ export const Dashboard: React.FC = () => {
             <Card className="overflow-hidden">
               <div className="flex items-center justify-between px-5 pt-5 pb-1">
                 <h3 className="font-bold text-slate-900 text-[15px]">Recent Admissions</h3>
-                <Link to="/admissions" className="text-xs font-bold text-sky-600 hover:underline">View all</Link>
+                <Link to="/admissions" className="text-xs font-bold text-[#14532D] hover:underline">View all</Link>
               </div>
               <div className="divide-y divide-slate-100">
                 {admissions.map((ad) => (
@@ -201,7 +201,7 @@ export const Dashboard: React.FC = () => {
                   { to: '/audit-logs', label: 'Audit Trail', sub: `${metrics.recentActivityCount} events`, icon: <FileText size={17} /> },
                 ].map((a) => (
                   <Link key={a.to} to={a.to} className="p-3.5 rounded-xl bg-white border border-slate-200 hover:border-sky-300 hover:shadow-sm transition-all group">
-                    <span className="text-sky-600 group-hover:scale-110 transition-transform inline-block">{a.icon}</span>
+                    <span className="text-[#14532D] group-hover:scale-110 transition-transform inline-block">{a.icon}</span>
                     <p className="text-[13px] font-bold text-slate-900 mt-1.5">{a.label}</p>
                     <p className="text-[11px] text-slate-500">{a.sub}</p>
                   </Link>
@@ -217,7 +217,7 @@ export const Dashboard: React.FC = () => {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger">
             <Stat dark label="Today's Appointments" value={String(appointments.length)} sub="Consultations booked" icon={<CalendarDays size={20} />} tint="" />
-            <Stat label="Assigned Patients" value={String(patientCount)} sub="Under your care" icon={<Users size={20} />} tint="bg-sky-50 text-sky-600" />
+            <Stat label="Assigned Patients" value={String(patientCount)} sub="Under your care" icon={<Users size={20} />} tint="bg-[#EAF9D8] text-[#14532D]" />
             <Stat label="Pending Notes" value={String(Math.max(0, appointments.filter((a) => a.status === 'Confirmed').length))} sub="Awaiting documentation" icon={<FileText size={20} />} tint="bg-amber-50 text-amber-600" />
             <Stat label="Prescriptions" value="—" sub="Open doctor portal" icon={<Pill size={20} />} tint="bg-emerald-50 text-emerald-600" />
           </div>
@@ -254,13 +254,13 @@ export const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           <Card className="xl:col-span-2 p-5 sm:p-6 !bg-gradient-to-br !from-sky-600 !to-sky-800 !border-sky-700 text-white relative overflow-hidden">
             <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-            <p className="text-[11px] font-bold uppercase tracking-wider text-sky-200">Next appointment</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#C7FF75]">Next appointment</p>
             {appointments[0] ? (
               <>
                 <h2 className="text-xl font-bold mt-1">{appointments[0].doctorName}</h2>
                 <p className="text-[13px] text-sky-100 mt-0.5">{appointments[0].appointmentDate} · {appointments[0].timeSlot} · {appointments[0].reason}</p>
                 <div className="flex gap-2 mt-4">
-                  <Link to="/appointments" className="px-4 py-2 bg-white text-sky-800 font-bold rounded-xl text-[13px]">Manage visits</Link>
+                  <Link to="/appointments" className="px-4 py-2 bg-white text-[#0B3D20] font-bold rounded-xl text-[13px]">Manage visits</Link>
                   <Link to="/patient-portal" className="px-4 py-2 bg-white/15 border border-white/25 text-white font-semibold rounded-xl text-[13px]">Health portal</Link>
                 </div>
               </>
@@ -268,7 +268,7 @@ export const Dashboard: React.FC = () => {
               <>
                 <h2 className="text-xl font-bold mt-1">No upcoming visits</h2>
                 <p className="text-[13px] text-sky-100 mt-0.5">Book a consultation in under a minute.</p>
-                <Link to="/appointments" className="inline-block mt-4 px-4 py-2 bg-white text-sky-800 font-bold rounded-xl text-[13px]">Book now</Link>
+                <Link to="/appointments" className="inline-block mt-4 px-4 py-2 bg-white text-[#0B3D20] font-bold rounded-xl text-[13px]">Book now</Link>
               </>
             )}
           </Card>
@@ -277,7 +277,7 @@ export const Dashboard: React.FC = () => {
               <h3 className="font-bold text-[14px] text-slate-900">Outstanding balance</h3>
               <p className="text-[26px] font-bold text-slate-900 mt-1">${bills.reduce((s, b) => s + b.balance, 0).toFixed(2)}</p>
               <p className="text-xs text-slate-500">Across {bills.length} invoice{bills.length === 1 ? '' : 's'}</p>
-              <Link to="/billing" className="text-xs font-bold text-sky-600 hover:underline mt-2 inline-block">Review invoices →</Link>
+              <Link to="/billing" className="text-xs font-bold text-[#14532D] hover:underline mt-2 inline-block">Review invoices →</Link>
             </Card>
             <Card className="p-5">
               <h3 className="font-bold text-[14px] text-slate-900 mb-2">Recent visits</h3>

@@ -118,12 +118,12 @@ export const PatientRecordsPage: React.FC = () => {
               prescriptions.map((rx) => (
                 <div
                   key={rx.id}
-                  className="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3"
+                  className="p-4 rounded-2xl bg-[#EAF9D8]/40 border border-blue-100 space-y-3"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-blue-700 bg-white px-2.5 py-0.5 rounded-full border border-blue-200">
+                        <span className="font-mono text-xs font-bold text-[#0B3D20] bg-white px-2.5 py-0.5 rounded-full border border-[#C7FF75]">
                           {rx.prescriptionCode}
                         </span>
                         <span className="text-xs font-bold text-slate-900">
@@ -160,7 +160,7 @@ export const PatientRecordsPage: React.FC = () => {
                   </div>
 
                   {rx.generalAdvice && (
-                    <p className="text-xs text-blue-800 bg-blue-100/50 p-2.5 rounded-xl font-medium">
+                    <p className="text-xs text-[#0B3D20] bg-blue-100/50 p-2.5 rounded-xl font-medium">
                       Advice: {rx.generalAdvice}
                     </p>
                   )}
@@ -193,7 +193,7 @@ export const PatientRecordsPage: React.FC = () => {
                   <p className="text-slate-600 leading-relaxed whitespace-pre-line">{r.notes}</p>
                   {r.vitalSigns && (
                     <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10.5px]">
-                      <span className="bg-white px-2 py-0.5 rounded border text-blue-700 font-bold">
+                      <span className="bg-white px-2 py-0.5 rounded border text-[#0B3D20] font-bold">
                         BP: {r.vitalSigns.bloodPressure}
                       </span>
                       <span className="bg-white px-2 py-0.5 rounded border text-emerald-700 font-bold">
@@ -264,7 +264,7 @@ export const PatientRecordsPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Diagnosis</p>
-                  <p className="font-bold text-blue-700">{viewRx.diagnosis}</p>
+                  <p className="font-bold text-[#0B3D20]">{viewRx.diagnosis}</p>
                 </div>
               </div>
 
@@ -286,9 +286,9 @@ export const PatientRecordsPage: React.FC = () => {
               </div>
 
               {viewRx.generalAdvice && (
-                <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3">
+                <div className="rounded-xl border border-blue-100 bg-[#EAF9D8]/60 p-3">
                   <p className="text-[11px] font-bold text-blue-900">General Advice:</p>
-                  <p className="mt-0.5 text-[11px] text-blue-800">{viewRx.generalAdvice}</p>
+                  <p className="mt-0.5 text-[11px] text-[#0B3D20]">{viewRx.generalAdvice}</p>
                 </div>
               )}
             </div>

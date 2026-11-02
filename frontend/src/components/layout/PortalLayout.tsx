@@ -8,12 +8,10 @@ export const PortalLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Close mobile drawer on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Prevent body scroll when mobile drawer is open; restore focus on close
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -34,7 +32,7 @@ export const PortalLayout: React.FC = () => {
   const handleMobileClose = useCallback(() => setMobileMenuOpen(false), []);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F6F2] flex overflow-x-hidden text-[#26352A]">
       {/* Persistent Left Sidebar */}
       <AppSidebar
         collapsed={sidebarCollapsed}
@@ -45,17 +43,14 @@ export const PortalLayout: React.FC = () => {
 
       {/* Main Content Column */}
       <div className="flex-1 min-w-0 flex flex-col h-screen overflow-y-auto">
-        {/* Compact utility header */}
         <TopBar onMobileMenuOpen={() => setMobileMenuOpen(true)} />
 
-        {/* Page Content */}
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-none w-full">
           <Outlet />
         </main>
 
-        {/* Footer */}
-        <footer className="px-6 py-4 border-t border-slate-200/60 text-center text-[11px] text-slate-400 bg-white/60 backdrop-blur flex-shrink-0">
-          <span>HospitalCare Enterprise · v1.0.0 · Server RBAC &amp; IDOR Enforced</span>
+        <footer className="px-6 py-4 border-t border-[#E3E8DE] text-center text-[11px] text-[#667367] bg-white/70 backdrop-blur flex-shrink-0">
+          <span>HospitalCare Enterprise Healthcare Platform · Strict RBAC · Verified Telemetry</span>
         </footer>
       </div>
     </div>

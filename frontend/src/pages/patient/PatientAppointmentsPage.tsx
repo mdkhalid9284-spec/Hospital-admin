@@ -123,7 +123,7 @@ export const PatientAppointmentsPage: React.FC = () => {
             setBookError(null);
             setShowBook(true);
           }}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Book New Visit
         </button>
@@ -153,7 +153,7 @@ export const PatientAppointmentsPage: React.FC = () => {
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-blue-700 bg-white px-2.5 py-0.5 rounded-full border border-blue-200">
+                    <span className="font-mono text-xs font-bold text-[#0B3D20] bg-white px-2.5 py-0.5 rounded-full border border-[#C7FF75]">
                       {a.appointmentCode}
                     </span>
                     <span className="text-xs font-bold text-slate-900">

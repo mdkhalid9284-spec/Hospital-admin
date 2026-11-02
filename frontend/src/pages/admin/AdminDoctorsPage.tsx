@@ -130,7 +130,7 @@ export const AdminDoctorsPage: React.FC = () => {
 
         <button
           onClick={() => setShowAddDoctor(true)}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Add Doctor
         </button>
@@ -170,7 +170,7 @@ export const AdminDoctorsPage: React.FC = () => {
                   <Avatar name={doc.fullName} size="md" className="w-12 h-12 text-xs" />
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">{doc.fullName}</h3>
-                    <p className="text-xs text-blue-600 font-semibold">{doc.specialization}</p>
+                    <p className="text-xs text-[#14532D] font-semibold">{doc.specialization}</p>
                   </div>
                 </div>
                 <span
@@ -221,7 +221,7 @@ export const AdminDoctorsPage: React.FC = () => {
             <div className="mt-5 pt-3 border-t border-slate-100 flex items-center gap-2">
               <button
                 onClick={() => setAssignModal({ doctor: doc })}
-                className="flex-1 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] rounded-full font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
               >
                 <UserCheck size={13} /> Assign Patient
               </button>

@@ -159,38 +159,38 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       )}
 
-      {/* 4 Metric Cards Row — 3D dimensional KPI surface */}
+      {/* 4 Metric Cards Row — Avocado Health forest & lime palette */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Metric 1: Patients */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +3%
             </span>
-            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <div className="w-9 h-9 rounded-full bg-[#EAF9D8] flex items-center justify-center text-[#14532D]">
               <Users size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Patients</p>
-            <p className="text-[28px] font-bold text-slate-900 tracking-tight leading-none mt-1">
+            <p className="text-xs text-[#667367] font-semibold uppercase tracking-wider">Patients</p>
+            <p className="text-[28px] font-bold text-[#26352A] tracking-tight leading-none mt-1">
               {metrics?.totalPatients || 35}
             </p>
           </div>
         </div>
 
-        {/* Metric 2: Elevated 3D Blue Card (Appointments) */}
-        <div className="hc-elev-blue flex flex-col justify-between p-6">
+        {/* Metric 2: Forest Green Hero Card (Appointments) */}
+        <div className="hc-card-forest-elevated flex flex-col justify-between p-6">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#C7FF75] text-[#0B3D20] text-[10px] font-bold">
               +2.1%
             </span>
-            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-[#C7FF75]">
               <Calendar size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-xs text-blue-100 font-semibold uppercase tracking-wider">Appointments</p>
+            <p className="text-xs text-[#EAF9D8] font-semibold uppercase tracking-wider">Appointments</p>
             <p className="text-[28px] font-bold text-white tracking-tight leading-none mt-1">
               {metrics?.todayAppointments || 16}
             </p>
@@ -200,16 +200,16 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Metric 3: Reports */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +2%
             </span>
-            <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+            <div className="w-9 h-9 rounded-full bg-[#F5F6F2] flex items-center justify-center text-[#26352A]">
               <FileText size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Reports</p>
-            <p className="text-[28px] font-bold text-slate-900 tracking-tight leading-none mt-1">
+            <p className="text-xs text-[#667367] font-semibold uppercase tracking-wider">Reports</p>
+            <p className="text-[28px] font-bold text-[#26352A] tracking-tight leading-none mt-1">
               {metrics?.recentActivityCount || 22}
             </p>
           </div>
@@ -218,16 +218,16 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Metric 4: Bed Occupancy */}
         <div className="hc-kpi flex flex-col justify-between">
           <div className="flex items-start justify-between">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#EAF9D8] text-[#0B3D20] text-[10px] font-bold">
               +3%
             </span>
-            <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+            <div className="w-9 h-9 rounded-full bg-[#F5F6F2] flex items-center justify-center text-[#26352A]">
               <BedDouble size={16} />
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Bed Occupancy</p>
-            <p className="text-[28px] font-bold text-slate-900 tracking-tight leading-none mt-1">
+            <p className="text-xs text-[#667367] font-semibold uppercase tracking-wider">Bed Occupancy</p>
+            <p className="text-[28px] font-bold text-[#26352A] tracking-tight leading-none mt-1">
               {metrics?.occupancyRate || 30}%
             </p>
           </div>
@@ -247,21 +247,21 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
 
           {/* Upcoming Patients Table matching screenshot media_1792651876079.png */}
-          <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
+          <div className="bg-white rounded-[24px] border border-[#E3E8DE] p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight">Upcoming Patients</h3>
+              <h3 className="text-[14px] font-bold text-[#26352A] tracking-tight">Upcoming Patients</h3>
               <button
                 onClick={() => navigate('/portal/admin/patients')}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20] transition-colors"
               >
-                View all directory →
+                View directory →
               </button>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs min-w-[640px]">
                 <thead>
-                  <tr className="text-slate-400 font-semibold border-b border-slate-100">
+                  <tr className="text-[#667367] font-semibold border-b border-[#E3E8DE]">
                     <th className="pb-3 pl-1">Patient Name</th>
                     <th className="pb-3">Time</th>
                     <th className="pb-3">Reason/Concern</th>
@@ -271,35 +271,35 @@ export const AdminDashboardPage: React.FC = () => {
                     <th className="pb-3 text-right pr-1">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#E3E8DE]/60">
                   {[
-                    { name: 'Robert Johnson', time: '11:30 AM', reason: 'Mental Health Concern', contact: '+1 234 567 890', payment: 'Pending', type: 'Consult', blue: true },
+                    { name: 'Robert Johnson', time: '11:30 AM', reason: 'Mental Health Concern', contact: '+1 234 567 890', payment: 'Pending', type: 'Consult', active: true },
                     { name: 'Ava Brown', time: '12:30 PM', reason: 'Hypertension Follow-up', contact: '+1 321 654 987', payment: 'Pending', type: 'Follow-up' },
                     { name: 'Emily Williams', time: '01:00 PM', reason: 'Routine Checkup', contact: '+1 987 654 321', payment: 'Pending', type: 'Consult' },
                     { name: 'Alena Moore', time: '02:00 PM', reason: 'Diabetes Medication Review', contact: '+1 654 321 789', payment: 'Pending', type: 'Consult' },
                     { name: 'Jonathan Foley', time: '03:00 PM', reason: 'Hypertension Follow-up', contact: '+1 123 456 789', payment: 'Pending', type: 'Follow-up' },
                   ].map((row, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={idx} className="hover:bg-[#F9FAF6] transition-colors">
                       <td className="py-3 pl-1">
                         <div className="flex items-center gap-2.5">
                           <Avatar name={row.name} size="sm" className="w-7 h-7 text-[10px]" />
-                          <span className="font-bold text-slate-900">{row.name}</span>
+                          <span className="font-bold text-[#26352A]">{row.name}</span>
                         </div>
                       </td>
-                      <td className="py-3 text-slate-500 font-medium">{row.time}</td>
-                      <td className="py-3 text-slate-700 font-medium">{row.reason}</td>
-                      <td className="py-3 text-slate-500 font-mono text-[11px]">{row.contact}</td>
+                      <td className="py-3 text-[#667367] font-medium">{row.time}</td>
+                      <td className="py-3 text-[#26352A] font-medium">{row.reason}</td>
+                      <td className="py-3 text-[#667367] font-mono text-[11px]">{row.contact}</td>
                       <td className="py-3">
-                        <span className="text-amber-600 font-bold">{row.payment}</span>
+                        <span className="text-[#9A6700] font-bold">{row.payment}</span>
                       </td>
-                      <td className="py-3 text-slate-600 font-medium">{row.type}</td>
+                      <td className="py-3 text-[#667367] font-medium">{row.type}</td>
                       <td className="py-3 text-right pr-1">
                         <button
                           onClick={() => navigate('/portal/admin/appointments')}
                           className={`px-3.5 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
-                            row.blue
-                              ? 'bg-[#1d6cf2] hover:bg-blue-700 text-white shadow-sm'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                            row.active
+                              ? 'bg-[#14532D] hover:bg-[#0B3D20] text-white shadow-xs'
+                              : 'bg-[#F5F6F2] hover:bg-[#E3E8DE] text-[#26352A]'
                           }`}
                         >
                           Start Consult
@@ -316,65 +316,64 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Right Column: Schedule & Quick Actions + Health Alerts */}
         <div className="lg:col-span-4 space-y-5">
           {/* Today's Schedule Card */}
-          <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)]">
-            <h3 className="text-[14.5px] font-bold text-slate-900 tracking-tight">Today's Schedule</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Your today's appointments</p>
+          <div className="bg-white rounded-[24px] border border-[#E3E8DE] p-5 shadow-sm">
+            <h3 className="text-[14px] font-bold text-[#26352A] tracking-tight">Today's Schedule</h3>
+            <p className="text-xs text-[#667367] mt-0.5">Assigned consultations on the board</p>
 
-            {/* 2 stat boxes */}
             <div className="grid grid-cols-2 gap-3 mt-3.5">
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Appointments</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">16</p>
+              <div className="p-3.5 rounded-2xl bg-[#F5F6F2] border border-[#E3E8DE]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#667367]">Appointments</p>
+                <p className="text-2xl font-bold text-[#26352A] mt-1">16</p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Available Slots</p>
-                <p className="text-2xl font-bold text-emerald-900 mt-1">04</p>
+              <div className="p-3.5 rounded-2xl bg-[#EAF9D8] border border-[#C7FF75]">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#0B3D20]">Available Slots</p>
+                <p className="text-2xl font-bold text-[#0B3D20] mt-1">04</p>
               </div>
             </div>
 
             {/* Quick Actions Buttons */}
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <p className="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 mb-2">Quick Actions</p>
+            <div className="mt-4 pt-3 border-t border-[#E3E8DE]">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#667367] mb-2">Quick Actions</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setShowNewAppt(true)}
-                  className="py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-full text-xs text-center transition-all shadow-sm active:scale-95"
+                  className="py-2.5 px-3 bg-[#14532D] hover:bg-[#0B3D20] text-white font-bold rounded-full text-xs text-center transition-all shadow-xs active:scale-95"
                 >
                   New Appointment
                 </button>
                 <button
                   onClick={() => setShowNewPatient(true)}
-                  className="py-2.5 px-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold rounded-full text-xs text-center transition-all shadow-sm active:scale-95"
+                  className="py-2.5 px-3 bg-white border border-[#E3E8DE] hover:bg-[#F5F6F2] text-[#26352A] font-bold rounded-full text-xs text-center transition-all shadow-xs active:scale-95"
                 >
                   New Patient
                 </button>
               </div>
               <button
                 onClick={() => setShowNewAdmission(true)}
-                className="w-full mt-2 py-2.5 px-3 bg-[#1d6cf2] hover:bg-blue-700 text-white font-bold rounded-full text-xs text-center transition-all shadow-md shadow-blue-500/20 active:scale-95"
+                className="w-full mt-2 py-2.5 px-3 bg-[#C7FF75] hover:bg-[#bbf654] text-[#0B3D20] font-bold rounded-full text-xs text-center transition-all shadow-xs active:scale-95"
               >
                 + Admit Inpatient to Bed
               </button>
             </div>
 
             {/* Upcoming Appointments preview */}
-            <div className="mt-4 pt-3 border-t border-slate-100 space-y-2.5">
-              <p className="text-[10.5px] font-bold uppercase tracking-wider text-slate-400">Upcoming Appointments</p>
+            <div className="mt-4 pt-3 border-t border-[#E3E8DE] space-y-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#667367]">Upcoming Appointments</p>
 
-              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-[#F5F6F2] border border-[#E3E8DE] flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-900">Routine Medical Checkup</p>
-                  <p className="text-[11px] text-slate-400">Amelia Bennett · Video · 10:00</p>
+                  <p className="text-xs font-bold text-[#26352A]">Routine Medical Checkup</p>
+                  <p className="text-[11px] text-[#667367]">Amelia Bennett · Video · 10:00</p>
                 </div>
-                <span className="w-2 h-2 rounded-full bg-slate-300" />
+                <span className="w-2 h-2 rounded-full bg-[#8A998B]" />
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#1d6cf2] text-white shadow-md shadow-blue-500/30 flex items-center justify-between">
+              <div className="p-3 rounded-2xl bg-[#14532D] text-white shadow-xs flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-white">Cold and Fever</p>
-                  <p className="text-[11px] text-blue-100">Hannah Collins · Video · 11:00</p>
+                  <p className="text-xs font-bold text-[#C7FF75]">Cold and Fever</p>
+                  <p className="text-[11px] text-white/80">Hannah Collins · Video · 11:00</p>
                 </div>
-                <span className="w-2 h-2 rounded-full bg-white" />
+                <span className="w-2 h-2 rounded-full bg-[#C7FF75]" />
               </div>
             </div>
           </div>

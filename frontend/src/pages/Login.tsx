@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, UserRound, Stethoscope, HeartPulse, Receipt } from 'lucide-react';
+import {
+  Activity, ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff,
+  UserRound, Stethoscope, HeartPulse, Receipt, ArrowLeft, CheckCircle2
+} from 'lucide-react';
 import { UserRole } from '../types';
 import { cn } from '../components/ui/primitives';
 
 const DEMO_ACCOUNTS: { id: UserRole; label: string; icon: React.ReactNode; email: string; pass: string }[] = [
-  { id: 'admin', label: 'Hospital Admin', icon: <UserRound size={16} />, email: 'admin@hospitalcare.demo', pass: 'Admin@123' },
-  { id: 'doctor', label: 'Medical Doctor', icon: <Stethoscope size={16} />, email: 'doctor@hospitalcare.demo', pass: 'Doctor@123' },
-  { id: 'patient', label: 'Patient Member', icon: <HeartPulse size={16} />, email: 'patient@hospitalcare.demo', pass: 'Patient@123' },
-  { id: 'billing', label: 'Billing Staff', icon: <Receipt size={16} />, email: 'billing@hospitalcare.demo', pass: 'Billing@123' },
+  { id: 'admin', label: 'Hospital Admin', icon: <UserRound size={15} />, email: 'admin@hospitalcare.demo', pass: 'Admin@123' },
+  { id: 'doctor', label: 'Medical Doctor', icon: <Stethoscope size={15} />, email: 'doctor@hospitalcare.demo', pass: 'Doctor@123' },
+  { id: 'patient', label: 'Patient Member', icon: <HeartPulse size={15} />, email: 'patient@hospitalcare.demo', pass: 'Patient@123' },
+  { id: 'billing', label: 'Billing Staff', icon: <Receipt size={15} />, email: 'billing@hospitalcare.demo', pass: 'Billing@123' },
 ];
 
 export const Login: React.FC = () => {
@@ -23,9 +26,6 @@ export const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Development-only credential convenience. Fills a legitimate demo account's
-  // credentials — the server alone determines the authenticated role; the client
-  // can never select or assert an arbitrary server-side role. Disabled in prod.
   const pick = (role: UserRole) => {
     if (!isDev) return;
     const acct = DEMO_ACCOUNTS.find((a) => a.id === role);
@@ -37,75 +37,228 @@ export const Login: React.FC = () => {
   };
 
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); setError(null); setLoading(true);
-    try { 
-      const authedUser = await login(email, password); 
-      navigate(`/portal/${authedUser.role}/dashboard`); 
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const authedUser = await login(email, password);
+      navigate(`/portal/${authedUser.role}/dashboard`);
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check credentials.');
+    } finally {
+      setLoading(false);
     }
-    catch (err: any) { setError(err.message || 'Login failed. Check credentials.'); }
-    finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#f8fafc]">
-      <div className="hidden lg:flex flex-col justify-between bg-slate-950 text-white p-12 relative overflow-hidden">
-        <div className="absolute -top-32 -left-32 w-[480px] h-[480px] bg-sky-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-24 w-[420px] h-[420px] bg-indigo-500/20 rounded-full blur-3xl" />
-        <div className="relative flex items-center gap-3">
-          <span className="w-11 h-11 rounded-2xl bg-sky-500 flex items-center justify-center shadow-lg shadow-sky-500/40"><Activity size={22} /></span>
-          <span><span className="block text-xl font-bold tracking-tight">Hospital<span className="text-sky-400">Care</span></span><span className="block text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold">Integrated Healthcare Platform</span></span>
+    <div className="min-h-screen grid lg:grid-cols-12 bg-[#F7F8EF] text-[#26352A]">
+      {/* Left Column: Forest Green Editorial Identity Showcase */}
+      <div className="hidden lg:flex lg:col-span-5 flex-col justify-between bg-[#14532D] text-white p-12 relative overflow-hidden">
+        {/* Organic avocado accent glow */}
+        <div className="absolute -top-32 -left-32 w-[460px] h-[460px] bg-[#C7FF75]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -right-24 w-[420px] h-[420px] bg-[#0B3D20] rounded-full blur-2xl pointer-events-none" />
+
+        {/* Top Brand & Back to Home */}
+        <div className="relative z-10 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group">
+            <span className="w-10 h-10 rounded-2xl bg-[#0B3D20] border border-[#C7FF75]/30 flex items-center justify-center text-[#C7FF75] shadow-sm group-hover:scale-105 transition-transform">
+              <Activity size={20} />
+            </span>
+            <span>
+              <span className="block text-lg font-bold tracking-tight text-white leading-tight">
+                Hospital<span className="text-[#C7FF75]">Care</span>
+              </span>
+              <span className="block text-[9.5px] uppercase tracking-[0.16em] text-[#EAF9D8]/80 font-medium">
+                Unified Clinical Operations
+              </span>
+            </span>
+          </Link>
+
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs text-[#EAF9D8]/80 hover:text-white transition-colors"
+          >
+            <ArrowLeft size={14} /> Back
+          </Link>
         </div>
-        <div className="relative max-w-lg">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-sky-300 text-xs font-semibold"><ShieldCheck size={14} /> High-assurance clinical prototype</span>
-          <h1 className="text-[40px] font-bold leading-[1.1] tracking-tight mt-5">One platform for beds, care, scripts & billing.</h1>
-          <p className="text-slate-300/90 mt-4 leading-relaxed">Admissions with atomic bed locks, doctor notes with vitals, multi-drug prescriptions, authoritative billing and a tamper-evident audit trail — all behind strict RBAC.</p>
-          <div className="grid grid-cols-4 gap-3 mt-8">
-            {[['Live', 'Bed board'], ['Zero', 'IDOR tolerance'], ['V(G)=4', 'Admission tests'], ['100%', 'Audited billing']].map(([a, b]) => (
-              <div key={b} className="rounded-2xl bg-white/5 border border-white/10 p-3.5"><p className="font-bold text-sky-300">{a}</p><p className="text-[11px] text-slate-400 mt-0.5">{b}</p></div>
-            ))}
+
+        {/* Editorial Story & Real Photography */}
+        <div className="relative z-10 my-auto py-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-[#C7FF75] text-xs font-semibold backdrop-blur-sm mb-6">
+            <ShieldCheck size={14} />
+            <span>High-Assurance Clinical System</span>
+          </div>
+
+          <h1 className="text-[34px] xl:text-[38px] font-bold leading-[1.15] tracking-tight text-white">
+            Better care. Smarter hospital operations.
+          </h1>
+
+          <p className="text-[#EAF9D8]/85 mt-4 text-sm leading-relaxed max-w-md">
+            Admissions with atomic bed locks, verified clinical notes with vitals telemetry, multi-drug prescriptions, and audited billing—all behind server-enforced RBAC.
+          </p>
+
+          {/* Clinician Card Preview */}
+          <div className="mt-8 p-4 rounded-3xl bg-white/10 border border-white/15 backdrop-blur-md flex items-center gap-4">
+            <img
+              src="https://images.unsplash.com/photo-1594824813511-57685600c920?auto=format&fit=crop&w=180&q=80"
+              alt="Dr. Nilson, Attending Clinician"
+              className="w-14 h-14 rounded-2xl object-cover border border-white/20 shrink-0"
+              loading="lazy"
+            />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-bold text-white truncate">Dr. Julia Nilson, MD</p>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C7FF75] text-[#0B3D20] font-bold">
+                  On Duty
+                </span>
+              </div>
+              <p className="text-[11px] text-[#EAF9D8]/80 mt-0.5">ICU & Internal Medicine Telemetry</p>
+              <div className="flex items-center gap-1.5 text-[10px] text-[#C7FF75] font-semibold mt-1">
+                <CheckCircle2 size={12} />
+                <span>Zero IDOR · Argon2/Bcrypt Session Verified</span>
+              </div>
+            </div>
           </div>
         </div>
-        <p className="relative text-[11px] text-slate-500">Argon2 / Bcrypt verified demo credentials · RBAC + IDOR enforced server-side</p>
+
+        {/* Bottom Assurance Note */}
+        <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-[#EAF9D8]/60">
+          <span>HospitalCare Enterprise SaaS</span>
+          <span>HIPAA & RBAC Compliant</span>
+        </div>
       </div>
 
-      <div className="flex items-center justify-center p-5 sm:p-10">
+      {/* Right Column: Clean White Authentication Form on Soft Neutral Cream */}
+      <div className="lg:col-span-7 flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-[440px] anim-fade-up">
-          <div className="lg:hidden flex items-center gap-2.5 mb-6">
-            <span className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white"><Activity size={19} className="text-sky-400" /></span>
-            <span className="text-lg font-bold">Hospital<span className="text-sky-600">Care</span></span>
+          {/* Mobile Header */}
+          <div className="lg:hidden flex items-center justify-between mb-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-xl bg-[#14532D] text-[#C7FF75] flex items-center justify-center">
+                <Activity size={18} />
+              </span>
+              <span className="text-lg font-bold text-[#26352A]">
+                Hospital<span className="text-[#14532D]">Care</span>
+              </span>
+            </Link>
+            <Link to="/" className="text-xs text-[#667367] hover:text-[#26352A] flex items-center gap-1">
+              <ArrowLeft size={13} /> Home
+            </Link>
           </div>
-          <h2 className="text-[26px] font-bold tracking-tight text-slate-900">Sign in to HospitalCare</h2>
-          <p className="text-[13px] text-slate-500 mt-1">Sign in with your hospital account. Role is assigned by the server.</p>
 
+          <div className="mb-6">
+            <h2 className="text-[26px] font-bold tracking-tight text-[#26352A]">
+              Sign in to HospitalCare
+            </h2>
+            <p className="text-[13px] text-[#667367] mt-1">
+              Select a verified demo role or enter your credentials to open your portal.
+            </p>
+          </div>
+
+          {/* Development Demo Role Switcher */}
           {isDev && (
-            <>
-              <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider mb-2">Development demo accounts</p>
-              <div className="grid grid-cols-4 gap-2 mt-2 mb-4">
-                {DEMO_ACCOUNTS.map((r) => (
-                  <button key={r.id} type="button" onClick={() => pick(r.id)} className={cn('flex flex-col items-center gap-1.5 py-3 rounded-2xl border text-xs font-bold transition-all active:scale-95', selectedDemo === r.id ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-800')}>
-                    {r.icon}
-                    <span className="leading-tight">{r.label}</span>
-                  </button>
-                ))}
+            <div className="mb-6 p-4 rounded-3xl bg-white border border-[#E3E8DE] shadow-xs">
+              <p className="text-[10px] font-bold text-[#667367] uppercase tracking-wider mb-2.5">
+                Quick-fill demo roles (Dev only)
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {DEMO_ACCOUNTS.map((r) => {
+                  const isPicked = selectedDemo === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => pick(r.id)}
+                      className={cn(
+                        'flex flex-col items-center gap-1.5 py-2.5 px-2 rounded-2xl border text-xs font-semibold transition-all active:scale-95 text-center',
+                        isPicked
+                          ? 'bg-[#EAF9D8] border-[#C7FF75] text-[#0B3D20] font-bold shadow-xs'
+                          : 'bg-[#F5F6F2] border-[#E3E8DE] text-[#667367] hover:text-[#26352A] hover:bg-white'
+                      )}
+                    >
+                      <span className={isPicked ? 'text-[#14532D]' : 'text-[#667367]'}>
+                        {r.icon}
+                      </span>
+                      <span className="text-[10.5px] leading-tight">{r.label}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <p className="text-[10px] text-slate-400 text-center mb-4">Credentials prefill only — server verifies and assigns your role.</p>
-            </>
+              <p className="text-[10px] text-[#8A998B] mt-2.5 text-center">
+                Credentials pre-fill only — user role is strictly assigned by server response.
+              </p>
+            </div>
           )}
 
-          {error && <div className="mt-4 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex gap-2.5 text-rose-700 text-[13px]"><AlertCircle size={16} className="shrink-0 mt-px" />{error}</div>}
+          {error && (
+            <div className="mb-4 p-3.5 bg-[#FEE2E2] border border-[#FCA5A5] rounded-2xl flex gap-2.5 text-[#B42318] text-xs font-semibold anim-pop">
+              <AlertCircle size={15} className="shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
 
-          <form onSubmit={submit} className="mt-5 space-y-4 bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_16px_32px_-20px_rgba(15,23,42,0.2)]">
+          <form onSubmit={submit} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">
             <div>
               <label className="hc-label">Email address</label>
-              <div className="relative"><Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" /><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="hc-input !pl-10" placeholder="name@hospitalcare.demo" /></div>
+              <div className="relative">
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="hc-input !pl-10"
+                  placeholder="name@hospitalcare.demo"
+                />
+              </div>
             </div>
+
             <div>
-              <label className="hc-label">Password</label>
-              <div className="relative"><Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" /><input type={show ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} className="hc-input !pl-10 !pr-11" placeholder="••••••••" /><button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">{show ? <EyeOff size={16} /> : <Eye size={16} />}</button></div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="hc-label !mb-0">Password</label>
+              </div>
+              <div className="relative">
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                <input
+                  type={show ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="hc-input !pl-10 !pr-11"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow(!show)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8A998B] hover:text-[#26352A]"
+                  aria-label={show ? 'Hide password' : 'Show password'}
+                >
+                  {show ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
             </div>
-            <button type="submit" disabled={loading} className="hc-btn-dark w-full !py-3 !rounded-xl !bg-sky-600 hover:!bg-sky-700">{loading ? 'Authenticating…' : 'Sign In to Portal'} <ArrowRight size={16} /></button>
-            <p className="text-center text-[11px] text-slate-400">Demo instance · passwords verified with Argon2/Bcrypt</p>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="hc-btn-primary w-full !py-3 !rounded-full !bg-[#14532D] hover:!bg-[#0B3D20] text-white shadow-md text-sm mt-2"
+            >
+              {loading ? 'Verifying Session…' : 'Enter HospitalCare Portal'}
+              <ArrowRight size={15} />
+            </button>
+
+            <div className="pt-2 text-center">
+              <p className="text-[11px] text-[#8A998B]">
+                Argon2 / Bcrypt verified authentication · Role-Based Access Control
+              </p>
+            </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/" className="text-xs text-[#667367] hover:text-[#14532D] font-medium transition-colors">
+              ← Return to HospitalCare Public Website
+            </Link>
+          </div>
         </div>
       </div>
     </div>

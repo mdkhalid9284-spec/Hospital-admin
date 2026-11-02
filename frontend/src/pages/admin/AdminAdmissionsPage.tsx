@@ -109,7 +109,7 @@ export const AdminAdmissionsPage: React.FC = () => {
 
         <button
           onClick={() => setShowAdmitModal(true)}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full text-xs font-bold shadow-md shadow-[#14532D]/20 transition-all active:scale-95"
         >
           <Plus size={14} /> Admit Inpatient
         </button>

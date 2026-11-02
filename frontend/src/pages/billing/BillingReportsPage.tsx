@@ -301,7 +301,7 @@ export const BillingReportsPage: React.FC = () => {
                 value: money(totals.grossBilled),
                 hint: `${bills.length} invoice${bills.length === 1 ? '' : 's'}`,
                 icon: DollarSign,
-                tone: 'bg-sky-50 text-sky-700 border-sky-200',
+                tone: 'bg-[#EAF9D8] text-[#0B3D20] border-sky-200',
               },
               {
                 label: 'Realized Cash',
@@ -365,7 +365,7 @@ export const BillingReportsPage: React.FC = () => {
             {/* Revenue by category */}
             <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
               <div className="mb-4 flex items-center gap-2">
-                <BarChart3 size={16} className="text-sky-600" />
+                <BarChart3 size={16} className="text-[#14532D]" />
                 <h2 className="text-sm font-bold text-slate-900">Revenue by Service Category</h2>
               </div>
 
@@ -383,7 +383,7 @@ export const BillingReportsPage: React.FC = () => {
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className="h-full rounded-full bg-sky-500"
+                          className="h-full rounded-full bg-[#EAF9D8]0"
                           style={{
                             width: `${Math.max(
                               2,
@@ -476,7 +476,7 @@ export const BillingReportsPage: React.FC = () => {
                   <tbody className="divide-y divide-slate-100">
                     {ledgerRows.map((bill) => (
                       <tr key={bill.id} className="hover:bg-slate-50/60">
-                        <td className="px-4 py-2 font-mono text-[11px] font-bold text-sky-700">
+                        <td className="px-4 py-2 font-mono text-[11px] font-bold text-[#0B3D20]">
                           {bill.billCode}
                         </td>
                         <td className="px-4 py-2 text-slate-500">

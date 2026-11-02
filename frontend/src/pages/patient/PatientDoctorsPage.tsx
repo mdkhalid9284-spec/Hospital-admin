@@ -74,7 +74,7 @@ export const PatientDoctorsPage: React.FC = () => {
                   <Avatar name={d.fullName} size="md" className="w-12 h-12 text-xs" />
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">{d.fullName}</h3>
-                    <p className="text-xs text-blue-600 font-semibold">{d.specialization}</p>
+                    <p className="text-xs text-[#14532D] font-semibold">{d.specialization}</p>
                   </div>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10.5px] font-bold border border-emerald-200">
@@ -105,7 +105,7 @@ export const PatientDoctorsPage: React.FC = () => {
             <div className="mt-5 pt-3 border-t border-slate-100">
               <button
                 onClick={() => navigate('/portal/patient/appointments')}
-                className="w-full py-2.5 bg-[#1d6cf2] hover:bg-blue-700 text-white rounded-full font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 bg-[#14532D] hover:bg-[#0B3D20] text-white rounded-full font-bold text-xs shadow-md shadow-[#14532D]/20 transition-all active:scale-95 flex items-center justify-center gap-1.5"
               >
                 <Calendar size={13} /> Book Consultation
               </button>

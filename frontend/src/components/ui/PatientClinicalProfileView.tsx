@@ -128,7 +128,7 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
           {onClose && (
             <button
               onClick={onClose}
-              className="text-xs font-bold text-blue-600 hover:underline mr-1"
+              className="text-xs font-bold text-[#14532D] hover:underline mr-1"
             >
               ← Back
             </button>
@@ -234,18 +234,18 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
               <MoreVertical size={14} className="text-slate-400 cursor-pointer shrink-0" />
             </div>
 
-            {/* Appointment Card 2 (Active Vibrant Blue Card from screenshot!) */}
-            <div className="p-3.5 rounded-2xl bg-[#1d6cf2] text-white shadow-[0_8px_20px_-4px_rgba(29,108,242,0.45)] flex items-center justify-between gap-3">
+            {/* Appointment Card 2 (Active Avocado Forest Green Card) */}
+            <div className="p-3.5 rounded-2xl bg-[#14532D] text-white shadow-[0_8px_20px_-4px_rgba(20,83,45,0.4)] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
+                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-[#C7FF75] shrink-0">
                   <Activity size={15} />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-white truncate">Cold and Fever</p>
-                  <p className="text-[11px] text-blue-100 truncate">Dr. Hannah Collins · Video · 11:00</p>
+                  <p className="text-[11px] text-[#EAF9D8] truncate">Dr. Hannah Collins · Video · 11:00</p>
                 </div>
               </div>
-              <MoreVertical size={14} className="text-blue-200 cursor-pointer shrink-0" />
+              <MoreVertical size={14} className="text-[#C7FF75]/80 cursor-pointer shrink-0" />
             </div>
           </div>
         </div>
@@ -263,7 +263,7 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
               {canEditClinical && (
                 <button
                   onClick={() => setShowUploadModal(true)}
-                  className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[#14532D] hover:text-[#0B3D20] transition-colors"
                 >
                   <Upload size={13} /> Upload Report ↑
                 </button>
@@ -271,20 +271,20 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
             </div>
 
             {/* Tabs matching screenshot */}
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-2 mb-3 text-xs overflow-x-auto">
+            <div className="flex items-center gap-2 border-b border-[#E3E8DE] pb-2 mb-3 text-xs overflow-x-auto">
               {(['Lab Reports', 'Consultation History', 'Medications', 'Vaccination'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setMedicalRecordTab(t)}
                   className={`pb-1 font-semibold whitespace-nowrap transition-colors relative ${
                     medicalRecordTab === t
-                      ? 'text-blue-600 font-bold'
-                      : 'text-slate-400 hover:text-slate-700'
+                      ? 'text-[#14532D] font-bold'
+                      : 'text-[#667367] hover:text-[#26352A]'
                   }`}
                 >
                   {t}
                   {medicalRecordTab === t && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#14532D] rounded-full" />
                   )}
                 </button>
               ))}
@@ -380,7 +380,7 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
               {canEditClinical && (
                 <button
                   onClick={() => setShowAddNoteModal(true)}
-                  className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                  className="text-xs font-bold text-[#14532D] hover:text-[#0B3D20] transition-colors"
                 >
                   Add New
                 </button>
@@ -398,7 +398,7 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
                     <p className="font-bold text-slate-900 mb-1">{rec.title}</p>
                     <p className="text-slate-600">{rec.notes}</p>
                     {rec.vitalSigns && (
-                      <span className="inline-block mt-2 font-mono text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">
+                      <span className="inline-block mt-2 font-mono text-[10px] text-[#14532D] font-bold bg-[#EAF9D8] px-2 py-0.5 rounded-md">
                         BP: {rec.vitalSigns.bloodPressure} · HR: {rec.vitalSigns.heartRate} · SpO2: {rec.vitalSigns.spo2}%
                       </span>
                     )}
@@ -512,7 +512,7 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
               required
               accept=".pdf,image/png,image/jpeg,image/webp"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
+              className="w-full text-xs text-[#26352A] file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#EAF9D8] file:text-[#0B3D20] hover:file:bg-[#C7FF75] cursor-pointer"
             />
           </Field>
           <div className="flex justify-end gap-2 pt-2">

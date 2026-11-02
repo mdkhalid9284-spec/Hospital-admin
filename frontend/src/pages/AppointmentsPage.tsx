@@ -122,7 +122,7 @@ export const AppointmentsPage: React.FC = () => {
             <button onClick={() => setCursor(addDays(cursor, view === 'month' ? -30 : view === 'week' ? -7 : -1))} className="hc-icon-btn !w-9 !h-9"><ChevronLeft size={16} /></button>
             <div className="min-w-[170px] text-center">
               <p className="font-bold text-slate-900 text-[15px]">{view === 'day' ? cursor.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : monthLabel}</p>
-              <button onClick={() => setCursor(new Date())} className="text-[11px] font-bold text-sky-600 hover:underline">Jump to today</button>
+              <button onClick={() => setCursor(new Date())} className="text-[11px] font-bold text-[#14532D] hover:underline">Jump to today</button>
             </div>
             <button onClick={() => setCursor(addDays(cursor, view === 'month' ? 30 : view === 'week' ? 7 : 1))} className="hc-icon-btn !w-9 !h-9"><ChevronRight size={16} /></button>
           </div>
@@ -160,15 +160,15 @@ export const AppointmentsPage: React.FC = () => {
               const isToday = fmt(d) === fmt(new Date());
               const dim = view === 'month' && d.getMonth() !== cursor.getMonth();
               return (
-                <div key={i} className={cn('rounded-2xl border p-2 min-h-[110px] transition-colors', isToday ? 'border-sky-400 bg-sky-50/50' : 'border-slate-200 bg-white', dim && 'opacity-45 bg-slate-50')}>
+                <div key={i} className={cn('rounded-2xl border p-2 min-h-[110px] transition-colors', isToday ? 'border-sky-400 bg-[#EAF9D8]/50' : 'border-slate-200 bg-white', dim && 'opacity-45 bg-slate-50')}>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className={cn('text-[11px] font-bold w-6 h-6 rounded-full flex items-center justify-center', isToday ? 'bg-slate-900 text-white' : 'text-slate-500')}>{d.getDate()}</span>
-                    {list.length > 0 && <span className="text-[10px] font-bold text-sky-600">{list.length}</span>}
+                    {list.length > 0 && <span className="text-[10px] font-bold text-[#14532D]">{list.length}</span>}
                   </div>
                   <div className="space-y-1 max-h-[180px] overflow-y-auto">
                     {list.slice(0, view === 'month' ? 3 : 6).map((a) => (
                       <button key={a.id} onClick={() => setSelected(a)} className={cn('w-full text-left px-2 py-1.5 rounded-lg text-[11px] font-semibold truncate border transition-all hover:shadow-sm',
-                        a.status === 'Confirmed' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : a.status === 'Cancelled' ? 'bg-rose-50 border-rose-200 text-rose-700 line-through' : a.status === 'Completed' ? 'bg-sky-50 border-sky-200 text-sky-800' : 'bg-amber-50 border-amber-200 text-amber-800')}>
+                        a.status === 'Confirmed' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : a.status === 'Cancelled' ? 'bg-rose-50 border-rose-200 text-rose-700 line-through' : a.status === 'Completed' ? 'bg-[#EAF9D8] border-sky-200 text-[#0B3D20]' : 'bg-amber-50 border-amber-200 text-amber-800')}>
                         {a.timeSlot} · {a.patientName}
                       </button>
                     ))}
@@ -187,7 +187,7 @@ export const AppointmentsPage: React.FC = () => {
           <div className="absolute inset-0 bg-slate-950/50" onClick={() => setSelected(null)} />
           <aside className="absolute right-0 top-0 bottom-0 w-full sm:w-[420px] bg-white shadow-2xl overflow-y-auto anim-drawer p-6">
             <div className="flex items-start justify-between">
-              <div><p className="font-mono text-xs font-bold text-sky-600">{selected.appointmentCode}</p><h3 className="text-lg font-bold text-slate-900 mt-0.5">{selected.patientName}</h3></div>
+              <div><p className="font-mono text-xs font-bold text-[#14532D]">{selected.appointmentCode}</p><h3 className="text-lg font-bold text-slate-900 mt-0.5">{selected.patientName}</h3></div>
               <button onClick={() => setSelected(null)} className="hc-icon-btn !w-8 !h-8"><X size={14} /></button>
             </div>
             <div className="mt-2"><StatusBadge status={selected.status} /></div>

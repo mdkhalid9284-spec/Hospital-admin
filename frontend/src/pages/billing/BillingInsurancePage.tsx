@@ -317,7 +317,7 @@ export const BillingInsurancePage: React.FC = () => {
             type="button"
             onClick={openSubmit}
             disabled={patients.length === 0 || bills.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-full bg-sky-600 px-4 py-2 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#14532D] px-4 py-2 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-50"
           >
             <Plus size={14} /> Submit Claim
           </button>
@@ -359,7 +359,7 @@ export const BillingInsurancePage: React.FC = () => {
             label: 'Total Claimed',
             value: money(stats.totalClaimed),
             hint: `${claims.length} claim(s)`,
-            tone: 'bg-sky-50 text-sky-700 border-sky-200',
+            tone: 'bg-[#EAF9D8] text-[#0B3D20] border-sky-200',
             icon: DollarSign,
           },
           {
@@ -483,7 +483,7 @@ export const BillingInsurancePage: React.FC = () => {
                   return (
                     <tr key={claim.id} className="hover:bg-slate-50/60">
                       <td className="px-4 py-3">
-                        <p className="font-mono text-[11px] font-bold text-sky-700">
+                        <p className="font-mono text-[11px] font-bold text-[#0B3D20]">
                           {claim.claimCode}
                         </p>
                         {claim.remarks && (
@@ -535,7 +535,7 @@ export const BillingInsurancePage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => openAdjudication(claim)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1.5 text-[10px] font-bold text-sky-700 hover:bg-sky-100"
+                            className="inline-flex items-center gap-1 rounded-lg border border-sky-200 bg-[#EAF9D8] px-2.5 py-1.5 text-[10px] font-bold text-[#0B3D20] hover:bg-sky-100"
                           >
                             <FileText size={12} /> Adjudicate
                           </button>
