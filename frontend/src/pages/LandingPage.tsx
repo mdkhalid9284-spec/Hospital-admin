@@ -74,7 +74,7 @@ const ConsultationCard: React.FC = () => {
           {/* Avatars */}
           <div className="flex -space-x-2">
             <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=48&q=80" alt="Attendee" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=48&q=80" alt="Attendee" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+            <img src="/patient.avif" alt="Patient attendee" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
           </div>
           <span className="text-xs font-semibold text-[#667367] border border-[#E3E8DE] px-2 py-0.5 rounded-full">All</span>
           <span className="px-3 py-1 rounded-full bg-[#14532D] text-[#C7FF75] text-[11px] font-mono font-semibold">sjm-jlmt-nsu</span>
@@ -110,7 +110,7 @@ const ConsultationCard: React.FC = () => {
         {/* Patient */}
         <div className="relative rounded-xl overflow-hidden aspect-[4/3] border-2 border-[#E3E8DE]">
           <img
-            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80"
+            src="/patient.avif"
             alt="Helen Watson — patient video"
             className="w-full h-full object-cover object-top"
           />
@@ -386,9 +386,9 @@ export const LandingPage: React.FC = () => {
           {/* ── COL 4: Tall female clinician photo card with overlay ───── */}
           <div className="rounded-[24px] overflow-hidden relative min-h-[360px] lg:min-h-[440px] bg-[#b0c4b0]">
             <img
-              src="https://images.unsplash.com/photo-1594824813511-57685600c920?auto=format&fit=crop&w=600&q=80"
+              src="/images/clinician-patient.jpg"
               alt="Female clinician — verified patients"
-              className="absolute inset-0 w-full h-full object-cover object-top"
+              className="absolute inset-0 w-full h-full object-cover object-center"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D20]/70 via-transparent to-transparent" />
@@ -474,9 +474,9 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div className="rounded-[28px] overflow-hidden aspect-[4/3] bg-[#14532D] order-2 md:order-1">
             <img
-              src="https://images.unsplash.com/photo-1612531387486-b9993a9c5e36?auto=format&fit=crop&w=800&q=80"
+              src="/images/medical-team.jpg"
               alt="Medical team reviewing data on monitors"
-              className="w-full h-full object-cover opacity-80 mix-blend-luminosity"
+              className="w-full h-full object-cover object-center opacity-10 mix-blend-luminosity"
               loading="lazy"
             />
           </div>
