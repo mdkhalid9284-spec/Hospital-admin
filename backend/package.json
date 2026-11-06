@@ -1,6 +1,7 @@
 {
   "name": "hospitalcare-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "HospitalCare Backend API Server",
   "main": "dist/server.js",
   "scripts": {
