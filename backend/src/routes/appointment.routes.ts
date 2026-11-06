@@ -5,6 +5,7 @@ import { requireRoles } from '../middlewares/rbac.middleware.js';
 import { validateRequest } from '../middlewares/validator.js';
 import {
   createAppointmentSchema,
+  updateAppointmentSchema,
   updateAppointmentStatusSchema,
 } from '../schemas/appointment.schema.js';
 
@@ -20,6 +21,17 @@ router.post(
   requireRoles('admin', 'patient', 'doctor'),
   validateRequest({ body: createAppointmentSchema }),
   AppointmentController.book
+);
+
+/**
+ * Reschedule / edit. Registering before /:id/status keeps the static suffix
+ * route working; Express matches in declaration order.
+ */
+router.patch(
+  '/:id',
+  requireRoles('admin', 'doctor', 'patient'),
+  validateRequest({ body: updateAppointmentSchema }),
+  AppointmentController.update
 );
 
 router.patch(

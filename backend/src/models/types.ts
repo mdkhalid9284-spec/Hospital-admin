@@ -20,6 +20,7 @@ export interface IUser {
 
 export interface IPatient {
   id: string;
+  /** Linked portal account. Empty string means the record has no portal account yet. */
   userId: string;
   patientCode: string;
   fullName: string;
@@ -36,6 +37,13 @@ export interface IPatient {
   };
   assignedDoctorId?: string;
   currentAdmissionId?: string;
+  /**
+   * Normalised name + phone key used by a unique sparse index to make
+   * concurrent duplicate registrations impossible across serverless
+   * instances. It is intentionally cleared when an administrator explicitly
+   * confirms that two same-name/phone records are genuinely different people.
+   */
+  identityKey?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -125,10 +133,21 @@ export interface IAppointment {
   doctorName: string;
   appointmentDate: string; // YYYY-MM-DD
   timeSlot: string; // e.g. "09:30 - 10:00"
+  startTime?: string; // e.g. "09:30"
+  endTime?: string; // e.g. "10:00"
   reason: string;
   status: AppointmentStatus;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
+  /**
+   * Unique sparse keys written only for non-cancelled appointments. The
+   * database unique indexes enforce conflict-free booking even when two
+   * serverless instances handle requests concurrently. Cancelling an
+   * appointment clears both keys so the slot is released.
+   */
+  doctorSlotKey?: string;
+  patientSlotKey?: string;
 }
 
 export interface IMedicalRecord {
@@ -273,4 +292,53 @@ export interface INotification {
   isRead: boolean;
   link?: string;
   createdAt: string;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Clinical messaging                                                          */
+/* -------------------------------------------------------------------------- */
+
+export interface IConversation {
+  id: string;
+  patientId: string;
+  patientName: string;
+  /** Clinician the conversation is routed to, when known. */
+  doctorId?: string;
+  participantUserIds: string[];
+  participantNames: string[];
+  participantRoles: UserRole[];
+  subject?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt?: string;
+  lastMessagePreview?: string;
+}
+
+export interface IMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: UserRole;
+  body: string;
+  createdAt: string;
+  readBy: string[];
+}
+
+export type TeleconsultationStatus = 'Active' | 'Ended';
+
+export interface ITeleconsultation {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctorId: string;
+  doctorName: string;
+  roomName: string;
+  joinUrl: string;
+  provider: string;
+  status: TeleconsultationStatus;
+  startedBy: string;
+  startedAt: string;
+  endedAt?: string | null;
 }

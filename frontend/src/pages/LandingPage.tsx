@@ -476,7 +476,7 @@ export const LandingPage: React.FC = () => {
             <img
               src="/images/medical-team.jpg"
               alt="Medical team reviewing data on monitors"
-              className="w-full h-full object-cover object-center opacity-10 mix-blend-luminosity"
+              className="w-full h-full object-cover object-center opacity-99 mix-blend-luminosity"
               loading="lazy"
             />
           </div>

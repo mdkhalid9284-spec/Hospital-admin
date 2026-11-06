@@ -39,6 +39,7 @@ import { PatientRecordsPage } from './pages/patient/PatientRecordsPage';
 import { PatientDocumentsPage } from './pages/patient/PatientDocumentsPage';
 import { PatientBillingPage } from './pages/patient/PatientBillingPage';
 import { PatientProfilePage } from './pages/patient/PatientProfilePage';
+import { MessagesPage } from './pages/shared/MessagesPage';
 
 // ─── Billing Portal ───────────────────────────────────────────────────────────
 import { BillingDashboardPage } from './pages/billing/BillingDashboardPage';
@@ -108,6 +109,7 @@ export const App: React.FC = () => (
             <Route path="admin/bed-board"   element={<RoleGuard roles={['admin']}><AdminBedBoardPage /></RoleGuard>} />
             <Route path="admin/admissions"  element={<RoleGuard roles={['admin']}><AdminAdmissionsPage /></RoleGuard>} />
             <Route path="admin/appointments" element={<RoleGuard roles={['admin']}><AdminAppointmentsPage /></RoleGuard>} />
+            <Route path="admin/messages"    element={<RoleGuard roles={['admin']}><MessagesPage /></RoleGuard>} />
             <Route path="admin/analytics"   element={<RoleGuard roles={['admin']}><AdminAnalyticsPage /></RoleGuard>} />
             <Route path="admin/audit-logs"  element={<RoleGuard roles={['admin']}><AdminAuditLogsPage /></RoleGuard>} />
             <Route path="admin/settings"    element={<RoleGuard roles={['admin']}><AdminSettingsPage /></RoleGuard>} />
@@ -119,6 +121,7 @@ export const App: React.FC = () => (
             <Route path="doctor/prescriptions" element={<RoleGuard roles={['doctor']}><DoctorPrescriptionsPage /></RoleGuard>} />
             <Route path="doctor/records"      element={<RoleGuard roles={['doctor']}><DoctorRecordsPage /></RoleGuard>} />
             <Route path="doctor/documents"    element={<RoleGuard roles={['doctor']}><DoctorDocumentsPage /></RoleGuard>} />
+            <Route path="doctor/messages"     element={<RoleGuard roles={['doctor']}><MessagesPage /></RoleGuard>} />
 
             {/* C. PATIENT PORTAL */}
             <Route path="patient/dashboard"    element={<RoleGuard roles={['patient']}><PatientDashboardPage /></RoleGuard>} />
@@ -128,6 +131,7 @@ export const App: React.FC = () => (
             <Route path="patient/documents"    element={<RoleGuard roles={['patient']}><PatientDocumentsPage /></RoleGuard>} />
             <Route path="patient/billing"      element={<RoleGuard roles={['patient']}><PatientBillingPage /></RoleGuard>} />
             <Route path="patient/profile"      element={<RoleGuard roles={['patient']}><PatientProfilePage /></RoleGuard>} />
+            <Route path="patient/messages"     element={<RoleGuard roles={['patient']}><MessagesPage /></RoleGuard>} />
 
             {/* D. BILLING PORTAL */}
             <Route path="billing/dashboard" element={<RoleGuard roles={['billing']}><BillingDashboardPage /></RoleGuard>} />

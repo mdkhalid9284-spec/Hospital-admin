@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../api/client';
-import { IPatient, IMedicalRecord, IPrescription, IMedicalDocument } from '../../types';
+import {
+  IPatient,
+  IMedicalRecord,
+  IPrescription,
+  IMedicalDocument,
+  IAppointment,
+} from '../../types';
+import { useNavigate } from 'react-router-dom';
 import { PatientClinicalProfileView } from '../../components/ui/PatientClinicalProfileView';
 import { Avatar, Badge, Modal, ModalHeader, Field, inputCls } from '../../components/ui/primitives';
 import {
@@ -19,6 +26,7 @@ import {
 } from 'lucide-react';
 
 export const AdminPatientsPage: React.FC = () => {
+  const navigate = useNavigate();
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQ, setSearchQ] = useState('');
@@ -29,6 +37,13 @@ export const AdminPatientsPage: React.FC = () => {
   const [patientRecords, setPatientRecords] = useState<IMedicalRecord[]>([]);
   const [patientRx, setPatientRx] = useState<IPrescription[]>([]);
   const [patientDocs, setPatientDocs] = useState<IMedicalDocument[]>([]);
+  const [patientAppointments, setPatientAppointments] = useState<IAppointment[]>([]);
+
+  // Duplicate-resolution flow
+  const [duplicateCandidates, setDuplicateCandidates] = useState<
+    Array<{ id: string; patientCode: string; fullName: string; dob: string; reasons: string[] }>
+  >([]);
+  const [pendingRegistration, setPendingRegistration] = useState(false);
 
   // Modals
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -65,29 +80,61 @@ export const AdminPatientsPage: React.FC = () => {
   const openProfile = async (p: IPatient) => {
     setSelectedPatient(p);
     try {
-      const [recRes, rxRes, docRes] = await Promise.all([
+      const [recRes, rxRes, docRes, apptRes] = await Promise.all([
         apiClient.get(`/records/patient/${p.id}`).catch(() => ({ data: { data: { records: [] } } })),
         apiClient.get(`/prescriptions/patient/${p.id}`).catch(() => ({ data: { data: { prescriptions: [] } } })),
         apiClient.get(`/documents/patient/${p.id}`).catch(() => ({ data: { data: { documents: [] } } })),
+        apiClient.get('/appointments').catch(() => ({ data: { data: { appointments: [] } } })),
       ]);
       setPatientRecords(recRes.data.data.records || []);
       setPatientRx(rxRes.data.data.prescriptions || []);
       setPatientDocs(docRes.data.data.documents || []);
+      setPatientAppointments(
+        (apptRes.data.data.appointments || []).filter(
+          (appointment: IAppointment) => appointment.patientId === p.id
+        )
+      );
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (e: React.FormEvent | undefined, confirmDistinct = false) => {
+    e?.preventDefault();
+    setPendingRegistration(true);
     try {
-      await apiClient.post('/patients', regForm);
+      await apiClient.post('/patients', { ...regForm, confirmDistinct });
       setShowRegisterModal(false);
+      setDuplicateCandidates([]);
       setToastMsg('Patient successfully registered into hospital database.');
       fetchPatients();
       setTimeout(() => setToastMsg(null), 3500);
     } catch (err: any) {
-      alert(err.message || 'Registration failed');
+      if (err.code === 'POSSIBLE_DUPLICATE_PATIENT' && err.details?.candidates) {
+        setDuplicateCandidates(err.details.candidates);
+      } else {
+        alert(err.message || 'Registration failed');
+      }
+    } finally {
+      setPendingRegistration(false);
+    }
+  };
+
+  const openConversation = async (patientId: string) => {
+    try {
+      const res = await apiClient.post('/conversations', { patientId });
+      navigate(`/portal/admin/messages?conversation=${res.data.data.conversation.id}`);
+    } catch (err: any) {
+      alert(err.message || 'Could not open conversation');
+    }
+  };
+
+  const startVideo = async (patientId: string) => {
+    try {
+      const res = await apiClient.post('/teleconsultations', { patientId });
+      window.open(res.data.data.teleconsultation.joinUrl, '_blank', 'noopener,noreferrer');
+    } catch (err: any) {
+      alert(err.message || 'Could not start video consultation');
     }
   };
 
@@ -154,6 +201,9 @@ export const AdminPatientsPage: React.FC = () => {
         records={patientRecords}
         prescriptions={patientRx}
         documents={patientDocs}
+        appointments={patientAppointments}
+        onStartVideo={() => startVideo(selectedPatient.id)}
+        onOpenChat={() => openConversation(selectedPatient.id)}
         onClose={() => setSelectedPatient(null)}
         onAddNote={async (note) => {
           await apiClient.post('/records/clinical-note', {
@@ -449,11 +499,66 @@ export const AdminPatientsPage: React.FC = () => {
             >
               Cancel
             </button>
-            <button type="submit" className="hc-btn-blue">
-              Save Patient Record
+            <button type="submit" disabled={pendingRegistration} className="hc-btn-blue">
+              {pendingRegistration ? 'Checking duplicates…' : 'Save Patient Record'}
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Modal: Possible duplicate resolution */}
+      <Modal open={duplicateCandidates.length > 0} onClose={() => setDuplicateCandidates([])}>
+        <ModalHeader
+          title="Possible Duplicate Patient"
+          subtitle="These existing records closely match the details you entered."
+          onClose={() => setDuplicateCandidates([])}
+        />
+        <div className="p-6 space-y-4">
+          <div className="space-y-2">
+            {duplicateCandidates.map((candidate) => (
+              <div
+                key={candidate.id}
+                className="p-3.5 rounded-2xl border border-amber-200 bg-amber-50 text-xs"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-bold text-slate-900">{candidate.fullName}</p>
+                  <span className="font-mono text-[10.5px] font-bold text-amber-800">
+                    {candidate.patientCode}
+                  </span>
+                </div>
+                <p className="text-slate-500 mt-0.5">
+                  DOB {candidate.dob} · {candidate.reasons.join(' · ')}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-slate-500">
+            Use the existing record for this person, or confirm that this is a genuinely
+            different patient. Confirming creates a new medical record and is audited.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-end gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setDuplicateCandidates([]);
+                setShowRegisterModal(false);
+                setToastMsg('Use the existing patient record from the directory instead.');
+                setTimeout(() => setToastMsg(null), 4000);
+              }}
+              className="hc-btn-ghost"
+            >
+              Use Existing Record
+            </button>
+            <button
+              type="button"
+              disabled={pendingRegistration}
+              onClick={() => handleRegister(undefined, true)}
+              className="hc-btn-blue"
+            >
+              {pendingRegistration ? 'Creating…' : 'Create Anyway (Different Person)'}
+            </button>
+          </div>
+        </div>
       </Modal>
 
       {/* Modal: Edit Demographics */}

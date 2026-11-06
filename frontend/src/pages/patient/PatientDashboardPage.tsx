@@ -33,7 +33,11 @@ export const PatientDashboardPage: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const pid = user?.patientId || 'pat-001';
+      const pid = user?.patientId;
+      if (!pid) {
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const [patRes, apptRes, recRes, rxRes, billRes, admRes] = await Promise.all([

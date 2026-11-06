@@ -60,6 +60,59 @@ export class AppointmentController {
     }
   }
 
+  public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = req.user!;
+      const existing = db.appointments.find((a) => a.id === req.params.id);
+      if (!existing) {
+        throw new AppError(
+          `Appointment with ID '${req.params.id}' not found.`,
+          404,
+          'APPOINTMENT_NOT_FOUND'
+        );
+      }
+
+      const updates = { ...req.body };
+
+      if (user.role === 'patient') {
+        if (existing.patientId !== user.patientId) {
+          throw new AppError(
+            'Access denied. You can only reschedule your own appointments.',
+            403,
+            'IDOR_FORBIDDEN'
+          );
+        }
+        // A patient can never move an appointment to another person's record.
+        delete updates.patientId;
+      }
+
+      if (user.role === 'doctor') {
+        if (existing.doctorId !== user.doctorId) {
+          throw new AppError(
+            'Access denied. You can only manage appointments in your own clinic.',
+            403,
+            'IDOR_FORBIDDEN'
+          );
+        }
+        // Doctors may reschedule within their own diary only.
+        delete updates.doctorId;
+      }
+
+      const appointment = await AppointmentService.updateAppointment(
+        req.params.id,
+        updates,
+        { id: user.id, name: user.fullName, role: user.role }
+      );
+
+      res.status(200).json({
+        success: true,
+        data: { appointment },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public static async updateStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;

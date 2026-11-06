@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Activity, ShieldCheck, Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff,
-  UserRound, Stethoscope, HeartPulse, Receipt, ArrowLeft, CheckCircle2
+  UserRound, Stethoscope, HeartPulse, Receipt, ArrowLeft, CheckCircle2,
+  UserPlus, IdCard, CalendarDays, Phone
 } from 'lucide-react';
 import { UserRole } from '../types';
 import { cn } from '../components/ui/primitives';
@@ -23,7 +24,15 @@ export const Login: React.FC = () => {
   const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [signup, setSignup] = useState({
+    identifier: '',
+    dob: '',
+    phone: '',
+    email: '',
+    password: '',
+  });
+  const { login, registerPatient } = useAuth();
   const navigate = useNavigate();
 
   const pick = (role: UserRole) => {
@@ -45,6 +54,20 @@ export const Login: React.FC = () => {
       navigate(`/portal/${authedUser.role}/dashboard`);
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const authedUser = await registerPatient(signup);
+      navigate(`/portal/${authedUser.role}/dashboard`);
+    } catch (err: any) {
+      setError(err.message || 'Account creation failed. Check the hospital record details.');
     } finally {
       setLoading(false);
     }
@@ -146,17 +169,52 @@ export const Login: React.FC = () => {
             </Link>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-5">
             <h2 className="text-[26px] font-bold tracking-tight text-[#26352A]">
-              Sign in to HospitalCare
+              {mode === 'login' ? 'Sign in to HospitalCare' : 'Create your patient account'}
             </h2>
             <p className="text-[13px] text-[#667367] mt-1">
-              Select a verified demo role or enter your credentials to open your portal.
+              {mode === 'login'
+                ? 'Select a verified demo role or enter your credentials to open your portal.'
+                : 'Link your existing hospital record to a secure patient portal login.'}
             </p>
           </div>
 
+          <div className="mb-5 grid grid-cols-2 gap-2 p-1 rounded-full bg-white border border-[#E3E8DE]">
+            <button
+              type="button"
+              onClick={() => {
+                setMode('login');
+                setError(null);
+              }}
+              className={cn(
+                'py-2 rounded-full text-xs font-bold transition-all',
+                mode === 'login'
+                  ? 'bg-[#14532D] text-white shadow-sm'
+                  : 'text-[#667367] hover:text-[#26352A]'
+              )}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode('signup');
+                setError(null);
+              }}
+              className={cn(
+                'py-2 rounded-full text-xs font-bold transition-all inline-flex items-center justify-center gap-1.5',
+                mode === 'signup'
+                  ? 'bg-[#14532D] text-white shadow-sm'
+                  : 'text-[#667367] hover:text-[#26352A]'
+              )}
+            >
+              <UserPlus size={13} /> Create Account
+            </button>
+          </div>
+
           {/* Development Demo Role Switcher */}
-          {isDev && (
+          {isDev && mode === 'login' && (
             <div className="mb-6 p-4 rounded-3xl bg-white border border-[#E3E8DE] shadow-xs">
               <p className="text-[10px] font-bold text-[#667367] uppercase tracking-wider mb-2.5">
                 Quick-fill demo roles (Dev only)
@@ -197,6 +255,7 @@ export const Login: React.FC = () => {
             </div>
           )}
 
+          {mode === 'login' ? (
           <form onSubmit={submit} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">
             <div>
               <label className="hc-label">Email address</label>
@@ -253,6 +312,110 @@ export const Login: React.FC = () => {
               </p>
             </div>
           </form>
+          ) : (
+          <form onSubmit={submitSignup} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">
+            <div className="p-3 rounded-2xl bg-[#EAF9D8] border border-[#C7FF75]/70 text-[11px] text-[#0B3D20] leading-relaxed">
+              <b>Hospital record required.</b> Enter the Patient ID, email or phone already
+              registered at reception. We verify your date of birth and registered phone;
+              this creates a portal login, not a second medical record.
+            </div>
+
+            <div>
+              <label className="hc-label">Patient ID / Email / Phone</label>
+              <div className="relative">
+                <IdCard size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                <input
+                  required
+                  value={signup.identifier}
+                  onChange={(e) => setSignup({ ...signup, identifier: e.target.value })}
+                  className="hc-input !pl-10"
+                  placeholder="PAT-1001 or you@example.com"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="hc-label">Date of Birth</label>
+                <div className="relative">
+                  <CalendarDays size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                  <input
+                    type="date"
+                    required
+                    value={signup.dob}
+                    onChange={(e) => setSignup({ ...signup, dob: e.target.value })}
+                    className="hc-input !pl-10"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="hc-label">Registered Phone</label>
+                <div className="relative">
+                  <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                  <input
+                    type="tel"
+                    required
+                    value={signup.phone}
+                    onChange={(e) => setSignup({ ...signup, phone: e.target.value })}
+                    className="hc-input !pl-10"
+                    placeholder="+1 555 0100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="hc-label">Email for this login</label>
+              <div className="relative">
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                <input
+                  type="email"
+                  required
+                  value={signup.email}
+                  onChange={(e) => setSignup({ ...signup, email: e.target.value })}
+                  className="hc-input !pl-10"
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="hc-label">Password</label>
+              <div className="relative">
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                <input
+                  type={show ? 'text' : 'password'}
+                  required
+                  value={signup.password}
+                  onChange={(e) => setSignup({ ...signup, password: e.target.value })}
+                  className="hc-input !pl-10 !pr-11"
+                  placeholder="8+ chars, upper, lower, number, symbol"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShow(!show)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8A998B] hover:text-[#26352A]"
+                  aria-label={show ? 'Hide password' : 'Show password'}
+                >
+                  {show ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="hc-btn-primary w-full !py-3 !rounded-full !bg-[#14532D] hover:!bg-[#0B3D20] text-white shadow-md text-sm mt-2"
+            >
+              {loading ? 'Verifying hospital record…' : 'Create Patient Account'}
+              <ArrowRight size={15} />
+            </button>
+            <p className="text-[10.5px] text-[#8A998B] text-center leading-relaxed">
+              No email/SMS OTP provider is configured in this deployment. Ownership is
+              verified against the hospital record demographics.
+            </p>
+          </form>
+          )}
 
           <div className="mt-6 text-center">
             <Link to="/" className="text-xs text-[#667367] hover:text-[#14532D] font-medium transition-colors">

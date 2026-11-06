@@ -14,6 +14,19 @@ export const createPatientSchema = z.object({
     phone: z.string().min(7, 'Emergency contact phone is required'),
   }),
   assignedDoctorId: z.string().optional(),
+  /**
+   * Explicit administrator confirmation that the new record is genuinely a
+   * different person despite the similarity warning.
+   */
+  confirmDistinct: z.boolean().optional(),
+});
+
+export const checkPatientDuplicatesSchema = z.object({
+  fullName: z.string().min(2, 'Full name is required'),
+  dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'DOB must be in YYYY-MM-DD format'),
+  gender: z.enum(['male', 'female', 'other']),
+  phone: z.string().min(7, 'Valid phone number is required'),
+  email: z.string().email().optional().or(z.literal('')),
 });
 
 export const updatePatientSchema = createPatientSchema.partial();

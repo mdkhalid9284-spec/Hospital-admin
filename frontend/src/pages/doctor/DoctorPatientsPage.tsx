@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../api/client';
-import { IPatient, IMedicalRecord, IPrescription, IMedicalDocument } from '../../types';
+import {
+  IPatient,
+  IMedicalRecord,
+  IPrescription,
+  IMedicalDocument,
+  IAppointment,
+} from '../../types';
 import { PatientClinicalProfileView } from '../../components/ui/PatientClinicalProfileView';
 import { Avatar, Badge } from '../../components/ui/primitives';
 import { Search, Eye, Stethoscope, CheckCircle, FilePlus, Pill } from 'lucide-react';
@@ -17,6 +23,7 @@ export const DoctorPatientsPage: React.FC = () => {
   const [patientRecords, setPatientRecords] = useState<IMedicalRecord[]>([]);
   const [patientRx, setPatientRx] = useState<IPrescription[]>([]);
   const [patientDocs, setPatientDocs] = useState<IMedicalDocument[]>([]);
+  const [patientAppointments, setPatientAppointments] = useState<IAppointment[]>([]);
 
   const fetchPatients = async () => {
     try {
@@ -37,16 +44,40 @@ export const DoctorPatientsPage: React.FC = () => {
   const openProfile = async (p: IPatient) => {
     setSelectedPatient(p);
     try {
-      const [recRes, rxRes, docRes] = await Promise.all([
+      const [recRes, rxRes, docRes, apptRes] = await Promise.all([
         apiClient.get(`/records/patient/${p.id}`).catch(() => ({ data: { data: { records: [] } } })),
         apiClient.get(`/prescriptions/patient/${p.id}`).catch(() => ({ data: { data: { prescriptions: [] } } })),
         apiClient.get(`/documents/patient/${p.id}`).catch(() => ({ data: { data: { documents: [] } } })),
+        apiClient.get('/appointments').catch(() => ({ data: { data: { appointments: [] } } })),
       ]);
       setPatientRecords(recRes.data.data.records || []);
       setPatientRx(rxRes.data.data.prescriptions || []);
       setPatientDocs(docRes.data.data.documents || []);
+      setPatientAppointments(
+        (apptRes.data.data.appointments || []).filter(
+          (appointment: IAppointment) => appointment.patientId === p.id
+        )
+      );
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const openConversation = async (patientId: string) => {
+    try {
+      const res = await apiClient.post('/conversations', { patientId });
+      navigate(`/portal/doctor/messages?conversation=${res.data.data.conversation.id}`);
+    } catch (err: any) {
+      alert(err.message || 'Could not open conversation');
+    }
+  };
+
+  const startVideo = async (patientId: string) => {
+    try {
+      const res = await apiClient.post('/teleconsultations', { patientId });
+      window.open(res.data.data.teleconsultation.joinUrl, '_blank', 'noopener,noreferrer');
+    } catch (err: any) {
+      alert(err.message || 'Could not start video consultation');
     }
   };
 
@@ -65,6 +96,9 @@ export const DoctorPatientsPage: React.FC = () => {
         records={patientRecords}
         prescriptions={patientRx}
         documents={patientDocs}
+        appointments={patientAppointments}
+        onStartVideo={() => startVideo(selectedPatient.id)}
+        onOpenChat={() => openConversation(selectedPatient.id)}
         onClose={() => setSelectedPatient(null)}
         onAddNote={async (note) => {
           await apiClient.post('/records/clinical-note', {

@@ -3,6 +3,7 @@ import { AuthController } from '../controllers/auth.controller.js';
 import { validateRequest } from '../middlewares/validator.js';
 import {
   registerSchema,
+  patientSignupSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -18,6 +19,17 @@ router.post(
   authIpRateLimiter,
   validateRequest({ body: registerSchema }),
   AuthController.register
+);
+
+/**
+ * Patient portal self-registration. Links an existing hospital medical record
+ * to a new login; it never creates a duplicate patient profile.
+ */
+router.post(
+  '/patient-signup',
+  authIpRateLimiter,
+  validateRequest({ body: patientSignupSchema }),
+  AuthController.patientSignup
 );
 
 router.post(

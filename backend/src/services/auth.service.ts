@@ -6,8 +6,115 @@ import { config } from '../config/index.js';
 import { IUser, UserRole } from '../models/types.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { logAuditEvent } from '../middlewares/audit.middleware.js';
+import { normalizeCode, normalizeEmail, normalizePhone } from '../utils/identity.js';
 
 export class AuthService {
+  /**
+   * Patient portal self-registration.
+   *
+   * A portal account is linked to an existing hospital patient record. This
+   * method never creates a new medical record. Ownership is verified against
+   * the patient's ID/registered email or phone, date of birth and registered
+   * phone number. No OTP provider is configured in this deployment, so we do
+   * not claim email/OTP verification works.
+   */
+  public static async registerPatientAccount(data: {
+    identifier: string;
+    dob: string;
+    phone: string;
+    email: string;
+    password: string;
+  }): Promise<{ user: Partial<IUser> & { patientId: string }; token: string; patientId: string }> {
+    const identifier = normalizeCode(data.identifier);
+    const phone = normalizePhone(data.phone);
+    const email = normalizeEmail(data.email);
+
+    const patient = db.patients.find(
+      (candidate) =>
+        normalizeCode(candidate.patientCode) === identifier ||
+        normalizeEmail(candidate.email) === normalizeEmail(data.identifier) ||
+        normalizePhone(candidate.phone) === normalizePhone(data.identifier)
+    );
+
+    if (!patient) {
+      throw new AppError(
+        'No hospital patient record matches that Patient ID, phone or email. Contact the hospital reception to register first.',
+        404,
+        'PATIENT_RECORD_NOT_FOUND'
+      );
+    }
+
+    if (patient.dob !== data.dob) {
+      throw new AppError(
+        'Identity verification failed. The date of birth does not match the hospital record.',
+        403,
+        'PATIENT_VERIFICATION_FAILED'
+      );
+    }
+
+    if (!phone || phone !== normalizePhone(patient.phone)) {
+      throw new AppError(
+        'Identity verification failed. The registered phone number does not match the hospital record.',
+        403,
+        'PATIENT_VERIFICATION_FAILED'
+      );
+    }
+
+    const linkedUser =
+      patient.userId && db.users.find((user) => user.id === patient.userId);
+    if (linkedUser) {
+      throw new AppError(
+        'This patient record is already linked to a portal account. Sign in instead or contact hospital support.',
+        409,
+        'PATIENT_ACCOUNT_ALREADY_LINKED'
+      );
+    }
+
+    const existing = db.users.find((user) => user.email.toLowerCase() === email);
+    if (existing) {
+      throw new AppError('An account with this email address already exists.', 409, 'EMAIL_EXISTS');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(data.password, salt);
+    const userId = `usr-${uuidv4().substring(0, 8)}`;
+    const now = new Date().toISOString();
+
+    const newUser: IUser = {
+      id: userId,
+      email,
+      passwordHash,
+      role: 'patient',
+      fullName: patient.fullName,
+      phone: patient.phone,
+      isActive: true,
+      failedLoginAttempts: 0,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    db.users.push(newUser);
+
+    // Link the account to the existing medical record. Do not create a new one.
+    patient.userId = newUser.id;
+    patient.updatedAt = now;
+
+    const token = this.generateToken(newUser, patient.id);
+
+    logAuditEvent(
+      { id: newUser.id, name: newUser.fullName, role: newUser.role },
+      'PATIENT_PORTAL_ACCOUNT_CREATED',
+      'User',
+      newUser.id,
+      'SUCCESS',
+      undefined,
+      { patientId: patient.id, patientCode: patient.patientCode },
+    );
+
+    const { passwordHash: _, ...safeUser } = newUser;
+    return { user: { ...safeUser, patientId: patient.id }, token, patientId: patient.id };
+  }
+
   public static async register(data: {
     email: string;
     password: string;
@@ -15,69 +122,13 @@ export class AuthService {
     role?: UserRole;
     phone?: string;
   }): Promise<{ user: Partial<IUser>; token: string }> {
-    const existing = db.users.find((u) => u.email.toLowerCase() === data.email.toLowerCase());
-    if (existing) {
-      throw new AppError('An account with this email address already exists.', 409, 'EMAIL_EXISTS');
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(data.password, salt);
-
-    const userId = `usr-${uuidv4().substring(0, 8)}`;
-    const role: UserRole = data.role || 'patient';
-
-    const newUser: IUser = {
-      id: userId,
-      email: data.email.toLowerCase(),
-      passwordHash,
-      role,
-      fullName: data.fullName,
-      phone: data.phone,
-      isActive: true,
-      failedLoginAttempts: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    db.users.push(newUser);
-
-    // If registering as a patient, automatically create patient profile skeleton
-    if (role === 'patient') {
-      const patientCode = `PAT-${1000 + db.patients.length + 1}`;
-      db.patients.push({
-        id: `pat-${uuidv4().substring(0, 8)}`,
-        userId: newUser.id,
-        patientCode,
-        fullName: newUser.fullName,
-        dob: '1990-01-01',
-        gender: 'other',
-        phone: data.phone || '+1 (555) 000-0000',
-        email: newUser.email,
-        address: 'Pending demographic update',
-        emergencyContact: {
-          name: 'Pending',
-          relationship: 'Pending',
-          phone: '+1 (555) 000-0000',
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-    }
-
-    const token = this.generateToken(newUser);
-
-    logAuditEvent(
-      { id: newUser.id, name: newUser.fullName, role: newUser.role },
-      'USER_REGISTRATION',
-      'User',
-      newUser.id,
-      'SUCCESS',
-      undefined,
-      { role: newUser.role, email: newUser.email }
+    // Legacy endpoint guard: public registration must never create arbitrary
+    // staff accounts or a duplicate patient record.
+    throw new AppError(
+      'Direct registration is disabled. Patients must create a portal account from an existing hospital patient record.',
+      410,
+      'REGISTRATION_MOVED',
     );
-
-    const { passwordHash: _, ...safeUser } = newUser;
-    return { user: safeUser, token };
   }
 
   public static async login(

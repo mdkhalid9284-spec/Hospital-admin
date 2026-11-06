@@ -16,6 +16,18 @@ export class AuthController {
     }
   }
 
+  public static async patientSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await AuthService.registerPatientAccount(req.body);
+      res.status(201).json({
+        success: true,
+        data: result,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;

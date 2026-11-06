@@ -70,11 +70,15 @@ export const PatientAppointmentsPage: React.FC = () => {
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!timeSlot) return;
+    if (!user?.patientId) {
+      setBookError('Your patient record is not linked to this login. Contact hospital reception.');
+      return;
+    }
     setSubmitting(true);
     setBookError(null);
     try {
       await apiClient.post('/appointments', {
-        patientId: user?.patientId || 'pat-001',
+        patientId: user.patientId,
         doctorId,
         appointmentDate,
         timeSlot,

@@ -1,0 +1,1746 @@
+{
+  "users": [
+    {
+      "id": "usr-admin-01",
+      "email": "admin@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.eq.HaXQLH.RjEffLdms/xjEVJKhoISi",
+      "role": "admin",
+      "fullName": "Dr. Sarah Mitchell (Administrator)",
+      "phone": "+1 (555) 019-2831",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-01-10T08:00:00.000Z",
+      "updatedAt": "2026-11-06T21:19:14.743Z",
+      "lockUntil": null,
+      "lastLoginAt": "2026-11-06T21:19:14.743Z"
+    },
+    {
+      "id": "usr-doc-01",
+      "email": "doctor@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.lFKzmy/gTmYbF1C1m.ZGqNu8FSEDjke",
+      "role": "doctor",
+      "fullName": "Dr. Alexander Reed, MD",
+      "phone": "+1 (555) 014-9923",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-01-12T09:00:00.000Z",
+      "updatedAt": "2026-01-12T09:00:00.000Z"
+    },
+    {
+      "id": "usr-doc-02",
+      "email": "doctor2@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.lFKzmy/gTmYbF1C1m.ZGqNu8FSEDjke",
+      "role": "doctor",
+      "fullName": "Dr. Elena Rostova, MD",
+      "phone": "+1 (555) 017-8841",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-01-12T09:00:00.000Z",
+      "updatedAt": "2026-01-12T09:00:00.000Z"
+    },
+    {
+      "id": "usr-pat-01",
+      "email": "patient@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "James Harrison",
+      "phone": "+1 (555) 018-7712",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-02-01T10:00:00.000Z",
+      "updatedAt": "2026-11-06T21:15:38.915Z",
+      "lockUntil": null,
+      "lastLoginAt": "2026-11-06T21:15:38.915Z"
+    },
+    {
+      "id": "usr-pat-02",
+      "email": "patient2@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "Emma Watson-Clarke",
+      "phone": "+1 (555) 012-3344",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-02-05T11:00:00.000Z",
+      "updatedAt": "2026-02-05T11:00:00.000Z"
+    },
+    {
+      "id": "usr-pat-03",
+      "email": "patient3@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "Sofia Ramirez",
+      "phone": "+1 (555) 013-5566",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-03-01T09:00:00.000Z",
+      "updatedAt": "2026-03-01T09:00:00.000Z"
+    },
+    {
+      "id": "usr-pat-04",
+      "email": "patient4@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "Daniel Okafor",
+      "phone": "+1 (555) 015-7788",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-03-04T10:00:00.000Z",
+      "updatedAt": "2026-03-04T10:00:00.000Z"
+    },
+    {
+      "id": "usr-pat-05",
+      "email": "patient5@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "Aisha Rahman",
+      "phone": "+1 (555) 016-9900",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-03-08T11:00:00.000Z",
+      "updatedAt": "2026-03-08T11:00:00.000Z"
+    },
+    {
+      "id": "usr-pat-06",
+      "email": "patient6@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.GDH1x921EWDNYsu4.wckGHEWocGcwn.",
+      "role": "patient",
+      "fullName": "Liam Chen",
+      "phone": "+1 (555) 011-2233",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-03-10T12:00:00.000Z",
+      "updatedAt": "2026-03-10T12:00:00.000Z"
+    },
+    {
+      "id": "usr-bill-01",
+      "email": "billing@hospitalcare.demo",
+      "passwordHash": "$2b$10$okNVEeESnNb2s8xNK7Gty.jspa0uJ8paVNL.8TGr0OScuv1mFLt6e",
+      "role": "billing",
+      "fullName": "Marcus Vance (Finance Officer)",
+      "phone": "+1 (555) 019-4455",
+      "isActive": true,
+      "failedLoginAttempts": 0,
+      "createdAt": "2026-01-15T08:30:00.000Z",
+      "updatedAt": "2026-01-15T08:30:00.000Z"
+    }
+  ],
+  "doctors": [
+    {
+      "id": "doc-001",
+      "userId": "usr-doc-01",
+      "doctorCode": "DOC-101",
+      "fullName": "Dr. Alexander Reed, MD",
+      "specialization": "Cardiology",
+      "department": "Cardiovascular Sciences",
+      "qualification": "MBBS, MD (Cardiology), FACC",
+      "phone": "+1 (555) 014-9923",
+      "email": "doctor@hospitalcare.demo",
+      "consultationFee": 150,
+      "availableDays": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "slotDurationMinutes": 30,
+      "isActive": true,
+      "assignedPatientIds": [
+        "pat-001",
+        "pat-003",
+        "pat-005"
+      ]
+    },
+    {
+      "id": "doc-002",
+      "userId": "usr-doc-02",
+      "doctorCode": "DOC-102",
+      "fullName": "Dr. Elena Rostova, MD",
+      "specialization": "Neurology",
+      "department": "Neurological Sciences",
+      "qualification": "MBBS, DM (Neurology)",
+      "phone": "+1 (555) 017-8841",
+      "email": "doctor2@hospitalcare.demo",
+      "consultationFee": 175,
+      "availableDays": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Saturday"
+      ],
+      "slotDurationMinutes": 30,
+      "isActive": true,
+      "assignedPatientIds": [
+        "pat-002",
+        "pat-004",
+        "pat-006"
+      ]
+    }
+  ],
+  "patients": [
+    {
+      "id": "pat-001",
+      "userId": "usr-pat-01",
+      "patientCode": "PAT-1001",
+      "fullName": "James Harrison",
+      "dob": "1985-06-14",
+      "gender": "male",
+      "bloodGroup": "O+",
+      "phone": "+1 (555) 018-7712",
+      "email": "patient@hospitalcare.demo",
+      "address": "742 Evergreen Terrace, Springfield, IL 62704",
+      "emergencyContact": {
+        "name": "Martha Harrison",
+        "relationship": "Spouse",
+        "phone": "+1 (555) 018-7713"
+      },
+      "assignedDoctorId": "doc-001",
+      "currentAdmissionId": "adm-001",
+      "createdAt": "2026-02-01T10:00:00.000Z",
+      "updatedAt": "2026-02-01T10:00:00.000Z",
+      "identityKey": "james harrison|15550187712"
+    },
+    {
+      "id": "pat-002",
+      "userId": "usr-pat-02",
+      "patientCode": "PAT-1002",
+      "fullName": "Emma Watson-Clarke",
+      "dob": "1992-11-23",
+      "gender": "female",
+      "bloodGroup": "A+",
+      "phone": "+1 (555) 012-3344",
+      "email": "patient2@hospitalcare.demo",
+      "address": "12 Grimmauld Place, Boston, MA 02108",
+      "emergencyContact": {
+        "name": "Arthur Clarke",
+        "relationship": "Brother",
+        "phone": "+1 (555) 012-3345"
+      },
+      "assignedDoctorId": "doc-002",
+      "createdAt": "2026-02-05T11:00:00.000Z",
+      "updatedAt": "2026-02-05T11:00:00.000Z",
+      "identityKey": "emma watson clarke|15550123344"
+    },
+    {
+      "id": "pat-003",
+      "userId": "usr-pat-03",
+      "patientCode": "PAT-1003",
+      "fullName": "Sofia Ramirez",
+      "dob": "1978-03-09",
+      "gender": "female",
+      "bloodGroup": "B+",
+      "phone": "+1 (555) 013-5566",
+      "email": "patient3@hospitalcare.demo",
+      "address": "88 Mission Street, San Francisco, CA 94105",
+      "emergencyContact": {
+        "name": "Carlos Ramirez",
+        "relationship": "Spouse",
+        "phone": "+1 (555) 013-5567"
+      },
+      "assignedDoctorId": "doc-001",
+      "createdAt": "2026-03-01T09:00:00.000Z",
+      "updatedAt": "2026-03-01T09:00:00.000Z",
+      "identityKey": "sofia ramirez|15550135566"
+    },
+    {
+      "id": "pat-004",
+      "userId": "usr-pat-04",
+      "patientCode": "PAT-1004",
+      "fullName": "Daniel Okafor",
+      "dob": "2001-12-02",
+      "gender": "male",
+      "bloodGroup": "AB+",
+      "phone": "+1 (555) 015-7788",
+      "email": "patient4@hospitalcare.demo",
+      "address": "31 Harbour View Road, Seattle, WA 98101",
+      "emergencyContact": {
+        "name": "Grace Okafor",
+        "relationship": "Mother",
+        "phone": "+1 (555) 015-7789"
+      },
+      "assignedDoctorId": "doc-002",
+      "createdAt": "2026-03-04T10:00:00.000Z",
+      "updatedAt": "2026-03-04T10:00:00.000Z",
+      "identityKey": "daniel okafor|15550157788"
+    },
+    {
+      "id": "pat-005",
+      "userId": "usr-pat-05",
+      "patientCode": "PAT-1005",
+      "fullName": "Aisha Rahman",
+      "dob": "1969-07-21",
+      "gender": "female",
+      "bloodGroup": "O-",
+      "phone": "+1 (555) 016-9900",
+      "email": "patient5@hospitalcare.demo",
+      "address": "19 Cedar Lane, Austin, TX 78701",
+      "emergencyContact": {
+        "name": "Imran Rahman",
+        "relationship": "Son",
+        "phone": "+1 (555) 016-9901"
+      },
+      "assignedDoctorId": "doc-001",
+      "createdAt": "2026-03-08T11:00:00.000Z",
+      "updatedAt": "2026-03-08T11:00:00.000Z",
+      "identityKey": "aisha rahman|15550169900"
+    },
+    {
+      "id": "pat-006",
+      "userId": "usr-pat-06",
+      "patientCode": "PAT-1006",
+      "fullName": "Liam Chen",
+      "dob": "1990-01-15",
+      "gender": "male",
+      "bloodGroup": "A-",
+      "phone": "+1 (555) 011-2233",
+      "email": "patient6@hospitalcare.demo",
+      "address": "7 Orchard Crescent, Denver, CO 80202",
+      "emergencyContact": {
+        "name": "Mei Chen",
+        "relationship": "Sister",
+        "phone": "+1 (555) 011-2234"
+      },
+      "assignedDoctorId": "doc-002",
+      "createdAt": "2026-03-10T12:00:00.000Z",
+      "updatedAt": "2026-03-10T12:00:00.000Z",
+      "identityKey": "liam chen|15550112233"
+    }
+  ],
+  "wards": [
+    {
+      "id": "ward-icu",
+      "name": "Intensive Care Unit (ICU)",
+      "type": "ICU",
+      "totalBeds": 4,
+      "availableBeds": 3,
+      "occupiedBeds": 1,
+      "rooms": [
+        {
+          "roomNumber": "ICU-101",
+          "beds": [
+            {
+              "bedNumber": "ICU-101-A",
+              "status": "Occupied",
+              "currentPatientId": "pat-001",
+              "currentPatientName": "James Harrison",
+              "currentAdmissionId": "adm-001",
+              "allocatedAt": "2026-11-02T04:00:00.000Z"
+            },
+            {
+              "bedNumber": "ICU-101-B",
+              "status": "Available",
+              "currentPatientId": null,
+              "currentPatientName": null,
+              "currentAdmissionId": null,
+              "allocatedAt": null
+            }
+          ]
+        },
+        {
+          "roomNumber": "ICU-102",
+          "beds": [
+            {
+              "bedNumber": "ICU-102-A",
+              "status": "Available",
+              "currentPatientId": null,
+              "currentPatientName": null,
+              "currentAdmissionId": null,
+              "allocatedAt": null
+            },
+            {
+              "bedNumber": "ICU-102-B",
+              "status": "Available",
+              "currentPatientId": null,
+              "currentPatientName": null,
+              "currentAdmissionId": null,
+              "allocatedAt": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ward-gen-a",
+      "name": "General Medical Ward A",
+      "type": "General",
+      "totalBeds": 6,
+      "availableBeds": 6,
+      "occupiedBeds": 0,
+      "rooms": [
+        {
+          "roomNumber": "GEN-201",
+          "beds": [
+            {
+              "bedNumber": "GEN-201-A",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "GEN-201-B",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "GEN-201-C",
+              "status": "Available"
+            }
+          ]
+        },
+        {
+          "roomNumber": "GEN-202",
+          "beds": [
+            {
+              "bedNumber": "GEN-202-A",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "GEN-202-B",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "GEN-202-C",
+              "status": "Available"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ward-semi-p",
+      "name": "Semi-Private Suite Wing",
+      "type": "Semi-Private",
+      "totalBeds": 4,
+      "availableBeds": 4,
+      "occupiedBeds": 0,
+      "rooms": [
+        {
+          "roomNumber": "SP-301",
+          "beds": [
+            {
+              "bedNumber": "SP-301-A",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "SP-301-B",
+              "status": "Available"
+            }
+          ]
+        },
+        {
+          "roomNumber": "SP-302",
+          "beds": [
+            {
+              "bedNumber": "SP-302-A",
+              "status": "Available"
+            },
+            {
+              "bedNumber": "SP-302-B",
+              "status": "Available"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "admissions": [
+    {
+      "id": "adm-001",
+      "admissionCode": "ADM-8001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "wardId": "ward-icu",
+      "wardName": "Intensive Care Unit (ICU)",
+      "roomNumber": "ICU-101",
+      "bedNumber": "ICU-101-A",
+      "reason": "Acute angina and hypertensive observation",
+      "admissionDate": "2026-11-02T04:00:00.000Z",
+      "status": "Admitted",
+      "dischargeDate": null,
+      "dischargeSummary": null,
+      "createdAt": "2026-11-02T04:00:00.000Z",
+      "updatedAt": "2026-11-02T04:00:00.000Z"
+    },
+    {
+      "id": "adm-002",
+      "admissionCode": "ADM-8002",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "wardId": "ward-gen-a",
+      "wardName": "General Medical Ward A",
+      "roomNumber": "GEN-202",
+      "bedNumber": "GEN-202-A",
+      "reason": "Migraine with aura - short inpatient observation",
+      "admissionDate": "2026-09-23T08:30:00.000Z",
+      "dischargeDate": "2026-09-26T05:30:00.000Z",
+      "status": "Discharged",
+      "dischargeSummary": {
+        "diagnosis": "Migraine with aura, resolved with IV therapy",
+        "treatmentGiven": "IV fluids, antiemetics and analgesia",
+        "adviceOnDischarge": "Neurology follow-up in 2 weeks; maintain headache diary.",
+        "dischargedBy": "Dr. Elena Rostova, MD",
+        "dischargedAt": "2026-09-26T05:30:00.000Z"
+      },
+      "createdAt": "2026-09-23T08:30:00.000Z",
+      "updatedAt": "2026-09-26T05:30:00.000Z"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "apt-001",
+      "appointmentCode": "APT-9001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "appointmentDate": "2026-11-09",
+      "timeSlot": "09:00 - 09:30",
+      "reason": "Hypertension and angina follow-up",
+      "status": "Confirmed",
+      "notes": "Bring home blood-pressure readings.",
+      "createdAt": "2026-11-05T08:30:00.000Z",
+      "startTime": "09:00",
+      "endTime": "09:30",
+      "doctorSlotKey": "doc-001|2026-11-09|09:00 - 09:30",
+      "patientSlotKey": "pat-001|2026-11-09|09:00 - 09:30"
+    },
+    {
+      "id": "apt-002",
+      "appointmentCode": "APT-9002",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "appointmentDate": "2026-11-10",
+      "timeSlot": "09:00 - 09:30",
+      "reason": "Persistent migraine and aura evaluation",
+      "status": "Confirmed",
+      "notes": "Initial neurology consultation.",
+      "createdAt": "2026-11-05T09:30:00.000Z",
+      "startTime": "09:00",
+      "endTime": "09:30",
+      "doctorSlotKey": "doc-002|2026-11-10|09:00 - 09:30",
+      "patientSlotKey": "pat-002|2026-11-10|09:00 - 09:30"
+    },
+    {
+      "id": "apt-003",
+      "appointmentCode": "APT-9003",
+      "patientId": "pat-003",
+      "patientName": "Sofia Ramirez",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "appointmentDate": "2026-11-03",
+      "timeSlot": "10:00 - 10:30",
+      "reason": "Lipid profile review",
+      "status": "Completed",
+      "notes": "Completed consultation; repeat lipids in 3 months.",
+      "createdAt": "2026-10-28T04:30:00.000Z",
+      "startTime": "10:00",
+      "endTime": "10:30",
+      "doctorSlotKey": "doc-001|2026-11-03|10:00 - 10:30",
+      "patientSlotKey": "pat-003|2026-11-03|10:00 - 10:30"
+    },
+    {
+      "id": "apt-004",
+      "appointmentCode": "APT-9004",
+      "patientId": "pat-004",
+      "patientName": "Daniel Okafor",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "appointmentDate": "2026-11-04",
+      "timeSlot": "14:00 - 14:30",
+      "reason": "Migraine medication review",
+      "status": "Cancelled",
+      "notes": "Cancelled by patient; slot released.",
+      "createdAt": "2026-10-29T05:30:00.000Z",
+      "startTime": "14:00",
+      "endTime": "14:30"
+    },
+    {
+      "id": "apt-005",
+      "appointmentCode": "APT-9005",
+      "patientId": "pat-005",
+      "patientName": "Aisha Rahman",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "appointmentDate": "2026-11-12",
+      "timeSlot": "15:00 - 15:30",
+      "reason": "Stable angina review",
+      "status": "Pending",
+      "notes": "Awaiting patient confirmation.",
+      "createdAt": "2026-11-06T03:30:00.000Z",
+      "startTime": "15:00",
+      "endTime": "15:30",
+      "doctorSlotKey": "doc-001|2026-11-12|15:00 - 15:30",
+      "patientSlotKey": "pat-005|2026-11-12|15:00 - 15:30"
+    },
+    {
+      "id": "apt-006",
+      "appointmentCode": "APT-9006",
+      "patientId": "pat-006",
+      "patientName": "Liam Chen",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "appointmentDate": "2026-11-14",
+      "timeSlot": "11:00 - 11:30",
+      "reason": "Tension headache assessment",
+      "status": "Confirmed",
+      "notes": "New patient neurology referral.",
+      "createdAt": "2026-11-06T04:30:00.000Z",
+      "startTime": "11:00",
+      "endTime": "11:30",
+      "doctorSlotKey": "doc-002|2026-11-14|11:00 - 11:30",
+      "patientSlotKey": "pat-006|2026-11-14|11:00 - 11:30"
+    }
+  ],
+  "medicalRecords": [
+    {
+      "id": "rec-001",
+      "patientId": "pat-001",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "recordType": "ClinicalNote",
+      "title": "Post-Admission Cardiac Examination",
+      "notes": "Patient presented with resting chest discomfort. ECG indicates sinus tachycardia. Blood pressure elevated at 155/95. Commenced on beta-blockers and telemetry monitoring.",
+      "vitalSigns": {
+        "bloodPressure": "155/95",
+        "heartRate": 98,
+        "temperature": 98.6,
+        "spo2": 97
+      },
+      "createdAt": "2026-11-02T05:30:00.000Z"
+    },
+    {
+      "id": "rec-002",
+      "patientId": "pat-002",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "recordType": "Consultation",
+      "title": "Neurology Consultation - Migraine With Aura",
+      "notes": "Recurrent visual aura followed by unilateral throbbing headache. No focal deficit. Started on abortive therapy and advised trigger diary.",
+      "vitalSigns": {
+        "bloodPressure": "118/76",
+        "heartRate": 72,
+        "temperature": 98.2,
+        "spo2": 99
+      },
+      "createdAt": "2026-11-05T06:00:00.000Z"
+    },
+    {
+      "id": "rec-003",
+      "patientId": "pat-003",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "recordType": "Diagnosis",
+      "title": "Hyperlipidaemia Review",
+      "notes": "LDL elevated at 3.1 mmol/L. Cardiovascular risk discussed. Lifestyle modification and statin therapy initiated.",
+      "vitalSigns": {
+        "bloodPressure": "132/84",
+        "heartRate": 76,
+        "temperature": 98.4,
+        "spo2": 98
+      },
+      "createdAt": "2026-11-01T05:15:00.000Z"
+    },
+    {
+      "id": "rec-004",
+      "patientId": "pat-004",
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "recordType": "ClinicalNote",
+      "title": "Migraine Medication Tolerance Review",
+      "notes": "Patient reports good tolerance of triptan therapy. No chest pain or palpitations. Continue as required dosing.",
+      "vitalSigns": {
+        "bloodPressure": "122/78",
+        "heartRate": 68,
+        "temperature": 98.1,
+        "spo2": 99
+      },
+      "createdAt": "2026-10-29T09:50:00.000Z"
+    },
+    {
+      "id": "rec-005",
+      "patientId": "pat-005",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "recordType": "ClinicalNote",
+      "title": "Stable Angina Outpatient Review",
+      "notes": "No rest pain. Exercise tolerance stable. Continue antiplatelet and statin therapy; review in 6 months.",
+      "vitalSigns": {
+        "bloodPressure": "128/80",
+        "heartRate": 74,
+        "temperature": 98.3,
+        "spo2": 98
+      },
+      "createdAt": "2026-08-29T04:15:00.000Z"
+    }
+  ],
+  "prescriptions": [
+    {
+      "id": "rx-001",
+      "prescriptionCode": "RX-5001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "patientCode": "PAT-1001",
+      "patientDob": "1985-06-14",
+      "patientAge": 41,
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "diagnosis": "Hypertension & Unstable Angina pectoris",
+      "medicines": [
+        {
+          "medicineName": "Metoprolol Tartrate",
+          "dosage": "50mg",
+          "frequency": "Twice daily (after meals)",
+          "duration": "14 days",
+          "instructions": "Take with morning and evening meals. Monitor heart rate."
+        },
+        {
+          "medicineName": "Aspirin (Enteric Coated)",
+          "dosage": "81mg",
+          "frequency": "Once daily",
+          "duration": "30 days",
+          "instructions": "Take in the morning with water."
+        },
+        {
+          "medicineName": "Atorvastatin",
+          "dosage": "40mg",
+          "frequency": "Once daily (at night)",
+          "duration": "30 days",
+          "instructions": "Take at bedtime."
+        }
+      ],
+      "generalAdvice": "Low sodium diet, maintain bed rest during ICU stay, avoid strenuous activity.",
+      "prescribedAt": "2026-10-26T06:00:00.000Z"
+    },
+    {
+      "id": "rx-002",
+      "prescriptionCode": "RX-5002",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "patientCode": "PAT-1002",
+      "patientDob": "1992-11-23",
+      "patientAge": 33,
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "diagnosis": "Migraine without aura",
+      "medicines": [
+        {
+          "medicineName": "Sumatriptan",
+          "dosage": "50mg",
+          "frequency": "As needed at migraine onset",
+          "duration": "6 doses",
+          "instructions": "Maximum two doses in 24 hours. Do not drive after use."
+        },
+        {
+          "medicineName": "Propranolol",
+          "dosage": "20mg",
+          "frequency": "Twice daily",
+          "duration": "30 days",
+          "instructions": "Take with food; monitor pulse."
+        }
+      ],
+      "generalAdvice": "Maintain a headache diary and avoid known triggers such as dehydration and poor sleep.",
+      "prescribedAt": "2026-11-05T06:30:00.000Z"
+    },
+    {
+      "id": "rx-003",
+      "prescriptionCode": "RX-5003",
+      "patientId": "pat-003",
+      "patientName": "Sofia Ramirez",
+      "patientCode": "PAT-1003",
+      "patientDob": "1978-03-09",
+      "patientAge": 48,
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "diagnosis": "Hyperlipidaemia",
+      "medicines": [
+        {
+          "medicineName": "Rosuvastatin",
+          "dosage": "10mg",
+          "frequency": "Once daily at night",
+          "duration": "90 days",
+          "instructions": "Report muscle pain promptly."
+        }
+      ],
+      "generalAdvice": "Mediterranean-style diet and 150 minutes of moderate exercise per week.",
+      "prescribedAt": "2026-11-01T05:30:00.000Z"
+    },
+    {
+      "id": "rx-004",
+      "prescriptionCode": "RX-5004",
+      "patientId": "pat-004",
+      "patientName": "Daniel Okafor",
+      "patientCode": "PAT-1004",
+      "patientDob": "2001-12-02",
+      "patientAge": 24,
+      "doctorId": "doc-002",
+      "doctorName": "Dr. Elena Rostova, MD",
+      "diagnosis": "Migraine with aura",
+      "medicines": [
+        {
+          "medicineName": "Ibuprofen",
+          "dosage": "400mg",
+          "frequency": "Three times daily with food",
+          "duration": "3 days",
+          "instructions": "Take only during acute episodes."
+        }
+      ],
+      "generalAdvice": "Hydration, regular sleep and trigger avoidance.",
+      "prescribedAt": "2026-10-29T10:15:00.000Z"
+    },
+    {
+      "id": "rx-005",
+      "prescriptionCode": "RX-5005",
+      "patientId": "pat-005",
+      "patientName": "Aisha Rahman",
+      "patientCode": "PAT-1005",
+      "patientDob": "1969-07-21",
+      "patientAge": 57,
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "diagnosis": "Stable angina pectoris",
+      "medicines": [
+        {
+          "medicineName": "Aspirin",
+          "dosage": "75mg",
+          "frequency": "Once daily",
+          "duration": "180 days",
+          "instructions": "Take after breakfast."
+        },
+        {
+          "medicineName": "Bisoprolol",
+          "dosage": "5mg",
+          "frequency": "Once daily",
+          "duration": "180 days",
+          "instructions": "Do not stop abruptly."
+        }
+      ],
+      "generalAdvice": "Seek urgent care for chest pain at rest or lasting more than 15 minutes.",
+      "prescribedAt": "2026-08-29T04:45:00.000Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-med-001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "uploadedBy": "usr-doc-01",
+      "uploaderRole": "doctor",
+      "category": "Report",
+      "title": "12-Lead Electrocardiogram (ECG) Report",
+      "originalFilename": "ECG_Harrison_James_Synthetic.pdf",
+      "safeStorageKey": "sample_ecg_report.pdf",
+      "mimeType": "application/pdf",
+      "fileSizeBytes": 1081,
+      "isExternalRecord": false,
+      "createdAt": "2026-10-26T04:45:00.000Z"
+    },
+    {
+      "id": "doc-med-002",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "uploadedBy": "usr-pat-01",
+      "uploaderRole": "patient",
+      "category": "Other",
+      "title": "Previous OPD Health Summary",
+      "originalFilename": "OPD_Summary_Synthetic.pdf",
+      "safeStorageKey": "sample_opd_summary.pdf",
+      "mimeType": "application/pdf",
+      "fileSizeBytes": 1090,
+      "isExternalRecord": true,
+      "createdAt": "2026-10-13T06:30:00.000Z"
+    },
+    {
+      "id": "doc-med-003",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "uploadedBy": "usr-doc-02",
+      "uploaderRole": "doctor",
+      "category": "Report",
+      "title": "Diagnostic Laboratory Panel",
+      "originalFilename": "Diagnostic_Panel_Synthetic.pdf",
+      "safeStorageKey": "sample_diagnostic_report.pdf",
+      "mimeType": "application/pdf",
+      "fileSizeBytes": 1043,
+      "isExternalRecord": false,
+      "createdAt": "2026-11-05T04:00:00.000Z"
+    },
+    {
+      "id": "doc-med-004",
+      "patientId": "pat-003",
+      "patientName": "Sofia Ramirez",
+      "uploadedBy": "usr-doc-01",
+      "uploaderRole": "doctor",
+      "category": "Report",
+      "title": "Lipid Profile & Cardiac Risk Panel",
+      "originalFilename": "Lipid_Profile_Synthetic.pdf",
+      "safeStorageKey": "sample_lab_panel.pdf",
+      "mimeType": "application/pdf",
+      "fileSizeBytes": 1020,
+      "isExternalRecord": false,
+      "createdAt": "2026-11-01T07:30:00.000Z"
+    },
+    {
+      "id": "doc-med-005",
+      "patientId": "pat-004",
+      "patientName": "Daniel Okafor",
+      "uploadedBy": "usr-pat-04",
+      "uploaderRole": "patient",
+      "category": "Prescription",
+      "title": "External Prescription Scan",
+      "originalFilename": "External_Prescription_Synthetic.pdf",
+      "safeStorageKey": "sample_prescription_scan.pdf",
+      "mimeType": "application/pdf",
+      "fileSizeBytes": 1046,
+      "isExternalRecord": true,
+      "createdAt": "2026-10-29T10:30:00.000Z"
+    }
+  ],
+  "bills": [
+    {
+      "id": "bill-001",
+      "billCode": "INV-3001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "admissionId": "adm-001",
+      "items": [
+        {
+          "id": "item-001-1",
+          "description": "ICU Day 1 Room & Care Charge",
+          "category": "Room Charges",
+          "quantity": 1,
+          "unitPrice": 500,
+          "amount": 500
+        },
+        {
+          "id": "item-001-2",
+          "description": "Emergency Cardiologist Consultation",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 200,
+          "amount": 200
+        },
+        {
+          "id": "item-001-3",
+          "description": "12-Lead ECG & Cardiac Enzyme Panel",
+          "category": "Diagnostics",
+          "quantity": 1,
+          "unitPrice": 180,
+          "amount": 180
+        }
+      ],
+      "subtotal": 880,
+      "tax": 44,
+      "discount": 0,
+      "total": 924,
+      "amountPaid": 300,
+      "balance": 624,
+      "status": "Partially Paid",
+      "createdAt": "2026-10-26T10:30:00.000Z",
+      "updatedAt": "2026-10-26T11:00:00.000Z"
+    },
+    {
+      "id": "bill-002",
+      "billCode": "INV-3002",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-002-1",
+          "description": "Neurology Consultation",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 175,
+          "amount": 175
+        },
+        {
+          "id": "item-002-2",
+          "description": "Neurology Baseline Blood Panel",
+          "category": "Diagnostics",
+          "quantity": 1,
+          "unitPrice": 95,
+          "amount": 95
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13.5,
+      "discount": 0,
+      "total": 283.5,
+      "amountPaid": 283.5,
+      "balance": 0,
+      "status": "Paid",
+      "createdAt": "2026-11-04T05:30:00.000Z",
+      "updatedAt": "2026-11-04T06:00:00.000Z"
+    },
+    {
+      "id": "bill-003",
+      "billCode": "INV-3003",
+      "patientId": "pat-003",
+      "patientName": "Sofia Ramirez",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-003-1",
+          "description": "General Ward Bed Charge",
+          "category": "Room Charges",
+          "quantity": 2,
+          "unitPrice": 250,
+          "amount": 500
+        },
+        {
+          "id": "item-003-2",
+          "description": "Nursing & Monitoring Fee",
+          "category": "Nursing",
+          "quantity": 1,
+          "unitPrice": 120,
+          "amount": 120
+        }
+      ],
+      "subtotal": 620,
+      "tax": 31,
+      "discount": 0,
+      "total": 651,
+      "amountPaid": 0,
+      "balance": 651,
+      "status": "Pending",
+      "createdAt": "2026-09-23T03:30:00.000Z",
+      "updatedAt": "2026-09-23T03:30:00.000Z"
+    },
+    {
+      "id": "bill-004",
+      "billCode": "INV-3004",
+      "patientId": "pat-004",
+      "patientName": "Daniel Okafor",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-004-1",
+          "description": "Neurology Follow-up Consultation",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 175,
+          "amount": 175
+        },
+        {
+          "id": "item-004-2",
+          "description": "Inflammatory Marker Panel",
+          "category": "Diagnostics",
+          "quantity": 1,
+          "unitPrice": 60,
+          "amount": 60
+        }
+      ],
+      "subtotal": 235,
+      "tax": 11.75,
+      "discount": 0,
+      "total": 246.75,
+      "amountPaid": 100,
+      "balance": 146.75,
+      "status": "Partially Paid",
+      "createdAt": "2026-10-30T09:30:00.000Z",
+      "updatedAt": "2026-10-30T10:00:00.000Z"
+    },
+    {
+      "id": "bill-005",
+      "billCode": "INV-3005",
+      "patientId": "pat-005",
+      "patientName": "Aisha Rahman",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-005-1",
+          "description": "Cardiology Consultation",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 150,
+          "amount": 150
+        },
+        {
+          "id": "item-005-2",
+          "description": "Cardiac Stress Test",
+          "category": "Diagnostics",
+          "quantity": 1,
+          "unitPrice": 180,
+          "amount": 180
+        }
+      ],
+      "subtotal": 330,
+      "tax": 16.5,
+      "discount": 0,
+      "total": 346.5,
+      "amountPaid": 346.5,
+      "balance": 0,
+      "status": "Paid",
+      "createdAt": "2026-08-19T04:30:00.000Z",
+      "updatedAt": "2026-08-19T05:00:00.000Z"
+    },
+    {
+      "id": "bill-006",
+      "billCode": "INV-3006",
+      "patientId": "pat-006",
+      "patientName": "Liam Chen",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-006-1",
+          "description": "Neurology New Patient Consultation",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 175,
+          "amount": 175
+        }
+      ],
+      "subtotal": 175,
+      "tax": 8.75,
+      "discount": 0,
+      "total": 183.75,
+      "amountPaid": 0,
+      "balance": 183.75,
+      "status": "Pending",
+      "createdAt": "2026-06-10T05:30:00.000Z",
+      "updatedAt": "2026-06-10T05:30:00.000Z"
+    },
+    {
+      "id": "bill-007",
+      "billCode": "INV-3007",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "admissionId": null,
+      "items": [
+        {
+          "id": "item-007-1",
+          "description": "Post-Discharge Cardiology Check",
+          "category": "Consultation",
+          "quantity": 1,
+          "unitPrice": 150,
+          "amount": 150
+        }
+      ],
+      "subtotal": 150,
+      "tax": 7.5,
+      "discount": 0,
+      "total": 157.5,
+      "amountPaid": 157.5,
+      "balance": 0,
+      "status": "Paid",
+      "createdAt": "2026-11-06T08:30:00.000Z",
+      "updatedAt": "2026-11-06T09:00:00.000Z"
+    }
+  ],
+  "insuranceClaims": [
+    {
+      "id": "clm-001",
+      "claimCode": "CLM-7001",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "billId": "bill-001",
+      "provider": "Blue Cross Comprehensive Healthcare",
+      "policyNumber": "BCBS-9948201-IL",
+      "claimAmount": 624,
+      "status": "Submitted",
+      "remarks": "Inpatient ICU cardiac care coverage claim submitted.",
+      "submittedAt": "2026-10-28T11:30:00.000Z",
+      "adjudicatedAt": null
+    },
+    {
+      "id": "clm-002",
+      "claimCode": "CLM-7002",
+      "patientId": "pat-002",
+      "patientName": "Emma Watson-Clarke",
+      "billId": "bill-002",
+      "provider": "Aetna Health Plans",
+      "policyNumber": "AET-4420-MA",
+      "claimAmount": 283.5,
+      "approvedAmount": 240,
+      "status": "Approved",
+      "remarks": "Approved at 85% of billed neurology package.",
+      "submittedAt": "2026-11-05T07:30:00.000Z",
+      "adjudicatedAt": "2026-11-06T04:30:00.000Z"
+    },
+    {
+      "id": "clm-003",
+      "claimCode": "CLM-7003",
+      "patientId": "pat-004",
+      "patientName": "Daniel Okafor",
+      "billId": "bill-004",
+      "provider": "Cigna Healthcare",
+      "policyNumber": "CIG-3390-MA",
+      "claimAmount": 146.75,
+      "approvedAmount": 0,
+      "status": "Rejected",
+      "remarks": "Rejected: waiting-period exclusion applies to this policy year.",
+      "submittedAt": "2026-10-31T08:30:00.000Z",
+      "adjudicatedAt": "2026-11-01T04:00:00.000Z"
+    },
+    {
+      "id": "clm-004",
+      "claimCode": "CLM-7004",
+      "patientId": "pat-005",
+      "patientName": "Aisha Rahman",
+      "billId": "bill-005",
+      "provider": "Blue Cross Comprehensive Healthcare",
+      "policyNumber": "BCBS-1180-IL",
+      "claimAmount": 346.5,
+      "approvedAmount": 300,
+      "status": "Approved",
+      "remarks": "Approved with standard co-payment deduction.",
+      "submittedAt": "2026-08-29T06:30:00.000Z",
+      "adjudicatedAt": "2026-09-03T10:30:00.000Z"
+    },
+    {
+      "id": "clm-005",
+      "claimCode": "CLM-7005",
+      "patientId": "pat-003",
+      "patientName": "Sofia Ramirez",
+      "billId": "bill-003",
+      "provider": "UnitedHealthcare",
+      "policyNumber": "UHC-7781-IL",
+      "claimAmount": 651,
+      "status": "Submitted",
+      "remarks": "Awaiting payer review for inpatient observation stay.",
+      "submittedAt": "2026-09-28T05:30:00.000Z",
+      "adjudicatedAt": null
+    }
+  ],
+  "insurancePolicies": [
+    {
+      "id": "pol-001",
+      "patientId": "pat-001",
+      "provider": "Blue Cross Comprehensive Healthcare",
+      "policyNumber": "BCBS-9948201-IL",
+      "policyHolderName": "James Harrison",
+      "coverageAmount": 50000,
+      "validUntil": "2027-12-31",
+      "createdAt": "2026-04-21T03:30:00.000Z"
+    },
+    {
+      "id": "pol-002",
+      "patientId": "pat-002",
+      "provider": "Aetna Health Plans",
+      "policyNumber": "AET-4420-MA",
+      "policyHolderName": "Emma Watson-Clarke",
+      "coverageAmount": 25000,
+      "validUntil": "2027-06-30",
+      "createdAt": "2026-04-21T03:35:00.000Z"
+    },
+    {
+      "id": "pol-003",
+      "patientId": "pat-003",
+      "provider": "UnitedHealthcare",
+      "policyNumber": "UHC-7781-IL",
+      "policyHolderName": "Sofia Ramirez",
+      "coverageAmount": 30000,
+      "validUntil": "2027-09-30",
+      "createdAt": "2026-04-21T03:40:00.000Z"
+    },
+    {
+      "id": "pol-004",
+      "patientId": "pat-004",
+      "provider": "Cigna Healthcare",
+      "policyNumber": "CIG-3390-MA",
+      "policyHolderName": "Daniel Okafor",
+      "coverageAmount": 20000,
+      "validUntil": "2027-03-31",
+      "createdAt": "2026-04-21T03:45:00.000Z"
+    },
+    {
+      "id": "pol-005",
+      "patientId": "pat-005",
+      "provider": "Blue Cross Comprehensive Healthcare",
+      "policyNumber": "BCBS-1180-IL",
+      "policyHolderName": "Aisha Rahman",
+      "coverageAmount": 45000,
+      "validUntil": "2027-11-30",
+      "createdAt": "2026-04-21T03:50:00.000Z"
+    },
+    {
+      "id": "pol-006",
+      "patientId": "pat-006",
+      "provider": "Aetna Health Plans",
+      "policyNumber": "AET-9902-MA",
+      "policyHolderName": "Liam Chen",
+      "coverageAmount": 22000,
+      "validUntil": "2027-08-31",
+      "createdAt": "2026-04-21T03:55:00.000Z"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "aud-a3fad950",
+      "timestamp": "2026-11-06T21:19:31.870Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGOUT",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "details": {}
+    },
+    {
+      "id": "aud-1a564221",
+      "timestamp": "2026-11-06T21:19:14.744Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-3fb8a2fe",
+      "timestamp": "2026-11-06T21:16:10.782Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGOUT",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "details": {}
+    },
+    {
+      "id": "aud-51393d38",
+      "timestamp": "2026-11-06T21:15:46.282Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "TELECONSULTATION_STARTED",
+      "resourceType": "Teleconsultation",
+      "resourceId": "tele-14add582",
+      "status": "SUCCESS",
+      "details": {
+        "patientId": "pat-001",
+        "doctorId": "doc-001",
+        "roomName": "HospitalCare-PAT-1001-a1e3f5a4"
+      }
+    },
+    {
+      "id": "aud-cf0772f1",
+      "timestamp": "2026-11-06T21:15:38.916Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-2e9a992a",
+      "timestamp": "2026-11-06T21:15:32.660Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGOUT",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "details": {}
+    },
+    {
+      "id": "aud-b9e71840",
+      "timestamp": "2026-11-06T21:15:27.273Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-d7ba0fc9",
+      "timestamp": "2026-11-06T21:06:23.261Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-b10dd110",
+      "timestamp": "2026-11-06T21:04:55.710Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-61aff67e",
+      "timestamp": "2026-11-06T21:04:32.567Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-3c8f9b0c",
+      "timestamp": "2026-11-06T20:52:46.306Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-69e2e961",
+      "timestamp": "2026-11-06T20:49:59.121Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-3769b0c4",
+      "timestamp": "2026-11-06T20:49:25.579Z",
+      "actorId": "anonymous",
+      "actorName": "nobody@hospitalcare.demo",
+      "actorRole": "patient",
+      "action": "LOGIN_FAILED_UNKNOWN_USER",
+      "resourceType": "User",
+      "resourceId": "unknown",
+      "status": "FAILURE",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "email": "nobody@hospitalcare.demo"
+      }
+    },
+    {
+      "id": "aud-9d05078b",
+      "timestamp": "2026-11-06T20:49:10.700Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "LOGIN_FAILED",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "FAILURE",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "attempts": 1
+      }
+    },
+    {
+      "id": "aud-32153711",
+      "timestamp": "2026-11-06T20:48:55.600Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-f69a7957",
+      "timestamp": "2026-11-06T20:46:56.032Z",
+      "actorId": "anonymous",
+      "actorName": "nobody@hospitalcare.demo",
+      "actorRole": "patient",
+      "action": "LOGIN_FAILED_UNKNOWN_USER",
+      "resourceType": "User",
+      "resourceId": "unknown",
+      "status": "FAILURE",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "email": "nobody@hospitalcare.demo"
+      }
+    },
+    {
+      "id": "aud-d0bcfc9f",
+      "timestamp": "2026-11-06T20:44:12.815Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-571effba",
+      "timestamp": "2026-11-06T20:42:34.820Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-5476ea71",
+      "timestamp": "2026-11-06T20:24:59.436Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-155450d7",
+      "timestamp": "2026-11-06T19:55:52.859Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "::1",
+      "details": {}
+    },
+    {
+      "id": "aud-80c8ec98",
+      "timestamp": "2026-11-06T19:48:48.962Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "::1",
+      "details": {}
+    },
+    {
+      "id": "aud-5d5f50b5",
+      "timestamp": "2026-11-06T19:45:17.748Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "::1",
+      "details": {}
+    },
+    {
+      "id": "aud-3dabdc7a",
+      "timestamp": "2026-11-06T19:43:03.369Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "::1",
+      "details": {}
+    },
+    {
+      "id": "aud-001",
+      "timestamp": "2026-11-02T04:00:00.000Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "PATIENT_ADMISSION",
+      "resourceType": "Admission",
+      "resourceId": "adm-001",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "patientId": "pat-001",
+        "bedNumber": "ICU-101-A",
+        "doctorId": "doc-001"
+      }
+    },
+    {
+      "id": "aud-002",
+      "timestamp": "2026-11-05T07:30:00.000Z",
+      "actorId": "usr-bill-01",
+      "actorName": "Marcus Vance (Finance Officer)",
+      "actorRole": "billing",
+      "action": "INSURANCE_CLAIM_SUBMITTED",
+      "resourceType": "InsuranceClaim",
+      "resourceId": "clm-002",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "claimCode": "CLM-7002",
+        "provider": "Aetna Health Plans"
+      }
+    },
+    {
+      "id": "aud-003",
+      "timestamp": "2026-10-26T10:30:00.000Z",
+      "actorId": "usr-bill-01",
+      "actorName": "Marcus Vance (Finance Officer)",
+      "actorRole": "billing",
+      "action": "BILL_GENERATED",
+      "resourceType": "Bill",
+      "resourceId": "bill-001",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "billCode": "INV-3001",
+        "total": 924
+      }
+    },
+    {
+      "id": "aud-004",
+      "timestamp": "2026-11-06T02:45:00.000Z",
+      "actorId": "usr-doc-01",
+      "actorName": "Dr. Alexander Reed, MD",
+      "actorRole": "doctor",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-doc-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "aud-005",
+      "timestamp": "2026-11-01T07:30:00.000Z",
+      "actorId": "usr-doc-01",
+      "actorName": "Dr. Alexander Reed, MD",
+      "actorRole": "doctor",
+      "action": "DOCUMENT_UPLOADED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-med-004",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "patientId": "pat-003",
+        "category": "Report"
+      }
+    },
+    {
+      "id": "aud-006",
+      "timestamp": "2026-07-30T04:30:00.000Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "PATIENT_CREATED",
+      "resourceType": "Patient",
+      "resourceId": "pat-006",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {
+        "patientCode": "PAT-1006"
+      }
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-001",
+      "recipientId": "usr-pat-01",
+      "recipientRole": "patient",
+      "title": "Admission Confirmed",
+      "message": "You have been admitted to ICU-101 (Bed ICU-101-A) under Dr. Alexander Reed.",
+      "type": "INFO",
+      "isRead": false,
+      "link": "/portal/patient/admissions",
+      "createdAt": "2026-11-02T04:00:00.000Z"
+    },
+    {
+      "id": "notif-002",
+      "recipientId": "usr-doc-01",
+      "recipientRole": "doctor",
+      "title": "New Patient Assigned",
+      "message": "Patient James Harrison (PAT-1001) has been assigned to your clinical care.",
+      "type": "ALERT",
+      "isRead": false,
+      "link": "/portal/doctor/patients",
+      "createdAt": "2026-11-02T04:00:00.000Z"
+    },
+    {
+      "id": "notif-003",
+      "recipientId": "usr-pat-02",
+      "recipientRole": "patient",
+      "title": "Insurance Claim Approved",
+      "message": "Claim CLM-7002 has been approved for $240.00.",
+      "type": "SUCCESS",
+      "isRead": false,
+      "link": "/portal/patient/billing",
+      "createdAt": "2026-11-06T04:30:00.000Z"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "conv-be3b2c11",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "doctorId": "doc-001",
+      "participantUserIds": [
+        "usr-pat-01",
+        "usr-doc-01"
+      ],
+      "participantNames": [
+        "James Harrison",
+        "Dr. Alexander Reed, MD"
+      ],
+      "participantRoles": [
+        "patient",
+        "doctor"
+      ],
+      "subject": "Care thread with Dr. Alexander Reed, MD",
+      "createdBy": "usr-pat-01",
+      "createdAt": "2026-11-06T21:15:56.530Z",
+      "updatedAt": "2026-11-06T21:15:56.530Z"
+    }
+  ],
+  "messages": [],
+  "teleconsultations": [
+    {
+      "id": "tele-14add582",
+      "patientId": "pat-001",
+      "patientName": "James Harrison",
+      "doctorId": "doc-001",
+      "doctorName": "Dr. Alexander Reed, MD",
+      "roomName": "HospitalCare-PAT-1001-a1e3f5a4",
+      "joinUrl": "https://meet.jit.si/HospitalCare-PAT-1001-a1e3f5a4",
+      "provider": "jitsi",
+      "status": "Active",
+      "startedBy": "usr-pat-01",
+      "startedAt": "2026-11-06T21:15:46.282Z",
+      "endedAt": null
+    }
+  ]
+}

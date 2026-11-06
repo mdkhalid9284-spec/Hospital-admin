@@ -3,10 +3,12 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import { config } from './config/index.js';
+import { db } from './database/index.js';
 import apiRouter from './routes/index.js';
 import { errorHandler, AppError } from './middlewares/errorHandler.js';
 import { globalRateLimiter } from './middlewares/rateLimiter.js';
 import { requestContextMiddleware } from './middlewares/audit.middleware.js';
+import { persistenceMiddleware } from './middlewares/persistence.middleware.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -78,16 +80,23 @@ const allowed =
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  // 5b. Persistent-storage refresh + write-through commit.
+  // Every successful mutation is committed before the HTTP response is sent.
+  app.use(persistenceMiddleware);
+
   // 6. Global Rate Limiter
   app.use(config.apiPrefix, globalRateLimiter);
 
   // 7. Health Check Endpoint
   app.get('/api/health', (req: Request, res: Response) => {
-    res.status(200).json({
-      success: true,
-      status: 'healthy',
+    const ready = db.isReady;
+    res.status(ready ? 200 : 503).json({
+      success: ready,
+      status: ready ? 'healthy' : 'starting',
       system: 'HospitalCare API Service',
       version: '1.0.0',
+      persistenceMode: db.persistenceMode,
+      databaseReady: ready,
       timestamp: new Date().toISOString(),
     });
   });

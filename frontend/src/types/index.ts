@@ -119,6 +119,49 @@ export interface IAppointment {
   status: AppointmentStatus;
   notes?: string;
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface IConversation {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctorId?: string;
+  participantUserIds: string[];
+  participantNames: string[];
+  participantRoles: UserRole[];
+  subject?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt?: string;
+  lastMessagePreview?: string;
+}
+
+export interface IMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: UserRole;
+  body: string;
+  createdAt: string;
+  readBy: string[];
+}
+
+export interface ITeleconsultation {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctorId: string;
+  doctorName: string;
+  roomName: string;
+  joinUrl: string;
+  provider: string;
+  status: 'Active' | 'Ended';
+  startedBy: string;
+  startedAt: string;
+  endedAt?: string | null;
 }
 
 export interface IMedicalRecord {

@@ -5,16 +5,18 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    // Public assets are served as-is. Watching them can crash Vite on Windows
-    // with EBUSY while an image is still being written/moved by another app.
     watch: {
       ignored: ['**/public/**'],
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true
-      }
-    }
-  }
+        // Must match backend PORT (default 5000 in backend/.env / config). Not 4000.
+        target: 'http://127.0.0.1:5000',
+        changeOrigin: true,
+        secure: false,
+        timeout: 15000,
+        proxyTimeout: 15000,
+      },
+    },
+  },
 });

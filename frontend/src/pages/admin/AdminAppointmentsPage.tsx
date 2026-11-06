@@ -29,6 +29,20 @@ export const AdminAppointmentsPage: React.FC = () => {
   const [booking, setBooking] = useState(false);
   const [bookError, setBookError] = useState<string | null>(null);
 
+  // Reschedule / edit
+  const [editAppointment, setEditAppointment] = useState<IAppointment | null>(null);
+  const [editForm, setEditForm] = useState({
+    patientId: '',
+    doctorId: '',
+    appointmentDate: todayISO(),
+    timeSlot: '',
+    reason: '',
+    notes: '',
+  });
+  const [editSlots, setEditSlots] = useState<string[]>([]);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+
   const fetchAppointments = async () => {
     try {
       setLoading(true);
@@ -103,6 +117,63 @@ export const AdminAppointmentsPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (!editAppointment || !editForm.doctorId || !editForm.appointmentDate) return;
+    (async () => {
+      try {
+        const res = await apiClient.get(
+          `/appointments/available-slots?doctorId=${editForm.doctorId}&date=${editForm.appointmentDate}`
+        );
+        const available: string[] = res.data.data.availableSlots ?? [];
+        // The appointment's current slot is reported as booked; keep it selectable.
+        const withCurrent = available.includes(editForm.timeSlot)
+          ? available
+          : [editForm.timeSlot, ...available].filter(Boolean);
+        setEditSlots(withCurrent);
+      } catch {
+        setEditSlots([editForm.timeSlot].filter(Boolean));
+      }
+    })();
+  }, [editAppointment, editForm.doctorId, editForm.appointmentDate, editForm.timeSlot]);
+
+  const openEdit = (appointment: IAppointment) => {
+    setEditError(null);
+    setEditAppointment(appointment);
+    setEditForm({
+      patientId: appointment.patientId,
+      doctorId: appointment.doctorId,
+      appointmentDate: appointment.appointmentDate,
+      timeSlot: appointment.timeSlot,
+      reason: appointment.reason,
+      notes: appointment.notes || '',
+    });
+  };
+
+  const handleEditSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editAppointment) return;
+    setSavingEdit(true);
+    setEditError(null);
+    try {
+      await apiClient.patch(`/appointments/${editAppointment.id}`, {
+        patientId: editForm.patientId,
+        doctorId: editForm.doctorId,
+        appointmentDate: editForm.appointmentDate,
+        timeSlot: editForm.timeSlot,
+        reason: editForm.reason,
+        notes: editForm.notes,
+      });
+      setEditAppointment(null);
+      setToastMsg('Appointment rescheduled successfully. The previous slot was released.');
+      await fetchAppointments();
+      setTimeout(() => setToastMsg(null), 4000);
+    } catch (err: any) {
+      setEditError(err.message || 'Could not update the appointment.');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const handleStatusChange = async (
     id: string,
     status: 'Confirmed' | 'Completed' | 'Cancelled'
@@ -157,6 +228,7 @@ export const AdminAppointmentsPage: React.FC = () => {
         onViewPatient={(patId) => {
           navigate(`/portal/admin/patients`);
         }}
+        onEditAppointment={openEdit}
       />
 
       {/* Modal: Schedule Appointment */}
@@ -287,6 +359,114 @@ export const AdminAppointmentsPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Modal: Reschedule / Edit Appointment */}
+      {editAppointment && (
+        <Modal open={true} onClose={() => setEditAppointment(null)}>
+          <ModalHeader
+            title="Reschedule Appointment"
+            subtitle={`${editAppointment.appointmentCode} · ${editAppointment.patientName}`}
+            onClose={() => setEditAppointment(null)}
+          />
+          <form onSubmit={handleEditSave} className="p-6 space-y-4">
+            <Field label="Patient *">
+              <select
+                required
+                value={editForm.patientId}
+                onChange={(e) => setEditForm({ ...editForm, patientId: e.target.value })}
+                className={inputCls}
+              >
+                {patients.map((patient) => (
+                  <option key={patient.id} value={patient.id}>
+                    {patient.fullName} ({patient.patientCode})
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Doctor *">
+              <select
+                required
+                value={editForm.doctorId}
+                onChange={(e) => setEditForm({ ...editForm, doctorId: e.target.value })}
+                className={inputCls}
+              >
+                {doctors.map((doctor) => (
+                  <option key={doctor.id} value={doctor.id}>
+                    {doctor.fullName} — {doctor.specialization}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Date *">
+                <input
+                  type="date"
+                  required
+                  value={editForm.appointmentDate}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, appointmentDate: e.target.value })
+                  }
+                  className={inputCls}
+                />
+              </Field>
+              <Field label="Time Slot *">
+                <select
+                  required
+                  value={editForm.timeSlot}
+                  onChange={(e) => setEditForm({ ...editForm, timeSlot: e.target.value })}
+                  className={inputCls}
+                >
+                  {editSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+            <Field label="Reason *">
+              <input
+                required
+                value={editForm.reason}
+                onChange={(e) => setEditForm({ ...editForm, reason: e.target.value })}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Notes">
+              <textarea
+                rows={2}
+                value={editForm.notes}
+                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                className={inputCls}
+              />
+            </Field>
+
+            {editError && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+                <AlertCircle size={15} className="mt-0.5 shrink-0" />
+                <span>{editError}</span>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditAppointment(null)}
+                className="hc-btn-ghost"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={savingEdit}
+                className="hc-btn-blue"
+              >
+                {savingEdit ? 'Saving…' : 'Save Reschedule'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 };

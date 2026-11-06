@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Users, BedDouble, CalendarDays, BarChart3, ShieldCheck,
   Settings, Stethoscope, UserCheck, Pill, FileText, FolderOpen, Receipt,
   HeartPulse, UserRound, LogOut, ChevronLeft, ChevronRight, Activity, X,
+  MessageSquare,
 } from 'lucide-react';
 
 interface NavItem {
@@ -24,7 +25,8 @@ const NAV_CONFIG: Record<UserRole, NavItem[]> = {
     { label: 'Appointments', path: '/portal/admin/appointments', icon: <CalendarDays size={17} /> },
     { label: 'Analytics', path: '/portal/admin/analytics', icon: <BarChart3 size={17} /> },
     { label: 'Audit Logs', path: '/portal/admin/audit-logs', icon: <ShieldCheck size={17} /> },
-    { label: 'Settings', path: '/portal/admin/settings', icon: <Settings size={17} /> },
+    { label: 'Messages', path: '/portal/admin/messages', icon: <MessageSquare size={17} /> },
+  { label: 'Settings', path: '/portal/admin/settings', icon: <Settings size={17} /> },
   ],
   doctor: [
     { label: 'Dashboard', path: '/portal/doctor/dashboard', icon: <LayoutDashboard size={17} /> },
@@ -33,6 +35,7 @@ const NAV_CONFIG: Record<UserRole, NavItem[]> = {
     { label: 'Clinical Notes', path: '/portal/doctor/records', icon: <FileText size={17} /> },
     { label: 'Prescriptions', path: '/portal/doctor/prescriptions', icon: <Pill size={17} /> },
     { label: 'Documents', path: '/portal/doctor/documents', icon: <FolderOpen size={17} /> },
+    { label: 'Messages', path: '/portal/doctor/messages', icon: <MessageSquare size={17} /> },
   ],
   patient: [
     { label: 'Dashboard', path: '/portal/patient/dashboard', icon: <LayoutDashboard size={17} /> },
@@ -41,6 +44,7 @@ const NAV_CONFIG: Record<UserRole, NavItem[]> = {
     { label: 'Medical Records', path: '/portal/patient/records', icon: <HeartPulse size={17} /> },
     { label: 'Documents', path: '/portal/patient/documents', icon: <FolderOpen size={17} /> },
     { label: 'Bills & Insurance', path: '/portal/patient/billing', icon: <Receipt size={17} /> },
+    { label: 'Messages', path: '/portal/patient/messages', icon: <MessageSquare size={17} /> },
     { label: 'My Profile', path: '/portal/patient/profile', icon: <UserRound size={17} /> },
   ],
   billing: [

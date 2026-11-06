@@ -4,11 +4,13 @@ import { config } from '../config/index.js';
 export class AppError extends Error {
   public statusCode: number;
   public code: string;
+  public details?: unknown;
 
-  constructor(message: string, statusCode = 400, code = 'BAD_REQUEST') {
+  constructor(message: string, statusCode = 400, code = 'BAD_REQUEST', details?: unknown) {
     super(message);
     this.statusCode = statusCode;
     this.code = code;
+    this.details = details;
     Object.setPrototypeOf(this, AppError.prototype);
   }
 }
@@ -45,6 +47,7 @@ export const errorHandler = (
       code,
       message,
       requestId: req.requestId,
+      ...(err.details !== undefined ? { details: err.details } : {}),
     },
   });
 };

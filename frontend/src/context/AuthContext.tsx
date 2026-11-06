@@ -8,6 +8,13 @@ interface AuthContextType {
   role: UserRole | null;
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<IUser>;
+  registerPatient: (data: {
+    identifier: string;
+    dob: string;
+    phone: string;
+    email: string;
+    password: string;
+  }) => Promise<IUser>;
   logout: () => void;
 }
 
@@ -20,32 +27,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const initAuth = async () => {
-      const savedToken = localStorage.getItem('hospitalcare_token');
-      const savedUser = localStorage.getItem('hospitalcare_user');
-      if (savedToken && savedUser) {
-        try {
-          const parsedUser = JSON.parse(savedUser);
-          // Validate that the stored user has required fields to prevent tampering
-          if (parsedUser && parsedUser.id && parsedUser.role && parsedUser.email) {
-            setUser(parsedUser);
-            setToken(savedToken);
-          } else {
-            throw new Error('Invalid stored user data');
+      try {
+        const savedToken = localStorage.getItem('hospitalcare_token');
+        const savedUser = localStorage.getItem('hospitalcare_user');
+        if (savedToken && savedUser) {
+          try {
+            const parsedUser = JSON.parse(savedUser);
+            // Validate that the stored user has required fields to prevent tampering
+            if (parsedUser && parsedUser.id && parsedUser.role && parsedUser.email) {
+              setUser(parsedUser);
+              setToken(savedToken);
+            } else {
+              throw new Error('Invalid stored user data');
+            }
+          } catch {
+            localStorage.removeItem('hospitalcare_token');
+            localStorage.removeItem('hospitalcare_user');
           }
-        } catch {
-          localStorage.removeItem('hospitalcare_token');
-          localStorage.removeItem('hospitalcare_user');
         }
+      } finally {
+        // Always clear the boot spinner — never leave "Authenticating…" forever.
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
-    initAuth();
+    void initAuth();
   }, []);
 
   const login = async (email: string, pass: string): Promise<IUser> => {
     const res = await apiClient.post('/auth/login', { email, password: pass });
-    const { user: authedUser, token: authToken } = res.data.data;
+    const payload = res.data?.data;
+    if (!payload?.user || !payload?.token) {
+      throw new Error('Login response was incomplete. Please try again.');
+    }
+    const { user: authedUser, token: authToken } = payload;
     // Role is derived entirely from the server response — never from client input
+    setUser(authedUser);
+    setToken(authToken);
+    localStorage.setItem('hospitalcare_token', authToken);
+    localStorage.setItem('hospitalcare_user', JSON.stringify(authedUser));
+    return authedUser;
+  };
+
+  const registerPatient = async (data: {
+    identifier: string;
+    dob: string;
+    phone: string;
+    email: string;
+    password: string;
+  }): Promise<IUser> => {
+    const res = await apiClient.post('/auth/patient-signup', data);
+    const { user: authedUser, token: authToken } = res.data.data;
     setUser(authedUser);
     setToken(authToken);
     localStorage.setItem('hospitalcare_token', authToken);
@@ -76,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: user ? user.role : null,
         isLoading,
         login,
+        registerPatient,
         logout,
       }}
     >

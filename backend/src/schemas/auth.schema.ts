@@ -17,6 +17,26 @@ export const registerSchema = z.object({
   phone: z.string().min(7, 'Invalid phone number format').optional(),
 });
 
+/**
+ * Patient portal sign-up: an existing hospital record is claimed, never
+ * recreated. The identifier may be a Patient ID, registered email or phone.
+ */
+export const patientSignupSchema = z.object({
+  identifier: z.string().min(3, 'Enter your Patient ID, registered email or phone number'),
+  dob: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must use the YYYY-MM-DD format'),
+  phone: z.string().min(7, 'Enter the phone number registered with the hospital'),
+  email: z.string().email('Invalid email address'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
+});
+
 export const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),

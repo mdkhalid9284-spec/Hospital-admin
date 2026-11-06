@@ -12,6 +12,8 @@ import billingRoutes from './billing.routes.js';
 import insuranceRoutes from './insurance.routes.js';
 import analyticsRoutes from './analytics.routes.js';
 import auditRoutes from './audit.routes.js';
+import conversationRoutes from './conversation.routes.js';
+import teleconsultationRoutes from './teleconsultation.routes.js';
 
 const router = Router();
 
@@ -28,5 +30,7 @@ router.use('/bills', billingRoutes);
 router.use('/insurance', insuranceRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/audit-logs', auditRoutes);
+router.use('/conversations', conversationRoutes);
+router.use('/teleconsultations', teleconsultationRoutes);
 
 export default router;

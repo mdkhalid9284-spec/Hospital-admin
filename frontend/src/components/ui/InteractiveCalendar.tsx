@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IAppointment } from '../../types';
 import {
   ChevronLeft,
@@ -34,6 +34,7 @@ interface InteractiveCalendarProps {
   onBookNew?: () => void;
   onViewPatient?: (patientId: string, patientName: string) => void;
   onStatusChange?: (id: string, status: 'Confirmed' | 'Completed' | 'Cancelled') => void;
+  onEditAppointment?: (appointment: IAppointment) => void;
 }
 
 /** Mirrors the backend's single source of truth for consult slots. */
@@ -85,6 +86,7 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
   onBookNew,
   onViewPatient,
   onStatusChange,
+  onEditAppointment,
 }) => {
   const [view, setView] = useState<ViewMode>('week');
   const [cursor, setCursor] = useState<Date>(() => {
@@ -93,6 +95,15 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
   });
   const [selectedApp, setSelectedApp] = useState<IAppointment | null>(null);
   const [searchQ, setSearchQ] = useState('');
+
+  // Keep the detail panel in sync after a reschedule/status refresh.
+  useEffect(() => {
+    setSelectedApp((current) => {
+      if (!current) return current;
+      const updated = appointments.find((appointment) => appointment.id === current.id);
+      return updated ?? null;
+    });
+  }, [appointments]);
 
   const weekStart = useMemo(() => startOfWeekMonday(cursor), [cursor]);
   const weekDays = useMemo(
@@ -603,6 +614,16 @@ export const InteractiveCalendar: React.FC<InteractiveCalendarProps> = ({
                     className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                   >
                     View Patient Record
+                  </button>
+                )}
+
+                {onEditAppointment && selectedApp.status !== 'Cancelled' && (
+                  <button
+                    type="button"
+                    onClick={() => onEditAppointment(selectedApp)}
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Reschedule / Edit
                   </button>
                 )}
 

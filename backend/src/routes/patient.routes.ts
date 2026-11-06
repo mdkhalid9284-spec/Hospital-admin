@@ -3,7 +3,7 @@ import { PatientController } from '../controllers/patient.controller.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
 import { requireRoles, requireResourceOwnership } from '../middlewares/rbac.middleware.js';
 import { validateRequest } from '../middlewares/validator.js';
-import { createPatientSchema, updatePatientSchema } from '../schemas/patient.schema.js';
+import { createPatientSchema, updatePatientSchema, checkPatientDuplicatesSchema } from '../schemas/patient.schema.js';
 
 const router = Router();
 
@@ -11,6 +11,14 @@ router.use(authenticateToken);
 
 // List / Search patients (Admin, Doctor, Billing)
 router.get('/', requireRoles('admin', 'doctor', 'billing'), PatientController.getAll);
+
+// Duplicate detection (Admin registering a patient)
+router.post(
+  '/check-duplicates',
+  requireRoles('admin'),
+  validateRequest({ body: checkPatientDuplicatesSchema }),
+  PatientController.checkDuplicates
+);
 
 // Get patient by ID (Admin, Doctor, or Self Patient)
 router.get(

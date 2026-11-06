@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { IPatient, IMedicalRecord, IPrescription, IMedicalDocument } from '../../types';
+import {
+  IPatient,
+  IMedicalRecord,
+  IPrescription,
+  IMedicalDocument,
+  IAppointment,
+} from '../../types';
 import { TestAnalyticsBubbleChart } from './TestAnalyticsBubbleChart';
 import { WellnessScoreGauge } from './WellnessScoreGauge';
 import {
@@ -24,19 +30,36 @@ interface PatientClinicalProfileProps {
   records: IMedicalRecord[];
   prescriptions: IPrescription[];
   documents: IMedicalDocument[];
+  appointments?: IAppointment[];
   onAddNote?: (note: { title: string; notes: string; bloodPressure: string; heartRate: number; temperature: number; spo2: number }) => Promise<void>;
   onUploadDoc?: (file: File, category: string, title: string) => Promise<void>;
+  onStartVideo?: () => Promise<void> | void;
+  onOpenChat?: () => Promise<void> | void;
   onClose?: () => void;
   canEditClinical?: boolean;
 }
+
+const calculateAge = (dob: string): number | null => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob || '')) return null;
+  const birth = new Date(`${dob}T00:00:00`);
+  if (Number.isNaN(birth.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const monthDiff = now.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) age -= 1;
+  return age >= 0 ? age : null;
+};
 
 export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> = ({
   patient,
   records,
   prescriptions,
   documents,
+  appointments = [],
   onAddNote,
   onUploadDoc,
+  onStartVideo,
+  onOpenChat,
   onClose,
   canEditClinical = true,
 }) => {
@@ -59,6 +82,18 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
   const [docCategory, setDocCategory] = useState('Report');
   const [uploading, setUploading] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const age = calculateAge(patient.dob);
+  const sortedAppointments = [...appointments].sort((a, b) =>
+    `${a.appointmentDate} ${a.timeSlot}`.localeCompare(`${b.appointmentDate} ${b.timeSlot}`)
+  );
+  const upcomingAppointments = sortedAppointments.filter(
+    (appointment) => appointment.status !== 'Cancelled' && appointment.status !== 'Completed'
+  );
+  const lastVisit = sortedAppointments
+    .filter((appointment) => appointment.status !== 'Cancelled')
+    .slice(-1)[0];
+  const labReports = records.filter((record) => record.recordType === 'LabReport');
 
   const handleExport = () => {
     const data = {
@@ -164,22 +199,26 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
                 <Avatar name={patient.fullName} size="lg" className="w-14 h-14 text-sm" />
                 <div>
                   <h3 className="text-base font-bold text-slate-900">{patient.fullName}</h3>
-                  <p className="text-xs text-slate-400 font-medium">25 years | Female</p>
+                  <p className="text-xs text-slate-400 font-medium capitalize">
+                    {age !== null ? `${age} years` : 'Age not recorded'} | {patient.gender}
+                  </p>
                 </div>
               </div>
 
               {/* Video & Chat action buttons */}
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => alert(`Initiating secure video consultation with ${patient.fullName}`)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                  onClick={() => onStartVideo?.()}
+                  disabled={!onStartVideo}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-slate-600 transition-colors"
                   title="Video Call"
                 >
                   <Video size={14} />
                 </button>
                 <button
-                  onClick={() => alert(`Opening secure clinical message thread with ${patient.fullName}`)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors"
+                  onClick={() => onOpenChat?.()}
+                  disabled={!onOpenChat}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-slate-600 transition-colors"
                   title="Message"
                 >
                   <MessageSquare size={14} />
@@ -191,27 +230,33 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
             <div className="mt-5 grid grid-cols-2 gap-4 text-xs border-t border-slate-100 pt-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Patient ID</p>
-                <p className="font-bold text-slate-800 font-mono mt-0.5">#{patient.patientCode || '128979'}</p>
+                <p className="font-bold text-slate-800 font-mono mt-0.5">#{patient.patientCode || patient.id}</p>
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Visit Date</p>
-                <p className="font-bold text-slate-800 mt-0.5">12 October, 2026</p>
+                <p className="font-bold text-slate-800 mt-0.5">
+                  {lastVisit ? lastVisit.appointmentDate : 'No visits recorded'}
+                </p>
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Contact No.</p>
-                <p className="font-semibold text-slate-800 mt-0.5">{patient.phone || '+91 6238290882'}</p>
+                <p className="font-semibold text-slate-800 mt-0.5">{patient.phone || 'Not recorded'}</p>
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Email</p>
-                <p className="font-semibold text-slate-800 truncate mt-0.5">{patient.email}</p>
+                <p className="font-semibold text-slate-800 truncate mt-0.5">{patient.email || 'Not recorded'}</p>
               </div>
               <div className="col-span-2">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Emergency Contact No.</p>
-                <p className="font-semibold text-slate-800 mt-0.5">{patient.emergencyContact?.phone || '+91 6238290882'}</p>
+                <p className="font-semibold text-slate-800 mt-0.5">
+                  {patient.emergencyContact?.phone || 'Not recorded'}
+                </p>
               </div>
               <div className="col-span-2">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Address</p>
-                <p className="font-semibold text-slate-700 mt-0.5 leading-snug">{patient.address || '123 Main St, New York, USA'}</p>
+                <p className="font-semibold text-slate-700 mt-0.5 leading-snug">
+                  {patient.address || 'Not recorded'}
+                </p>
               </div>
             </div>
           </div>
@@ -220,33 +265,61 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
           <div className="bg-white rounded-[28px] border border-slate-200/90 p-5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] space-y-3">
             <h4 className="text-[13.5px] font-bold text-slate-900">Upcoming Appointments</h4>
 
-            {/* Appointment Card 1 (Light) */}
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 shrink-0">
-                  <Activity size={15} />
+            {upcomingAppointments.length === 0 ? (
+              <p className="text-xs text-slate-400 py-3">No upcoming appointments on record.</p>
+            ) : (
+              upcomingAppointments.slice(0, 3).map((appointment, index) => (
+                <div
+                  key={appointment.id}
+                  className={
+                    index === 1
+                      ? 'p-3.5 rounded-2xl bg-[#14532D] text-white shadow-[0_8px_20px_-4px_rgba(20,83,45,0.4)] flex items-center justify-between gap-3'
+                      : 'p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3'
+                  }
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div
+                      className={
+                        index === 1
+                          ? 'w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-[#C7FF75] shrink-0'
+                          : 'w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 shrink-0'
+                      }
+                    >
+                      <Activity size={15} />
+                    </div>
+                    <div className="min-w-0">
+                      <p
+                        className={
+                          index === 1
+                            ? 'text-xs font-bold text-white truncate'
+                            : 'text-xs font-bold text-slate-900 truncate'
+                        }
+                      >
+                        {appointment.reason}
+                      </p>
+                      <p
+                        className={
+                          index === 1
+                            ? 'text-[11px] text-[#EAF9D8] truncate'
+                            : 'text-[11px] text-slate-400 truncate'
+                        }
+                      >
+                        Dr. {appointment.doctorName} · {appointment.appointmentDate} ·{' '}
+                        {appointment.timeSlot}
+                      </p>
+                    </div>
+                  </div>
+                  <MoreVertical
+                    size={14}
+                    className={
+                      index === 1
+                        ? 'text-[#C7FF75]/80 shrink-0'
+                        : 'text-slate-400 shrink-0'
+                    }
+                  />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 truncate">Routine Medical Checkup</p>
-                  <p className="text-[11px] text-slate-400 truncate">Dr. Amelia Bennett · Video · 10:00</p>
-                </div>
-              </div>
-              <MoreVertical size={14} className="text-slate-400 cursor-pointer shrink-0" />
-            </div>
-
-            {/* Appointment Card 2 (Active Avocado Forest Green Card) */}
-            <div className="p-3.5 rounded-2xl bg-[#14532D] text-white shadow-[0_8px_20px_-4px_rgba(20,83,45,0.4)] flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-[#C7FF75] shrink-0">
-                  <Activity size={15} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate">Cold and Fever</p>
-                  <p className="text-[11px] text-[#EAF9D8] truncate">Dr. Hannah Collins · Video · 11:00</p>
-                </div>
-              </div>
-              <MoreVertical size={14} className="text-[#C7FF75]/80 cursor-pointer shrink-0" />
-            </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -293,41 +366,32 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
             {/* Records Content */}
             {medicalRecordTab === 'Lab Reports' && (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="text-slate-400 font-semibold border-b border-slate-100">
-                      <th className="pb-2">Test Name</th>
-                      <th className="pb-2">Referred By</th>
-                      <th className="pb-2">Date</th>
-                      <th className="pb-2">Comments</th>
-                      <th className="pb-2 text-right">Result</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    <tr>
-                      <td className="py-2.5 font-bold text-slate-900">Blood Test</td>
-                      <td className="py-2.5 text-slate-600">Dr. Max Reed</td>
-                      <td className="py-2.5 text-slate-500">10 Oct, 2026</td>
-                      <td className="py-2.5 text-slate-500">Take Rest</td>
-                      <td className="py-2.5 text-right">
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-bold">
-                          Normal
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-2.5 font-bold text-slate-900">12-Lead ECG</td>
-                      <td className="py-2.5 text-slate-600">Dr. Alexander Reed</td>
-                      <td className="py-2.5 text-slate-500">08 Oct, 2026</td>
-                      <td className="py-2.5 text-slate-500">Telemetry OK</td>
-                      <td className="py-2.5 text-right">
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-bold">
-                          Normal
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                {labReports.length === 0 ? (
+                  <p className="text-xs text-slate-400 py-3">No laboratory reports on file.</p>
+                ) : (
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="text-slate-400 font-semibold border-b border-slate-100">
+                        <th className="pb-2">Test Name</th>
+                        <th className="pb-2">Referred By</th>
+                        <th className="pb-2">Date</th>
+                        <th className="pb-2">Comments</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {labReports.map((record) => (
+                        <tr key={record.id}>
+                          <td className="py-2.5 font-bold text-slate-900">{record.title}</td>
+                          <td className="py-2.5 text-slate-600">{record.doctorName}</td>
+                          <td className="py-2.5 text-slate-500">
+                            {record.createdAt?.slice(0, 10)}
+                          </td>
+                          <td className="py-2.5 text-slate-500">{record.notes}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             )}
 
@@ -362,11 +426,9 @@ export const PatientClinicalProfileView: React.FC<PatientClinicalProfileProps> =
             )}
 
             {medicalRecordTab === 'Vaccination' && (
-              <div className="text-xs space-y-2 text-slate-600 py-2">
-                <p>• COVID-19 Booster (Completed · Dec 2025)</p>
-                <p>• Influenza Quadrivalent (Annual · Oct 2026)</p>
-                <p>• Tetanus / Diphtheria Toxoid (Valid through 2030)</p>
-              </div>
+              <p className="text-xs text-slate-400 py-3">
+                No vaccination records are stored for this patient.
+              </p>
             )}
           </div>
         </div>
