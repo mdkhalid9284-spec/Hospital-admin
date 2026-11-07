@@ -15,7 +15,7 @@ export const createApp = (): Express => {
 app.set('trust proxy', 1);
   // 1. Security Headers via Helmet
   app.use(
-    helmet({
+    (typeof helmet === 'function' ? helmet : (helmet as any).default || helmet)({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
