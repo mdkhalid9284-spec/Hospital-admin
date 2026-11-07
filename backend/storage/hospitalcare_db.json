@@ -10,9 +10,9 @@
       "isActive": true,
       "failedLoginAttempts": 0,
       "createdAt": "2026-01-10T08:00:00.000Z",
-      "updatedAt": "2026-11-06T21:19:14.743Z",
+      "updatedAt": "2026-11-06T22:37:20.491Z",
       "lockUntil": null,
-      "lastLoginAt": "2026-11-06T21:19:14.743Z"
+      "lastLoginAt": "2026-11-06T22:37:20.491Z"
     },
     {
       "id": "usr-doc-01",
@@ -24,7 +24,9 @@
       "isActive": true,
       "failedLoginAttempts": 0,
       "createdAt": "2026-01-12T09:00:00.000Z",
-      "updatedAt": "2026-01-12T09:00:00.000Z"
+      "updatedAt": "2026-11-06T22:37:24.771Z",
+      "lockUntil": null,
+      "lastLoginAt": "2026-11-06T22:37:24.771Z"
     },
     {
       "id": "usr-doc-02",
@@ -48,9 +50,9 @@
       "isActive": true,
       "failedLoginAttempts": 0,
       "createdAt": "2026-02-01T10:00:00.000Z",
-      "updatedAt": "2026-11-06T21:15:38.915Z",
+      "updatedAt": "2026-11-06T23:11:49.538Z",
       "lockUntil": null,
-      "lastLoginAt": "2026-11-06T21:15:38.915Z"
+      "lastLoginAt": "2026-11-06T23:11:49.538Z"
     },
     {
       "id": "usr-pat-02",
@@ -122,7 +124,9 @@
       "isActive": true,
       "failedLoginAttempts": 0,
       "createdAt": "2026-01-15T08:30:00.000Z",
-      "updatedAt": "2026-01-15T08:30:00.000Z"
+      "updatedAt": "2026-11-06T22:37:33.881Z",
+      "lockUntil": null,
+      "lastLoginAt": "2026-11-06T22:37:33.881Z"
     }
   ],
   "doctors": [
@@ -1269,6 +1273,235 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "aud-e5bf4c76",
+      "timestamp": "2026-11-06T23:16:14.389Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_DELETED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-aae01ecb",
+      "status": "SUCCESS",
+      "details": {
+        "title": "Judiciary- Supreme Court",
+        "category": "Report"
+      }
+    },
+    {
+      "id": "aud-b3b3cab3",
+      "timestamp": "2026-11-06T23:16:09.637Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_UPLOADED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-aae01ecb",
+      "status": "SUCCESS",
+      "details": {
+        "patientId": "pat-001",
+        "category": "Report",
+        "title": "Judiciary- Supreme Court",
+        "fileSizeBytes": 369104,
+        "mimeType": "application/pdf"
+      }
+    },
+    {
+      "id": "aud-a1ffd7b3",
+      "timestamp": "2026-11-06T23:12:05.529Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_DELETED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-dc3bb54b",
+      "status": "SUCCESS",
+      "details": {
+        "title": "Success message check",
+        "category": "Other"
+      }
+    },
+    {
+      "id": "aud-367ad706",
+      "timestamp": "2026-11-06T23:11:49.648Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_UPLOADED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-dc3bb54b",
+      "status": "SUCCESS",
+      "details": {
+        "patientId": "pat-001",
+        "category": "Other",
+        "title": "Success message check",
+        "fileSizeBytes": 69,
+        "mimeType": "application/pdf"
+      }
+    },
+    {
+      "id": "aud-9c318a28",
+      "timestamp": "2026-11-06T23:11:49.539Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-1559d585",
+      "timestamp": "2026-11-06T23:11:31.156Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-19ad3ae4",
+      "timestamp": "2026-11-06T23:11:10.338Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_DELETED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-96926d6a",
+      "status": "SUCCESS",
+      "details": {
+        "title": "Delete confirmation check",
+        "category": "Report"
+      }
+    },
+    {
+      "id": "aud-64d80d5a",
+      "timestamp": "2026-11-06T23:10:44.300Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "DOCUMENT_UPLOADED",
+      "resourceType": "MedicalDocument",
+      "resourceId": "doc-96926d6a",
+      "status": "SUCCESS",
+      "details": {
+        "patientId": "pat-001",
+        "category": "Report",
+        "title": "Delete confirmation check",
+        "fileSizeBytes": 69,
+        "mimeType": "application/pdf"
+      }
+    },
+    {
+      "id": "aud-2f172572",
+      "timestamp": "2026-11-06T23:10:44.115Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-3bef8e60",
+      "timestamp": "2026-11-06T23:10:10.908Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-ce928a4d",
+      "timestamp": "2026-11-06T23:09:53.604Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-1e22e5a4",
+      "timestamp": "2026-11-06T22:37:33.881Z",
+      "actorId": "usr-bill-01",
+      "actorName": "Marcus Vance (Finance Officer)",
+      "actorRole": "billing",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-bill-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-54bbd83c",
+      "timestamp": "2026-11-06T22:37:29.279Z",
+      "actorId": "usr-pat-01",
+      "actorName": "James Harrison",
+      "actorRole": "patient",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-pat-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-f08d3c36",
+      "timestamp": "2026-11-06T22:37:24.772Z",
+      "actorId": "usr-doc-01",
+      "actorName": "Dr. Alexander Reed, MD",
+      "actorRole": "doctor",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-doc-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-084d7481",
+      "timestamp": "2026-11-06T22:37:20.496Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
+    {
+      "id": "aud-4ca60628",
+      "timestamp": "2026-11-06T21:39:11.035Z",
+      "actorId": "usr-admin-01",
+      "actorName": "Dr. Sarah Mitchell (Administrator)",
+      "actorRole": "admin",
+      "action": "USER_LOGIN",
+      "resourceType": "User",
+      "resourceId": "usr-admin-01",
+      "status": "SUCCESS",
+      "ipAddress": "127.0.0.1",
+      "details": {}
+    },
     {
       "id": "aud-a3fad950",
       "timestamp": "2026-11-06T21:19:31.870Z",

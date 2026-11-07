@@ -8,6 +8,7 @@ const startServer = async () => {
   try {
     console.log(`[HospitalCare] Loading environment from ${getBackendEnvPath()}`);
     console.log(`[HospitalCare] Persistence target: ${config.database.mongoUri ? 'MongoDB Atlas' : 'local JSON snapshot'}`);
+    console.log(`[HospitalCare] Document storage: ${config.storage.driver}`);
 
     // 1. Establish required storage before accepting HTTP traffic.
     await db.initialize();

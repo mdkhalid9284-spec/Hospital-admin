@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../database/index.js';
@@ -6,7 +5,38 @@ import { config } from '../config/index.js';
 import { IMedicalDocument, DocumentCategory, UserRole, IPatient } from '../models/types.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { logAuditEvent } from '../middlewares/audit.middleware.js';
+import {
+  DownloadStream,
+  FileStorageService,
+  StorageOperationError,
+  StorageProvider,
+} from './fileStorage.service.js';
 
+const EXTENSION_BY_MIME: Record<string, string> = {
+  'application/pdf': '.pdf',
+  'image/jpeg': '.jpg',
+  'image/jpg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+};
+
+const providerOf = (document: IMedicalDocument): StorageProvider =>
+  document.storageProvider === 'vercel-blob' ? 'vercel-blob' : 'local';
+
+const storageError = (error: unknown, fallback: string, code: string, statusCode: number): AppError => {
+  if (error instanceof StorageOperationError) {
+    if (error.code === 'NOT_FOUND') {
+      return new AppError('The requested file is no longer available in storage.', 404, 'FILE_MISSING');
+    }
+    if (error.code === 'INVALID_KEY') {
+      return new AppError('The document storage key is invalid. The record was kept.', 500, 'INVALID_STORAGE_KEY');
+    }
+    if (error.code === 'MISCONFIGURED') {
+      return new AppError(error.message, 500, 'STORAGE_MISCONFIGURED');
+    }
+  }
+  return new AppError(fallback, statusCode, code);
+};
 export interface DocumentActor {
   id: string;
   name: string;
@@ -166,16 +196,27 @@ export class DocumentService {
       );
     }
 
-    // Generate an unguessable storage key that is never exposed as a public path.
-    const fileExt = path.extname(file.originalname) || '.bin';
-    const safeKey = `${uuidv4()}${fileExt.toLowerCase()}`;
-    const targetPath = path.join(config.storage.localPath, safeKey);
-
-    if (!fs.existsSync(config.storage.localPath)) {
-      fs.mkdirSync(config.storage.localPath, { recursive: true });
+    // Extension comes from the validated MIME type. The original name is metadata only.
+    const extension = EXTENSION_BY_MIME[file.mimetype];
+    if (!extension) {
+      throw new AppError(
+        `Invalid file type '${file.mimetype}'. Only PDF and images (JPEG, PNG, WebP) are permitted.`,
+        400,
+        'INVALID_MIME_TYPE'
+      );
     }
-
-    await fs.promises.writeFile(targetPath, file.buffer);
+    const safeKey = `${uuidv4()}${extension}`;
+    let storedFile: { storageKey: string; provider: StorageProvider };
+    try {
+      storedFile = await FileStorageService.upload(safeKey, file.buffer, file.mimetype);
+    } catch (error) {
+      throw storageError(
+        error,
+        'The document could not be stored. No record was saved.',
+        'STORAGE_WRITE_FAILED',
+        502
+      );
+    }
 
     const docId = `doc-${uuidv4().substring(0, 8)}`;
     const newDoc: IMedicalDocument = {
@@ -186,8 +227,9 @@ export class DocumentService {
       uploaderRole: actor.role,
       category: data.category,
       title,
-      originalFilename: path.basename(file.originalname).slice(0, 255),
-      safeStorageKey: safeKey,
+      originalFilename: path.basename(file.originalname).replace(/\0/g, '').slice(0, 255) || 'document',
+      safeStorageKey: storedFile.storageKey,
+      storageProvider: storedFile.provider,
       mimeType: file.mimetype,
       fileSizeBytes: file.size,
       isExternalRecord: Boolean(data.isExternalRecord),
@@ -210,7 +252,7 @@ export class DocumentService {
   public static async getFileStream(
     docId: string,
     actor: DocumentActor
-  ): Promise<{ filePath: string; document: IMedicalDocument }> {
+  ): Promise<{ stream: DownloadStream; size?: number; document: IMedicalDocument }> {
     const doc = db.documents.find((d) => d.id === docId);
     if (!doc) {
       throw new AppError(`Document with ID '${docId}' not found.`, 404, 'DOCUMENT_NOT_FOUND');
@@ -243,16 +285,23 @@ export class DocumentService {
       );
     }
 
-    const filePath = path.join(config.storage.localPath, doc.safeStorageKey);
-    if (!fs.existsSync(filePath)) {
-      throw new AppError('The requested file is no longer available in storage.', 404, 'FILE_MISSING');
+    let opened: { stream: DownloadStream; size?: number };
+    try {
+      opened = await FileStorageService.download(doc.safeStorageKey, providerOf(doc));
+    } catch (error) {
+      throw storageError(
+        error,
+        'The document could not be read from storage.',
+        'STORAGE_READ_FAILED',
+        502
+      );
     }
 
     logAuditEvent(actor, 'DOCUMENT_DOWNLOADED', 'MedicalDocument', doc.id, 'SUCCESS', undefined, {
       filename: doc.originalFilename,
     });
 
-    return { filePath, document: doc };
+    return { stream: opened.stream, size: opened.size, document: doc };
   }
 
   public static async deleteDocument(
@@ -275,13 +324,20 @@ export class DocumentService {
       );
     }
 
-    const filePath = path.join(config.storage.localPath, doc.safeStorageKey);
-    if (fs.existsSync(filePath)) {
-      try {
-        await fs.promises.unlink(filePath);
-      } catch (err) {
-        console.warn(`[Document] Could not remove physical file ${filePath}`, err);
-      }
+    let removal: 'deleted' | 'missing';
+    try {
+      removal = await FileStorageService.delete(doc.safeStorageKey, providerOf(doc));
+    } catch (error) {
+      throw storageError(
+        error,
+        'The stored file could not be deleted. The document record was kept.',
+        'STORAGE_DELETE_FAILED',
+        502
+      );
+    }
+
+    if (removal === 'missing') {
+      console.warn(`[Document] Storage object for ${doc.id} was already absent. Metadata will be removed.`);
     }
 
     db.documents.splice(index, 1);

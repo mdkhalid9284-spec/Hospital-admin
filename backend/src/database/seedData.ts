@@ -15,7 +15,8 @@ import {
   IAuditLog,
   INotification
 } from '../models/types.js';
-import { SAMPLE_DOCUMENT_FILES } from './sampleDocuments.js';
+import { config } from '../config/index.js';
+import { SAMPLE_DOCUMENT_FILES, sampleBlobPathname } from './sampleDocuments.js';
 import { DAY_NAMES, addDays, toISODate, calculateAge } from '../utils/date.js';
 
 // ---------------------------------------------------------------------------
@@ -896,6 +897,15 @@ export const generateSeedData = async () => {
       createdAt: isoDaysAgo(9, 16, 0)
     }
   ];
+
+  const sampleStorageProvider = config.storage.driver === 'vercel-blob' ? 'vercel-blob' : 'local';
+  for (const document of documents) {
+    const fileName = document.safeStorageKey;
+    document.storageProvider = sampleStorageProvider;
+    if (sampleStorageProvider === 'vercel-blob') {
+      document.safeStorageKey = sampleBlobPathname(fileName);
+    }
+  }
 
   const bills: IBill[] = [
     {

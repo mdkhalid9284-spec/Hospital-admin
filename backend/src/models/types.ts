@@ -203,11 +203,13 @@ export interface IMedicalDocument {
   title: string;
   originalFilename: string;
   safeStorageKey: string;
+  storageProvider?: 'local' | 'vercel-blob';
   mimeType: string;
   fileSizeBytes: number;
   isExternalRecord: boolean;
   createdAt: string;
 }
+
 
 export type BillStatus = 'Pending' | 'Partially Paid' | 'Paid';
 

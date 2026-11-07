@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { config } from '../config/index.js';
+import { IMedicalDocument } from '../models/types.js';
+import { FileStorageService } from '../services/fileStorage.service.js';
 
 /**
  * Lightweight, dependency-free PDF writer used to create clearly-labelled
@@ -147,12 +149,26 @@ export const SAMPLE_DOCUMENT_FILES: SampleDocumentFile[] = [
   ),
 ];
 
+export const sampleBlobPathname = (fileName: string): string =>
+  `medical-documents/samples/${fileName}`;
+
+const SAMPLE_FILE_NAMES = new Set(SAMPLE_DOCUMENT_FILES.map((file) => file.safeStorageKey));
+
+/** Accept only the original sample file name or its deterministic private Blob pathname. */
+export const canonicalSampleFileName = (storageKey: string): string | null => {
+  if (SAMPLE_FILE_NAMES.has(storageKey)) return storageKey;
+  const prefix = 'medical-documents/samples/';
+  if (!storageKey.startsWith(prefix)) return null;
+  const fileName = storageKey.slice(prefix.length);
+  if (!SAMPLE_FILE_NAMES.has(fileName) || fileName.includes('/')) return null;
+  return fileName;
+};
+
 /**
- * Writes the synthetic sample files to the configured private storage
- * directory. Idempotent: existing files are only replaced if they are missing
- * or look like an older placeholder (very small file).
+ * Writes synthetic sample PDFs to the local upload directory.
+ * Idempotent: existing files are only replaced when missing or tiny placeholders.
  */
-export const ensureSampleDocumentFiles = (): void => {
+export const ensureLocalSampleDocumentFiles = (): void => {
   const storageDir = config.storage.localPath;
   if (!fs.existsSync(storageDir)) {
     fs.mkdirSync(storageDir, { recursive: true });
@@ -164,4 +180,58 @@ export const ensureSampleDocumentFiles = (): void => {
       fs.writeFileSync(target, file.buffer);
     }
   }
+};
+
+/**
+ * Makes synthetic sample PDFs available for the active storage driver.
+ * Blob uploads use deterministic pathnames and skip objects that already exist.
+ */
+export const ensureSampleDocumentFiles = async (): Promise<void> => {
+  if (config.storage.driver === 'vercel-blob') {
+    for (const file of SAMPLE_DOCUMENT_FILES) {
+      await FileStorageService.ensurePrivateBlob(
+        sampleBlobPathname(file.safeStorageKey),
+        file.buffer,
+        file.mimeType
+      );
+    }
+    return;
+  }
+
+  ensureLocalSampleDocumentFiles();
+};
+
+/**
+ * Points seeded synthetic records at the private Blob objects created above.
+ * Records that are not known sample files are left unchanged, including older
+ * uploads that have no storageProvider and therefore remain local.
+ */
+export const alignSampleDocumentsForBlob = (documents: IMedicalDocument[]): IMedicalDocument[] => {
+  if (config.storage.driver !== 'vercel-blob') return [];
+
+  const changed: IMedicalDocument[] = [];
+  for (const document of documents) {
+    const fileName = canonicalSampleFileName(document.safeStorageKey);
+    if (!fileName) continue;
+    const sample = SAMPLE_DOCUMENT_FILES.find((file) => file.safeStorageKey === fileName);
+    if (!sample) continue;
+
+    const pathname = sampleBlobPathname(fileName);
+    if (
+      document.storageProvider === 'vercel-blob' &&
+      document.safeStorageKey === pathname &&
+      document.mimeType === sample.mimeType &&
+      document.fileSizeBytes === sample.buffer.length
+    ) {
+      continue;
+    }
+
+    document.storageProvider = 'vercel-blob';
+    document.safeStorageKey = pathname;
+    document.mimeType = sample.mimeType;
+    document.fileSizeBytes = sample.buffer.length;
+    changed.push(document);
+  }
+
+  return changed;
 };

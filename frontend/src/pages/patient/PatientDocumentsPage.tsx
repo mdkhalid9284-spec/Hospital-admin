@@ -4,7 +4,7 @@ import { apiClient } from '../../api/client';
 import { IMedicalDocument, DocumentCategory } from '../../types';
 import { 
   FileText, Upload, Download, Filter, Search, 
-  CheckCircle, AlertTriangle, File, ShieldCheck, X
+  CheckCircle, AlertTriangle, File, ShieldCheck, X, Trash2
 } from 'lucide-react';
 
 export const PatientDocumentsPage: React.FC = () => {
@@ -13,7 +13,10 @@ export const PatientDocumentsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<IMedicalDocument | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Filters
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -143,6 +146,27 @@ export const PatientDocumentsPage: React.FC = () => {
     }
   };
 
+  const canDeleteDocument = (doc: IMedicalDocument): boolean =>
+    Boolean(user?.id) && doc.uploadedBy === user?.id;
+
+  const handleDelete = async () => {
+    if (!pendingDelete) return;
+    const target = pendingDelete;
+    try {
+      setIsDeleting(true);
+      setDeleteError(null);
+      await apiClient.delete(`/documents/${target.id}`);
+      setDocuments((current) => current.filter((item) => item.id !== target.id));
+      setPendingDelete(null);
+      setSuccessMsg('Medical document deleted.');
+      setTimeout(() => setSuccessMsg(null), 5000);
+    } catch (err: any) {
+      setDeleteError(err.message || 'Could not delete this medical document.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -207,6 +231,24 @@ export const PatientDocumentsPage: React.FC = () => {
             className="self-start rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-rose-700"
           >
             Retry
+          </button>
+        </div>
+      )}
+
+      {deleteError && (
+        <div
+          role="alert"
+          className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3"
+        >
+          <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0" />
+          <span className="flex-1">{deleteError}</span>
+          <button
+            type="button"
+            onClick={() => setDeleteError(null)}
+            aria-label="Dismiss delete error"
+            className="text-rose-600 hover:text-rose-800"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -314,16 +356,77 @@ export const PatientDocumentsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-4 pt-3">
+              <div className="mt-4 pt-3 flex items-center gap-2">
                 <button
                   onClick={() => handleDownload(doc)}
-                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-50 hover:bg-[#EAF9D8] text-slate-700 hover:text-[#0B3D20] text-xs font-semibold border border-slate-200 hover:border-[#C7FF75] transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-50 hover:bg-[#EAF9D8] text-slate-700 hover:text-[#0B3D20] text-xs font-semibold border border-slate-200 hover:border-[#C7FF75] transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" /> Download File
                 </button>
+                {canDeleteDocument(doc) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setPendingDelete(doc);
+                    }}
+                    aria-label={`Delete ${doc.title}`}
+                    title="Delete document"
+                    className="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {pendingDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-document-title"
+            className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <h3 id="delete-document-title" className="font-bold text-slate-900">
+                Delete medical document
+              </h3>
+            </div>
+            <p className="text-sm text-slate-600 mt-4">
+              Are you sure you want to delete this medical document? This action cannot be undone.
+            </p>
+            <p className="text-xs text-slate-500 mt-2 font-medium truncate">{pendingDelete.title}</p>
+            {deleteError && (
+              <p role="alert" className="mt-3 text-xs text-rose-700">
+                {deleteError}
+              </p>
+            )}
+            <div className="flex items-center justify-end gap-3 pt-5 mt-5 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setPendingDelete(null)}
+                disabled={isDeleting}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-md shadow-rose-600/20 disabled:opacity-50 transition-all"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

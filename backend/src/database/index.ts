@@ -23,7 +23,8 @@ import {
   ITeleconsultation,
 } from '../models/types.js';
 import { generateSeedData } from './seedData.js';
-import { ensureSampleDocumentFiles } from './sampleDocuments.js';
+import { alignSampleDocumentsForBlob, ensureLocalSampleDocumentFiles, ensureSampleDocumentFiles } from './sampleDocuments.js';
+import { assertBlobStorageConfigured } from '../services/fileStorage.service.js';
 import { config } from '../config/index.js';
 import { patientIdentityKey } from '../utils/identity.js';
 
@@ -108,11 +109,15 @@ class HospitalDatabase {
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
-    const storageDir = config.storage.localPath;
-    if (!fs.existsSync(storageDir)) {
-      fs.mkdirSync(storageDir, { recursive: true });
+    if (config.nodeEnv === 'production' && !(process.env.STORAGE_DRIVER ?? '').trim()) {
+      throw new Error(
+        'STORAGE_DRIVER is required in production. Set STORAGE_DRIVER=vercel-blob on the backend service and provide BLOB_READ_WRITE_TOKEN from the connected private Blob store. Medical documents are not written to the serverless filesystem.'
+      );
     }
-    ensureSampleDocumentFiles();
+
+    assertBlobStorageConfigured();
+    // Local uploads are created only when STORAGE_DRIVER=local. Blob mode never mkdir's the upload directory.
+    await ensureSampleDocumentFiles();
 
     const seed: IDatabaseStore = { ...emptyStore(), ...(await generateSeedData()) };
     this.data = seed;
@@ -141,7 +146,7 @@ class HospitalDatabase {
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         console.error('[Database] MongoDB Atlas connection failed. Server will not start.');
-        console.error(`[Database] ${message}`);
+        console.error(`[Database] ${message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, '[redacted]')}`);
         throw error;
       }
     } else {
@@ -154,6 +159,13 @@ class HospitalDatabase {
     }
 
     this.ensureDerivedFields();
+    const sampleUpdates = alignSampleDocumentsForBlob(this.data.documents);
+    if (sampleUpdates.length > 0) {
+      await this.commitDocumentMetadata(sampleUpdates);
+      console.log(
+        `[Database] Updated ${sampleUpdates.length} synthetic sample document record(s) for private Blob storage.`
+      );
+    }
     this.baseline = clone(this.data);
     this.isInitialized = true;
   }
@@ -414,6 +426,28 @@ class HospitalDatabase {
     return { upserts, deletes };
   }
 
+  private async commitDocumentMetadata(documents: IMedicalDocument[]): Promise<void> {
+    if (documents.length === 0) return;
+
+    if (this.mode === 'mongo') {
+      const model = this.modelFor('documents');
+      await model.bulkWrite(
+        documents.map((document) => ({
+          updateOne: {
+            filter: { id: document.id },
+            update: { $set: stripMongoFields(document) },
+          },
+        })),
+        { ordered: false }
+      );
+      return;
+    }
+
+    if (this.mode === 'file') {
+      await this.persistLocalSnapshot();
+    }
+  }
+
   private async persistMongoDiff(): Promise<void> {
     const keys = Object.keys(this.data) as StoreKey[];
 
@@ -476,7 +510,7 @@ class HospitalDatabase {
 
   // Atomic state reset helper for automated test isolation
   public async resetForTesting(): Promise<void> {
-    ensureSampleDocumentFiles();
+    ensureLocalSampleDocumentFiles();
     const seed: IDatabaseStore = { ...emptyStore(), ...(await generateSeedData()) };
     this.data = seed;
     this.ensureDerivedFields();

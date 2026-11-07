@@ -6,6 +6,13 @@ loadBackendEnv();
 
 const backendRoot = getBackendRoot();
 
+const resolveStorageDriver = (): 'local' | 'vercel-blob' => {
+  const raw = (process.env.STORAGE_DRIVER ?? '').trim();
+  if (raw === '' || raw === 'local') return 'local';
+  if (raw === 'vercel-blob') return 'vercel-blob';
+  throw new Error("Invalid STORAGE_DRIVER. Expected 'local' or 'vercel-blob'.");
+};
+
 export const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -35,7 +42,7 @@ export const config = {
   },
 
   storage: {
-    driver: process.env.STORAGE_DRIVER || 'local',
+    driver: resolveStorageDriver(),
     localPath: process.env.STORAGE_LOCAL_PATH || path.join(backendRoot, 'storage', 'uploads'),
     maxFileSizeMb: parseInt(process.env.MAX_FILE_SIZE_MB || '10', 10),
     allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],

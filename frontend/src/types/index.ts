@@ -217,6 +217,7 @@ export interface IMedicalDocument {
   title: string;
   originalFilename: string;
   safeStorageKey: string;
+  storageProvider?: 'local' | 'vercel-blob';
   mimeType: string;
   fileSizeBytes: number;
   isExternalRecord: boolean;

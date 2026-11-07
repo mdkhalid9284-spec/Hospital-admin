@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import fs from 'fs';
 import { DocumentService, DocumentActor } from '../services/document.service.js';
 import { AppError } from '../middlewares/errorHandler.js';
+import { DownloadStream, toNodeReadable } from '../services/fileStorage.service.js';
 
 const toActor = (user: NonNullable<Request['user']>): DocumentActor => ({
   id: user.id,
@@ -47,13 +47,13 @@ export class DocumentController {
   public static async download(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user = req.user!;
-      const { filePath, document } = await DocumentService.getFileStream(
-        req.params.id,
+      const { stream, size, document } = await DocumentService.getFileStream(
+        req.params.id as string,
         toActor(user)
       );
 
-      const safeName = document.originalFilename.replace(/["\r\n]/g, '_');
-      const stats = fs.statSync(filePath);
+      const safeName = document.originalFilename.replace(/["\r\n\\/]/g, '_').slice(0, 180) || 'document';
+      res.status(200);
       res.setHeader('Content-Type', document.mimeType);
       res.setHeader(
         'Content-Disposition',
@@ -61,13 +61,43 @@ export class DocumentController {
           document.originalFilename
         )}`
       );
-      res.setHeader('Content-Length', String(stats.size));
+      if (typeof size === 'number' && Number.isFinite(size) && size >= 0) {
+        res.setHeader('Content-Length', String(size));
+      }
       res.setHeader('Cache-Control', 'private, no-store');
       res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.sendFile(filePath);
+
+      DocumentController.pipeDownload(res, stream, next);
     } catch (err) {
       next(err);
     }
+  }
+
+  private static pipeDownload(res: Response, stream: DownloadStream, next: NextFunction): void {
+    const nodeStream = toNodeReadable(stream);
+    let settled = false;
+
+    const fail = (error: unknown): void => {
+      if (settled || res.writableEnded) return;
+      settled = true;
+      nodeStream.destroy();
+      if (!res.headersSent) {
+        next(
+          error instanceof AppError
+            ? error
+            : new AppError('The document could not be read from storage.', 502, 'STORAGE_READ_FAILED')
+        );
+        return;
+      }
+      res.destroy();
+    };
+
+    nodeStream.on('error', fail);
+    res.on('close', () => {
+      if (!res.writableFinished) nodeStream.destroy();
+    });
+
+    nodeStream.pipe(res);
   }
 
   public static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
