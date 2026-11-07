@@ -24,7 +24,9 @@ export const Login: React.FC = () => {
   const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSent, setForgotSent] = useState(false);
   const [signup, setSignup] = useState({
     identifier: '',
     dob: '',
@@ -32,7 +34,7 @@ export const Login: React.FC = () => {
     email: '',
     password: '',
   });
-  const { login, registerPatient } = useAuth();
+  const { login, registerPatient, sendPasswordReset } = useAuth();
   const navigate = useNavigate();
 
   const pick = (role: UserRole) => {
@@ -54,6 +56,20 @@ export const Login: React.FC = () => {
       navigate(`/portal/${authedUser.role}/dashboard`);
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      await sendPasswordReset(forgotEmail);
+      setForgotSent(true);
+    } catch (err: any) {
+      setError(err.message || 'Failed to dispatch password reset. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -171,12 +187,18 @@ export const Login: React.FC = () => {
 
           <div className="mb-5">
             <h2 className="text-[26px] font-bold tracking-tight text-[#26352A]">
-              {mode === 'login' ? 'Sign in to HospitalCare' : 'Create your patient account'}
+              {mode === 'login'
+                ? 'Sign in to HospitalCare'
+                : mode === 'signup'
+                ? 'Create your patient account'
+                : 'Recover account password'}
             </h2>
             <p className="text-[13px] text-[#667367] mt-1">
               {mode === 'login'
                 ? 'Select a verified demo role or enter your credentials to open your portal.'
-                : 'Link your existing hospital record to a secure patient portal login.'}
+                : mode === 'signup'
+                ? 'Link your existing hospital record to a secure patient portal login.'
+                : 'Enter your registered email address to receive password reset instructions.'}
             </p>
           </div>
 
@@ -275,6 +297,18 @@ export const Login: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="hc-label !mb-0">Password</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('forgot');
+                    setForgotEmail(email);
+                    setError(null);
+                    setForgotSent(false);
+                  }}
+                  className="text-xs text-[#14532D] hover:underline font-semibold"
+                >
+                  Forgot password?
+                </button>
               </div>
               <div className="relative">
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
@@ -312,7 +346,7 @@ export const Login: React.FC = () => {
               </p>
             </div>
           </form>
-          ) : (
+          ) : mode === 'signup' ? (
           <form onSubmit={submitSignup} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">
             <div className="p-3 rounded-2xl bg-[#EAF9D8] border border-[#C7FF75]/70 text-[11px] text-[#0B3D20] leading-relaxed">
               <b>Hospital record required.</b> Enter the Patient ID, email or phone already
@@ -414,6 +448,69 @@ export const Login: React.FC = () => {
               No email/SMS OTP provider is configured in this deployment. Ownership is
               verified against the hospital record demographics.
             </p>
+          </form>
+          ) : (
+          <form onSubmit={submitForgot} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">
+            {forgotSent ? (
+              <div className="p-4 rounded-2xl bg-[#EAF9D8] border border-[#C7FF75]/70 text-[#0B3D20] text-xs space-y-2.5">
+                <p className="font-bold flex items-center gap-1.5 text-sm">
+                  <CheckCircle2 size={16} /> Reset link dispatched
+                </p>
+                <p className="leading-relaxed text-[#26352A]">
+                  If an account exists for <b>{forgotEmail}</b>, password reset instructions have been sent. Check your inbox to choose a new password.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('login');
+                    setError(null);
+                    setForgotSent(false);
+                  }}
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#14532D] hover:underline"
+                >
+                  <ArrowLeft size={13} /> Back to Sign In
+                </button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <label className="hc-label">Account Email</label>
+                  <div className="relative">
+                    <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A998B]" />
+                    <input
+                      type="email"
+                      required
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      className="hc-input !pl-10"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="hc-btn-primary w-full !py-3 !rounded-full !bg-[#14532D] hover:!bg-[#0B3D20] text-white shadow-md text-sm mt-2"
+                >
+                  {loading ? 'Sending Instructions…' : 'Send Password Reset Link'}
+                  <ArrowRight size={15} />
+                </button>
+
+                <div className="pt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('login');
+                      setError(null);
+                    }}
+                    className="text-xs text-[#667367] hover:text-[#14532D] font-medium"
+                  >
+                    ← Cancel and return to sign in
+                  </button>
+                </div>
+              </>
+            )}
           </form>
           )}
 

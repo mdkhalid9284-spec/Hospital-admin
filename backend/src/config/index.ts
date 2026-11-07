@@ -26,6 +26,17 @@ export const config = {
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
 
+  /**
+   * Firebase Admin credentials. Empty values leave Firebase disabled so local
+   * development and the automated suite can still use the legacy password bridge.
+   * The private key is stored with escaped newlines in Vercel; normalise them here.
+   */
+  firebase: {
+    projectId: (process.env.FIREBASE_PROJECT_ID || '').trim(),
+    clientEmail: (process.env.FIREBASE_CLIENT_EMAIL || '').trim(),
+    privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n').trim(),
+  },
+
   database: {
     mongoUri: (process.env.MONGODB_URI || '').trim(),
     /** Local JSON snapshot used only when MongoDB is not configured in development. */

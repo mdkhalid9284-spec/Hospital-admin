@@ -99,7 +99,7 @@ The platform includes pre-configured demo test accounts with Argon2/Bcrypt hash 
 | **Patient** | `patient@hospitalcare.demo` | `Patient@123` | Own records, appointments, document uploads, bills |
 | **Billing Staff** | `billing@hospitalcare.demo` | `Billing@123` | Invoicing, payment receipts, insurance claim processing |
 
-**No role switching exists in authenticated navigation.** Persona is fixed per authenticated session and enforced server-side via JWT + RBAC + IDOR guards.
+**No role switching exists in authenticated navigation.** Persona is fixed per authenticated session. Firebase Authentication is the identity provider when it is configured; MongoDB remains the source of roles and clinical records. RBAC and IDOR guards stay on the server.
 
 ---
 

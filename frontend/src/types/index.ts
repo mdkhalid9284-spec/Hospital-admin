@@ -8,6 +8,7 @@ export interface IUser {
   phone?: string;
   patientId?: string;
   doctorId?: string;
+  emailVerified?: boolean;
 }
 
 export interface IPatient {

@@ -18,6 +18,9 @@ export const logAuditEvent = (
   delete sanitizedDetails.passwordHash;
   delete sanitizedDetails.token;
   delete sanitizedDetails.secret;
+  delete sanitizedDetails.claimToken;
+  delete sanitizedDetails.idToken;
+  delete sanitizedDetails.privateKey;
 
   const logEntry: IAuditLog = {
     id: `aud-${uuidv4().substring(0, 8)}`,

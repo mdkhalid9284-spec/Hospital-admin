@@ -4,6 +4,8 @@ export interface IUser {
   id: string;
   email: string;
   passwordHash: string;
+  /** Firebase Authentication uid. Absent until the account is linked. */
+  firebaseUid?: string;
   role: UserRole;
   fullName: string;
   phone?: string;

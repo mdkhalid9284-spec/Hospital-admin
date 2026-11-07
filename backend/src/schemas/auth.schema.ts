@@ -46,6 +46,31 @@ export const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
 
+export const existingPatientPrepareSchema = z.object({
+  identifier: z.string().min(3, 'Enter your Patient ID, registered email or phone number'),
+  dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must use the YYYY-MM-DD format'),
+  phone: z.string().min(7, 'Enter the phone number registered with the hospital'),
+  email: z.string().email('Invalid email address'),
+});
+
+export const existingPatientCompleteSchema = z.object({
+  claimToken: z.string().min(20, 'The hospital-record verification has expired. Start again.'),
+});
+
+export const newPatientRegistrationSchema = z.object({
+  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+  dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must use the YYYY-MM-DD format'),
+  gender: z.enum(['male', 'female', 'other']),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(7, 'Enter a valid phone number'),
+  address: z.string().min(5, 'Address must be at least 5 characters'),
+  emergencyContact: z.object({
+    name: z.string().min(2, 'Emergency contact name is required'),
+    relationship: z.string().min(2, 'Relationship is required'),
+    phone: z.string().min(7, 'Emergency contact phone is required'),
+  }),
+});
+
 export const resetPasswordSchema = z.object({
   token: z.string().min(10, 'Invalid or expired token'),
   newPassword: z

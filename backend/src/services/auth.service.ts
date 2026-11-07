@@ -7,6 +7,8 @@ import { IUser, UserRole } from '../models/types.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { logAuditEvent } from '../middlewares/audit.middleware.js';
 import { normalizeCode, normalizeEmail, normalizePhone } from '../utils/identity.js';
+import { isFirebaseAdminConfigured, provisionFirebaseUser } from './firebaseAdmin.service.js';
+import { FirebaseAccountService } from './firebaseAccount.service.js';
 
 export class AuthService {
   /**
@@ -80,10 +82,24 @@ export class AuthService {
     const userId = `usr-${uuidv4().substring(0, 8)}`;
     const now = new Date().toISOString();
 
+    let firebaseUid: string | undefined;
+    if (isFirebaseAdminConfigured()) {
+      try {
+        firebaseUid = await provisionFirebaseUser({
+          email,
+          password: data.password,
+          fullName: patient.fullName,
+        });
+      } catch (fbErr) {
+        console.error('[Firebase] Failed to provision during patient-signup:', fbErr);
+      }
+    }
+
     const newUser: IUser = {
       id: userId,
       email,
       passwordHash,
+      firebaseUid,
       role: 'patient',
       fullName: patient.fullName,
       phone: patient.phone,
@@ -135,7 +151,10 @@ export class AuthService {
     email: string,
     password: string,
     ipAddress?: string
-  ): Promise<{ user: Partial<IUser> & { patientId?: string; doctorId?: string }; token: string }> {
+  ): Promise<
+    | { user: Partial<IUser> & { patientId?: string; doctorId?: string }; token: string }
+    | { user: Partial<IUser> & { patientId?: string; doctorId?: string }; linked: true }
+  > {
     const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
 
     if (!user) {
@@ -208,8 +227,6 @@ export class AuthService {
       if (doctor) doctorId = doctor.id;
     }
 
-    const token = this.generateToken(user, patientId, doctorId);
-
     logAuditEvent(
       { id: user.id, name: user.fullName, role: user.role },
       'USER_LOGIN',
@@ -219,7 +236,17 @@ export class AuthService {
       ipAddress
     );
 
-    const { passwordHash: _, ...safeUser } = user;
+    const { passwordHash: _, resetPasswordToken: _reset, resetPasswordExpires: _resetExp, ...safeUser } = user;
+
+    // Firebase is the identity provider when Admin credentials are configured.
+    // The password proof above links the existing MongoDB user and its role.
+    // No application JWT is issued on that path.
+    if (isFirebaseAdminConfigured()) {
+      await FirebaseAccountService.linkVerifiedLegacyUser(user, password);
+      return { user: { ...safeUser, patientId, doctorId }, linked: true as const };
+    }
+
+    const token = this.generateToken(user, patientId, doctorId);
     return { user: { ...safeUser, patientId, doctorId }, token };
   }
 

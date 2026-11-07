@@ -7,6 +7,7 @@ const userSchema = new Schema<IUser>(
     id: { type: String, required: true, unique: true, index: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
     passwordHash: { type: String, required: true, select: false },
+    firebaseUid: { type: String, unique: true, sparse: true, index: true },
     role: {
       type: String,
       enum: ['admin', 'doctor', 'patient', 'billing'],

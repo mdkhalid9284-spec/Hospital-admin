@@ -7,6 +7,9 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  existingPatientPrepareSchema,
+  existingPatientCompleteSchema,
+  newPatientRegistrationSchema,
 } from '../schemas/auth.schema.js';
 import { authIpRateLimiter } from '../middlewares/rateLimiter.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
@@ -38,6 +41,29 @@ router.post(
   validateRequest({ body: loginSchema }),
   AuthController.login
 );
+
+router.post(
+  '/register/existing/prepare',
+  authIpRateLimiter,
+  validateRequest({ body: existingPatientPrepareSchema }),
+  AuthController.prepareExistingPatient
+);
+
+router.post(
+  '/register/existing/complete',
+  authIpRateLimiter,
+  validateRequest({ body: existingPatientCompleteSchema }),
+  AuthController.completeExistingPatient
+);
+
+router.post(
+  '/register/new',
+  authIpRateLimiter,
+  validateRequest({ body: newPatientRegistrationSchema }),
+  AuthController.registerNewPatient
+);
+
+router.post('/session', authIpRateLimiter, AuthController.session);
 
 router.post(
   '/forgot-password',

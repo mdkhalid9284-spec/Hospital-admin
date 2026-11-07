@@ -18,5 +18,8 @@
     "concurrently": "^9.1.2"
   },
   "author": "HospitalCare Engineering Team",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^13.2.0"
+  }
 }
