@@ -1,7 +1,9 @@
 import rateLimit from 'express-rate-limit';
 import { config } from '../config/index.js';
 
-export const globalRateLimiter = rateLimit({
+const rateLimitFn: any = typeof rateLimit === 'function' ? rateLimit : (rateLimit as any).default || rateLimit;
+
+export const globalRateLimiter = rateLimitFn({
   windowMs: config.rateLimit.windowMs,
   max: config.rateLimit.max,
   standardHeaders: true,
@@ -21,7 +23,7 @@ export const globalRateLimiter = rateLimit({
  * Uses a high threshold (50 reqs/15m) to defend against network flooding,
  * while specific account backoff (5 failed tries -> 6th throttled) is enforced in AuthService.
  */
-export const authIpRateLimiter = rateLimit({
+export const authIpRateLimiter = rateLimitFn({
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 50, // 50 requests per IP per 15 mins
   skipSuccessfulRequests: true,
