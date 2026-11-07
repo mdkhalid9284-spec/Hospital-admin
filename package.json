@@ -1,6 +1,7 @@
 {
   "name": "hospitalcare-root",
   "version": "1.0.0",
+  "type": "module",
   "description": "HospitalCare - Integrated Hospital & Patient Management System",
   "private": true,
   "workspaces": [
