@@ -92,12 +92,6 @@ Open your browser at: `http://localhost:5173`
 
 The platform includes pre-configured demo test accounts with Argon2/Bcrypt hash verification. These are **development-only credential conveniences** — they prefill legitimate accounts on the Login page but cannot select or assert an arbitrary server-side role. The authenticated role is always determined server-side from the database. This convenience is disabled in production.
 
-| Role | Email | Password | Scope |
-| :--- | :--- | :--- | :--- |
-| **Hospital Admin** | `admin@hospitalcare.demo` | `Admin@123` | Full hospital operational control, bed board, admissions, audits |
-| **Medical Doctor** | `doctor@hospitalcare.demo` | `Doctor@123` | Assigned patients, clinical notes, digital prescriptions |
-| **Patient** | `patient@hospitalcare.demo` | `Patient@123` | Own records, appointments, document uploads, bills |
-| **Billing Staff** | `billing@hospitalcare.demo` | `Billing@123` | Invoicing, payment receipts, insurance claim processing |
 
 **No role switching exists in authenticated navigation.** Persona is fixed per authenticated session. Firebase Authentication is the identity provider when it is configured; MongoDB remains the source of roles and clinical records. RBAC and IDOR guards stay on the server.
 
