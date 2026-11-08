@@ -75,9 +75,17 @@ export const requireResourceOwnership = (
         }
       }
       // Doctors can only access patients assigned to them
-      if (req.user.role === 'doctor' && req.user.doctorId) {
+      if (req.user?.role === 'doctor' && req.user.doctorId) {
+        const doctorId = req.user.doctorId;
         const patient = db.patients.find((p) => p.id === targetId);
-        if (!patient || patient.assignedDoctorId !== req.user.doctorId) {
+        const doctor = db.doctors.find((d) => d.id === doctorId);
+        const isAssigned =
+          patient &&
+          (patient.assignedDoctorId === doctorId ||
+            Boolean(doctor?.assignedPatientIds.includes(patient.id)) ||
+            db.appointments.some((a) => a.doctorId === doctorId && a.patientId === patient.id));
+
+        if (!isAssigned) {
           res.status(403).json({
             success: false,
             error: {

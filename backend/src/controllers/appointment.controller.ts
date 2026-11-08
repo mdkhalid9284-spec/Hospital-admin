@@ -37,7 +37,13 @@ export class AppointmentController {
       // Doctors may only schedule their own assigned patients.
       if (user.role === 'doctor') {
         const patient = db.patients.find((p) => p.id === targetPatientId);
-        if (!patient || patient.assignedDoctorId !== user.doctorId) {
+        const doctor = db.doctors.find((d) => d.id === user.doctorId);
+        const isAssigned =
+          patient &&
+          (patient.assignedDoctorId === user.doctorId ||
+            Boolean(doctor?.assignedPatientIds.includes(patient.id)) ||
+            db.appointments.some((a) => a.doctorId === user.doctorId && a.patientId === patient.id));
+        if (!isAssigned) {
           throw new AppError(
             'Forbidden. You can only schedule appointments for your assigned patients.',
             403,

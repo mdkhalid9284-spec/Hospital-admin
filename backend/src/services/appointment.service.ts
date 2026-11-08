@@ -320,6 +320,13 @@ export class AppointmentService {
       // verification and insert, so no competing request can slip through.
       db.appointments.unshift(newAppointment);
 
+      if (!doctor.assignedPatientIds.includes(patient.id)) {
+        doctor.assignedPatientIds.push(patient.id);
+      }
+      if (!patient.assignedDoctorId) {
+        patient.assignedDoctorId = doctor.id;
+      }
+
       logAuditEvent(actor, 'APPOINTMENT_BOOKED', 'Appointment', newAppointment.id, 'SUCCESS', undefined, {
         patientId: patient.id,
         doctorId: doctor.id,

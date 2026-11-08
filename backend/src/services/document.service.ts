@@ -122,7 +122,12 @@ export class DocumentService {
     }
 
     if (actor.role === 'doctor') {
-      if (patient.assignedDoctorId !== actor.doctorId) {
+      const doctor = db.doctors.find((d) => d.id === actor.doctorId);
+      const isAssigned =
+        patient.assignedDoctorId === actor.doctorId ||
+        Boolean(doctor?.assignedPatientIds.includes(patient.id)) ||
+        db.appointments.some((a) => a.doctorId === actor.doctorId && a.patientId === patient.id);
+      if (!isAssigned) {
         throw new AppError(
           'Forbidden. You can only access documents of your assigned patients.',
           403,
@@ -270,7 +275,12 @@ export class DocumentService {
       }
     } else if (actor.role === 'doctor') {
       const patient = db.patients.find((p) => p.id === doc.patientId);
-      if (patient?.assignedDoctorId !== actor.doctorId && doc.uploadedBy !== actor.id) {
+      const doctor = db.doctors.find((d) => d.id === actor.doctorId);
+      const isAssigned =
+        patient?.assignedDoctorId === actor.doctorId ||
+        Boolean(doctor?.assignedPatientIds.includes(doc.patientId)) ||
+        db.appointments.some((a) => a.doctorId === actor.doctorId && a.patientId === doc.patientId);
+      if (!isAssigned && doc.uploadedBy !== actor.id) {
         throw new AppError(
           'Forbidden. You can only access documents of your assigned patients.',
           403,
@@ -369,11 +379,12 @@ export class DocumentService {
     }
 
     if (actor.role === 'doctor') {
-      const assignedPatientIds = new Set(
-        db.patients
-          .filter((patient) => patient.assignedDoctorId === actor.doctorId)
-          .map((patient) => patient.id)
-      );
+      const doctor = db.doctors.find((d) => d.id === actor.doctorId);
+      const assignedPatientIds = new Set([
+        ...db.patients.filter((patient) => patient.assignedDoctorId === actor.doctorId).map((patient) => patient.id),
+        ...(doctor?.assignedPatientIds ?? []),
+        ...db.appointments.filter((a) => a.doctorId === actor.doctorId).map((a) => a.patientId),
+      ]);
       return db.documents.filter(
         (doc) => assignedPatientIds.has(doc.patientId) || doc.uploadedBy === actor.id
       );

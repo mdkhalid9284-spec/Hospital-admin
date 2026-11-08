@@ -66,9 +66,22 @@ export class PatientService {
   ): Promise<{ patients: Partial<IPatient>[]; total: number }> {
     let list = [...db.patients];
 
-    // If doctor, filter to assigned patients unless searching
+    // If doctor, filter to authorized/assigned patients
     if (actorRole === 'doctor' && actorDoctorId) {
-      list = list.filter((p) => p.assignedDoctorId === actorDoctorId);
+      const doctor = db.doctors.find((d) => d.id === actorDoctorId);
+      const assignedIds = new Set(doctor?.assignedPatientIds ?? []);
+      const apptPatientIds = new Set(
+        db.appointments
+          .filter((a) => a.doctorId === actorDoctorId)
+          .map((a) => a.patientId)
+      );
+
+      list = list.filter(
+        (p) =>
+          p.assignedDoctorId === actorDoctorId ||
+          assignedIds.has(p.id) ||
+          apptPatientIds.has(p.id)
+      );
     }
 
     if (query.search) {

@@ -93,4 +93,16 @@ export class DoctorService {
       patientName: patient.fullName,
     });
   }
+
+  public static isDoctorAssignedToPatient(doctorId: string, patientId: string): boolean {
+    const doctor = db.doctors.find((d) => d.id === doctorId);
+    const patient = db.patients.find((p) => p.id === patientId);
+    if (!doctor || !patient) return false;
+
+    return (
+      patient.assignedDoctorId === doctorId ||
+      doctor.assignedPatientIds.includes(patientId) ||
+      db.appointments.some((a) => a.doctorId === doctorId && a.patientId === patientId)
+    );
+  }
 }

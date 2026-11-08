@@ -29,13 +29,22 @@ export class PrescriptionService {
 
     // Doctors may only prescribe for patients they are authorized to treat.
     const isAssigned =
-      patient.assignedDoctorId === doctor.id || doctor.assignedPatientIds.includes(patient.id);
+      patient.assignedDoctorId === doctor.id ||
+      doctor.assignedPatientIds.includes(patient.id) ||
+      db.appointments.some((a) => a.doctorId === doctor.id && a.patientId === patient.id);
     if (!isAssigned) {
       throw new AppError(
         'Forbidden. You can only issue prescriptions for patients assigned to your care.',
         403,
         'NOT_ASSIGNED_PATIENT'
       );
+    }
+
+    if (!doctor.assignedPatientIds.includes(patient.id)) {
+      doctor.assignedPatientIds.push(patient.id);
+    }
+    if (!patient.assignedDoctorId) {
+      patient.assignedDoctorId = doctor.id;
     }
 
     const prescriptionId = `rx-${uuidv4().substring(0, 8)}`;

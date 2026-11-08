@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { IPrescription, IPatient, IPrescriptionMedicine } from '../../types';
@@ -23,17 +24,19 @@ import {
 
 export const DoctorPrescriptionsPage: React.FC = () => {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const queryPatientId = searchParams.get('patientId');
   const [prescriptions, setPrescriptions] = useState<IPrescription[]>([]);
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showBuilder, setShowBuilder] = useState(false);
+  const [showBuilder, setShowBuilder] = useState(Boolean(queryPatientId));
   const [viewRx, setViewRx] = useState<IPrescription | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [builderError, setBuilderError] = useState<string | null>(null);
 
   // Form states
-  const [patientId, setPatientId] = useState('');
+  const [patientId, setPatientId] = useState(queryPatientId || '');
   const [diagnosis, setDiagnosis] = useState('');
   const [generalAdvice, setGeneralAdvice] = useState('Maintain proper hydration and complete full dosage course.');
   const [medicines, setMedicines] = useState<IPrescriptionMedicine[]>([
@@ -61,7 +64,14 @@ export const DoctorPrescriptionsPage: React.FC = () => {
       const patRes = await apiClient.get('/patients');
       const pats: IPatient[] = patRes.data.data?.patients ?? [];
       setPatients(pats);
-      if (pats.length > 0 && !patientId) setPatientId(pats[0].id);
+      if (pats.length > 0) {
+        if (queryPatientId && pats.some((p) => p.id === queryPatientId)) {
+          setPatientId(queryPatientId);
+          setShowBuilder(true);
+        } else if (!patientId || !pats.some((p) => p.id === patientId)) {
+          setPatientId(pats[0].id);
+        }
+      }
 
       // Fetch all prescriptions for assigned patients
       const allRx: IPrescription[] = [];

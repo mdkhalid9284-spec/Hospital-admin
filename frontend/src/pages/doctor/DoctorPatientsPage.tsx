@@ -200,12 +200,21 @@ export const DoctorPatientsPage: React.FC = () => {
                     )}
                   </td>
                   <td className="py-3.5 text-right pr-2">
-                    <button
-                      onClick={() => openProfile(p)}
-                      className="px-3.5 py-1.5 bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] rounded-full font-bold text-xs transition-colors flex items-center gap-1.5 ml-auto"
-                    >
-                      <Eye size={13} /> View 3D Profile
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => navigate(`/portal/doctor/prescriptions?patientId=${p.id}`)}
+                        className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full font-bold text-xs transition-colors flex items-center gap-1.5"
+                        title="Compose Prescription"
+                      >
+                        <Pill size={13} className="text-[#14532D]" /> Prescribe
+                      </button>
+                      <button
+                        onClick={() => openProfile(p)}
+                        className="px-3.5 py-1.5 bg-[#EAF9D8] hover:bg-blue-100 text-[#0B3D20] rounded-full font-bold text-xs transition-colors flex items-center gap-1.5"
+                      >
+                        <Eye size={13} /> View 3D Profile
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
