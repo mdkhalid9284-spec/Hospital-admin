@@ -61,8 +61,8 @@ export const config = {
 
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-    max: parseInt(process.env.RATE_LIMIT_MAX_ATTEMPTS || '200', 10),
-    authMax: parseInt(process.env.AUTH_RATE_LIMIT_MAX_ATTEMPTS || '5', 10),
+    max: parseInt(process.env.RATE_LIMIT_MAX_ATTEMPTS || '2000', 10),
+    authMax: parseInt(process.env.AUTH_RATE_LIMIT_MAX_ATTEMPTS || '100', 10),
   },
 
   notification: {

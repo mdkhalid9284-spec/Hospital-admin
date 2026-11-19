@@ -2,15 +2,23 @@ import { Request, Response, NextFunction } from 'express';
 import { db } from '../database/index.js';
 
 /**
- * Serialises API requests in one instance, refreshes the in-memory snapshot
- * from the durable store before handling, and commits changes before the
- * response leaves the process.
+ * Performance-optimized persistence middleware.
  *
- * This is what makes writes durable on Vercel: the serverless response is not
- * sent until the database write has completed. Requests are serialised per
- * instance so the refresh -> mutate -> persist cycle cannot interleave.
+ * 1. Safe HTTP methods (GET, HEAD, OPTIONS) are strictly read-only and bypass
+ *    the persistence write lifecycle entirely. They execute concurrently without
+ *    queuing or database round-trips.
+ *
+ * 2. Mutation methods (POST, PUT, PATCH, DELETE) execute their route handlers,
+ *    and upon successful mutation (status < 400), commit changed documents to
+ *    durable storage (MongoDB Atlas or local snapshot) before the response leaves
+ *    the process.
+ *
+ * 3. Full-collection reload (17 collections across Atlas) is removed from the
+ *    per-request path, eliminating the multi-second latency and 15s timeout crashes.
  */
-let requestQueue: Promise<void> = Promise.resolve();
+
+// Mutex queue specifically for mutation writes to preserve atomic commit ordering
+let mutationQueue: Promise<void> = Promise.resolve();
 
 export const persistenceMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   if (!db.isReady || db.persistenceMode === 'memory') {
@@ -18,22 +26,25 @@ export const persistenceMiddleware = (req: Request, res: Response, next: NextFun
     return;
   }
 
-  // Health checks should stay cheap and should not wait behind a write.
-  if (req.originalUrl === '/api/health' || req.path === '/health') {
+  // Safe read requests: completely bypass write queuing and collection reloading
+  const isReadMethod = req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS';
+  if (isReadMethod || req.path === '/api/health' || req.path === '/health') {
     next();
     return;
   }
 
+  // For mutations (POST, PUT, PATCH, DELETE):
+  // Coordinate writes so mutations commit cleanly without interleaving diffs
   let release!: () => void;
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  const previous = requestQueue;
-  requestQueue = previous.then(() => gate).catch(() => undefined);
+  const previous = mutationQueue;
+  mutationQueue = previous.then(() => gate).catch(() => undefined);
 
   previous
     .catch(() => undefined)
-    .then(async () => {
+    .then(() => {
       let settled = false;
       const originalJson = res.json.bind(res);
       const originalSend = res.send.bind(res);
@@ -47,6 +58,14 @@ export const persistenceMiddleware = (req: Request, res: Response, next: NextFun
       const commitAndSend = (send: () => void): void => {
         if (settled) return;
         settled = true;
+
+        // Only persist if the mutation succeeded (2xx or 3xx status)
+        const isSuccess = res.statusCode >= 200 && res.statusCode < 400;
+        if (!isSuccess) {
+          release();
+          send();
+          return;
+        }
 
         db.persist()
           .then(() => {
@@ -77,18 +96,8 @@ export const persistenceMiddleware = (req: Request, res: Response, next: NextFun
       };
       req.on('aborted', onAborted);
       res.on('close', () => {
-        // Handlers that stream or never call json/send still release the queue.
         if (!settled) commitAndSend(() => undefined);
       });
-
-      try {
-        await db.refreshFromStorage();
-      } catch (error) {
-        req.off('aborted', onAborted);
-        releaseQueue();
-        next(error);
-        return;
-      }
 
       res.json = ((body: any) => {
         req.off('aborted', onAborted);
@@ -96,17 +105,15 @@ export const persistenceMiddleware = (req: Request, res: Response, next: NextFun
         return res;
       }) as Response['json'];
 
-     res.send = ((body: any) => {
-  // res.json() internally calls res.send().
-  // If the JSON wrapper has already committed, send directly.
-  if (settled) {
-    return originalSend(body);
-  }
+      res.send = ((body: any) => {
+        if (settled) {
+          return originalSend(body);
+        }
+        req.off('aborted', onAborted);
+        commitAndSend(() => originalSend(body));
+        return res;
+      }) as Response['send'];
 
-  req.off('aborted', onAborted);
-  commitAndSend(() => originalSend(body));
-  return res;
-}) as Response['send'];
       next();
     })
     .catch((error) => {

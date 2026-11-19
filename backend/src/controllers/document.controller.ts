@@ -14,7 +14,15 @@ const toActor = (user: NonNullable<Request['user']>): DocumentActor => ({
 export class DocumentController {
   public static async upload(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      if (!req.file) {
+      const uploadedFile =
+        req.file ||
+        (req.files && Array.isArray(req.files) ? req.files[0] : undefined) ||
+        (req.files && typeof req.files === 'object'
+          ? (req.files as Record<string, Express.Multer.File[]>)['file']?.[0] ||
+            (req.files as Record<string, Express.Multer.File[]>)['document']?.[0]
+          : undefined);
+
+      if (!uploadedFile) {
         throw new AppError('No document file was uploaded.', 400, 'FILE_MISSING');
       }
 
@@ -25,7 +33,7 @@ export class DocumentController {
       }
 
       const doc = await DocumentService.uploadDocument(
-        req.file,
+        uploadedFile,
         {
           patientId: targetPatientId,
           category: req.body.category,

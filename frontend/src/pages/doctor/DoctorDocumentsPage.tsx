@@ -80,7 +80,14 @@ export const DoctorDocumentsPage: React.FC = () => {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !targetPatientId) return;
+    if (!file) {
+      setUploadError('Please select a document file to upload.');
+      return;
+    }
+    if (!targetPatientId) {
+      setUploadError('Please select a target patient.');
+      return;
+    }
     if (!validateFile(file)) return;
     setUploading(true);
     setUploadError(null);
@@ -91,7 +98,11 @@ export const DoctorDocumentsPage: React.FC = () => {
       form.append('category', category);
       form.append('title', docTitle || file.name);
 
-      await apiClient.post('/documents/upload', form);
+      await apiClient.post('/documents/upload', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       setShowUpload(false);
       setFile(null);
       setDocTitle('');
@@ -153,6 +164,9 @@ export const DoctorDocumentsPage: React.FC = () => {
         <button
           onClick={() => {
             setUploadError(null);
+            if (!targetPatientId && patients.length > 0) {
+              setTargetPatientId(patients[0].id);
+            }
             setShowUpload(true);
           }}
           disabled={patients.length === 0}

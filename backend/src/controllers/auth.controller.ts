@@ -40,7 +40,7 @@ export class AuthController {
       if ('linked' in result && result.linked) {
         res.status(200).json({
           success: true,
-          data: { linked: true, email: result.user.email, user: result.user },
+          data: { linked: true, email: result.user.email, user: result.user, token: result.token },
         });
         return;
       }

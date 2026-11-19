@@ -30,6 +30,7 @@ export const AdminDashboardPage: React.FC = () => {
   const [doctors, setDoctors] = useState<IDoctor[]>([]);
   const [wards, setWards] = useState<IWard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Modals
   const [showNewAdmission, setShowNewAdmission] = useState(false);
@@ -45,6 +46,7 @@ export const AdminDashboardPage: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [sumRes, admRes, apptRes, patRes, docRes, bedRes] = await Promise.all([
         apiClient.get('/analytics/summary'),
         apiClient.get('/admissions'),
@@ -68,8 +70,9 @@ export const AdminDashboardPage: React.FC = () => {
         setAdmitForm((p) => ({ ...p, doctorId: docRes.data.data.doctors[0].id }));
         setApptForm((p) => ({ ...p, doctorId: docRes.data.data.doctors[0].id }));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || 'Failed to load operational dashboard data.');
     } finally {
       setLoading(false);
     }
@@ -156,6 +159,21 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2 anim-pop">
           <CheckCircle size={16} className="text-emerald-600 shrink-0" />
           {feedback}
+        </div>
+      )}
+
+      {error && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between gap-3 anim-pop">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} className="text-rose-600 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchData}
+            className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Retry
+          </button>
         </div>
       )}
 

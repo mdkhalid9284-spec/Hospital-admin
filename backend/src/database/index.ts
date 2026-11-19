@@ -100,6 +100,8 @@ class HospitalDatabase {
   private baseline: IDatabaseStore = emptyStore();
   private mode: PersistenceMode = 'memory';
   private isInitialized = false;
+  private initError: string | null = null;
+  private initPromise: Promise<void> | null = null;
   private writeQueue: Promise<void> = Promise.resolve();
 
   /* ------------------------------------------------------------------ */
@@ -108,70 +110,92 @@ class HospitalDatabase {
 
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
-
-    if (config.nodeEnv === 'production' && !(process.env.STORAGE_DRIVER ?? '').trim()) {
-      throw new Error(
-        'STORAGE_DRIVER is required in production. Set STORAGE_DRIVER=vercel-blob on the backend service and provide BLOB_READ_WRITE_TOKEN from the connected private Blob store. Medical documents are not written to the serverless filesystem.'
-      );
+    if (this.initPromise) {
+      return this.initPromise;
     }
 
-    assertBlobStorageConfigured();
-    // Local uploads are created only when STORAGE_DRIVER=local. Blob mode never mkdir's the upload directory.
-    await ensureSampleDocumentFiles();
-
-    const seed: IDatabaseStore = { ...emptyStore(), ...(await generateSeedData()) };
-    this.data = seed;
-    this.ensureDerivedFields();
-
-    const hasConfiguredUri = Boolean(config.database.mongoUri);
-
-    if (!hasConfiguredUri && config.nodeEnv === 'production' && process.env.ALLOW_EPHEMERAL_STORAGE !== 'true') {
-      throw new Error(
-        'Persistent storage is required in production but MONGODB_URI is not configured. ' +
-          'Set MONGODB_URI in the backend Vercel project before deploying. ' +
-          'Local JSON snapshots are not durable on Vercel serverless functions.'
-      );
-    }
-
-    if (hasConfiguredUri) {
-      // When MONGODB_URI is set, Atlas is required. Do not silently fall back
-      // to a local JSON file — that hides authentication failures and desyncs data.
+    this.initPromise = (async () => {
       try {
-        await connectMongo();
-        await this.ensureMongoIndexes();
-        await this.seedMongoFoundation(seed);
-        await this.loadFromMongo();
-        this.mode = 'mongo';
-        console.log('[Database] MongoDB Atlas connected; all collections are persistent.');
+        if (config.nodeEnv === 'production' && !(process.env.STORAGE_DRIVER ?? '').trim()) {
+          throw new Error(
+            'STORAGE_DRIVER is required in production. Set STORAGE_DRIVER=vercel-blob on the backend service and provide BLOB_READ_WRITE_TOKEN from the connected private Blob store. Medical documents are not written to the serverless filesystem.'
+          );
+        }
+
+        assertBlobStorageConfigured();
+        // Local uploads are created only when STORAGE_DRIVER=local. Blob mode never mkdir's the upload directory.
+        await ensureSampleDocumentFiles();
+
+        const seed: IDatabaseStore = { ...emptyStore(), ...(await generateSeedData()) };
+        this.data = seed;
+        this.ensureDerivedFields();
+
+        const hasConfiguredUri = Boolean(config.database.mongoUri);
+
+        if (!hasConfiguredUri && config.nodeEnv === 'production' && process.env.ALLOW_EPHEMERAL_STORAGE !== 'true') {
+          throw new Error(
+            'Persistent storage is required in production but MONGODB_URI is not configured. ' +
+              'Set MONGODB_URI in the backend Vercel project before deploying. ' +
+              'Local JSON snapshots are not durable on Vercel serverless functions.'
+          );
+        }
+
+        if (hasConfiguredUri) {
+          // When MONGODB_URI is set, Atlas is required. Do not silently fall back
+          // to a local JSON file — that hides authentication failures and desyncs data.
+          try {
+            await connectMongo();
+            await this.ensureMongoIndexes();
+            await this.seedMongoFoundation(seed);
+            await this.loadFromMongo();
+            this.mode = 'mongo';
+            console.log('[Database] MongoDB Atlas connected; all collections are persistent.');
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            console.error('[Database] MongoDB Atlas connection failed.');
+            console.error(`[Database] ${message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, '[redacted]')}`);
+            throw error;
+          }
+        } else {
+          await this.loadLocalSnapshot(seed);
+          this.mode = 'file';
+          console.warn(
+            '[Database] MONGODB_URI is not configured. Using storage/hospitalcare_db.json for local development. ' +
+              'This file is not durable on Vercel; configure MongoDB Atlas for production.'
+          );
+        }
+
+        this.ensureDerivedFields();
+        const sampleUpdates = alignSampleDocumentsForBlob(this.data.documents);
+        if (sampleUpdates.length > 0) {
+          await this.commitDocumentMetadata(sampleUpdates);
+          console.log(
+            `[Database] Updated ${sampleUpdates.length} synthetic sample document record(s) for private Blob storage.`
+          );
+        }
+        this.baseline = clone(this.data);
+        this.isInitialized = true;
+        this.initError = null;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error('[Database] MongoDB Atlas connection failed. Server will not start.');
-        console.error(`[Database] ${message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, '[redacted]')}`);
+        const safeMessage = message.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, '[redacted]');
+        this.initError = safeMessage;
+        this.isInitialized = false;
         throw error;
+      } finally {
+        this.initPromise = null;
       }
-    } else {
-      await this.loadLocalSnapshot(seed);
-      this.mode = 'file';
-      console.warn(
-        '[Database] MONGODB_URI is not configured. Using storage/hospitalcare_db.json for local development. ' +
-          'This file is not durable on Vercel; configure MongoDB Atlas for production.'
-      );
-    }
+    })();
 
-    this.ensureDerivedFields();
-    const sampleUpdates = alignSampleDocumentsForBlob(this.data.documents);
-    if (sampleUpdates.length > 0) {
-      await this.commitDocumentMetadata(sampleUpdates);
-      console.log(
-        `[Database] Updated ${sampleUpdates.length} synthetic sample document record(s) for private Blob storage.`
-      );
-    }
-    this.baseline = clone(this.data);
-    this.isInitialized = true;
+    return this.initPromise;
   }
 
   public get isReady(): boolean {
     return this.isInitialized;
+  }
+
+  public get lastInitializationError(): string | null {
+    return this.initError;
   }
 
   public get persistenceMode(): PersistenceMode {
@@ -275,11 +299,6 @@ class HospitalDatabase {
   }
 
   private async loadFromMongo(): Promise<void> {
-    const userDocs = await UserModel.find()
-      .select('+passwordHash +resetPasswordToken +resetPasswordExpires')
-      .lean();
-    this.data.users = userDocs.map((doc) => stripMongoFields<IUser>(doc));
-
     const keys: Exclude<StoreKey, 'users'>[] = [
       'doctors',
       'patients',
@@ -299,10 +318,15 @@ class HospitalDatabase {
       'teleconsultations',
     ];
 
-    for (const key of keys) {
-      const docs = await this.modelFor(key).find().lean();
-      (this.data as any)[key] = docs.map((doc: any) => stripMongoFields(doc));
-    }
+    const [userDocs, ...collectionResults] = await Promise.all([
+      UserModel.find().select('+passwordHash +resetPasswordToken +resetPasswordExpires').lean(),
+      ...keys.map((key) => this.modelFor(key).find().lean()),
+    ]);
+
+    this.data.users = userDocs.map((doc: any) => stripMongoFields<IUser>(doc));
+    keys.forEach((key, index) => {
+      (this.data as any)[key] = (collectionResults[index] as any[]).map((doc: any) => stripMongoFields(doc));
+    });
   }
 
   private async loadLocalSnapshot(seed: IDatabaseStore): Promise<void> {
@@ -368,9 +392,17 @@ class HospitalDatabase {
   /* Refresh / persistence                                               */
   /* ------------------------------------------------------------------ */
 
-  /** Reload latest committed data before serving a request. */
-  public async refreshFromStorage(): Promise<void> {
+  private lastStorageRefreshTime = 0;
+  private readonly refreshTtlMs = 60000;
+
+  /** Reload latest committed data when stale or explicitly requested. */
+  public async refreshFromStorage(force = false): Promise<void> {
     if (!this.isInitialized || this.mode === 'memory') return;
+
+    const now = Date.now();
+    if (!force && now - this.lastStorageRefreshTime < this.refreshTtlMs) {
+      return;
+    }
 
     if (this.mode === 'mongo') {
       await this.loadFromMongo();
@@ -382,6 +414,7 @@ class HospitalDatabase {
 
     this.ensureDerivedFields();
     this.baseline = clone(this.data);
+    this.lastStorageRefreshTime = now;
   }
 
   /** Persist only documents that changed since the last refresh/save. */
@@ -412,6 +445,10 @@ class HospitalDatabase {
   private computeDiff(key: StoreKey): { upserts: any[]; deletes: string[] } {
     const current = (this.data as any)[key] as any[];
     const previous = (this.baseline as any)[key] as any[];
+
+    if (!current || !previous) return { upserts: [], deletes: [] };
+    if (current.length === 0 && previous.length === 0) return { upserts: [], deletes: [] };
+
     const previousById = new Map(previous.map((document: any) => [document.id, document]));
     const currentIds = new Set(current.map((document: any) => document.id));
 
@@ -450,29 +487,41 @@ class HospitalDatabase {
 
   private async persistMongoDiff(): Promise<void> {
     const keys = Object.keys(this.data) as StoreKey[];
+    const diffs: Array<{ key: StoreKey; upserts: any[]; deletes: string[] }> = [];
 
     for (const key of keys) {
-      const { upserts, deletes } = this.computeDiff(key);
-      if (upserts.length === 0 && deletes.length === 0) continue;
-
-      const model = this.modelFor(key);
-      if (upserts.length > 0) {
-        const operations = upserts.map((document) => ({
-          updateOne: {
-            filter: { id: document.id },
-            update: { $set: stripMongoFields(document) },
-            upsert: true,
-          },
-        }));
-        await model.bulkWrite(operations, { ordered: false });
+      const diff = this.computeDiff(key);
+      if (diff.upserts.length > 0 || diff.deletes.length > 0) {
+        diffs.push({ key, ...diff });
       }
-
-      if (deletes.length > 0) {
-        await model.deleteMany({ id: { $in: deletes } });
-      }
-
-      (this.baseline as any)[key] = clone((this.data as any)[key]);
     }
+
+    if (diffs.length === 0) return;
+
+    await Promise.all(
+      diffs.map(async ({ key, upserts, deletes }) => {
+        const model = this.modelFor(key);
+        const tasks: Promise<any>[] = [];
+
+        if (upserts.length > 0) {
+          const operations = upserts.map((document) => ({
+            updateOne: {
+              filter: { id: document.id },
+              update: { $set: stripMongoFields(document) },
+              upsert: true,
+            },
+          }));
+          tasks.push(model.bulkWrite(operations, { ordered: false }));
+        }
+
+        if (deletes.length > 0) {
+          tasks.push(model.deleteMany({ id: { $in: deletes } }));
+        }
+
+        await Promise.all(tasks);
+        (this.baseline as any)[key] = clone((this.data as any)[key]);
+      })
+    );
   }
 
   private async persistLocalSnapshot(): Promise<void> {
@@ -517,6 +566,8 @@ class HospitalDatabase {
     this.baseline = clone(this.data);
     this.mode = 'memory';
     this.isInitialized = false;
+    this.initError = null;
+    this.initPromise = null;
   }
 }
 

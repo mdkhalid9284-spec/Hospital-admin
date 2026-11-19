@@ -153,7 +153,7 @@ export class AuthService {
     ipAddress?: string
   ): Promise<
     | { user: Partial<IUser> & { patientId?: string; doctorId?: string }; token: string }
-    | { user: Partial<IUser> & { patientId?: string; doctorId?: string }; linked: true }
+    | { user: Partial<IUser> & { patientId?: string; doctorId?: string }; linked: true; token: string }
   > {
     const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
 
@@ -240,10 +240,11 @@ export class AuthService {
 
     // Firebase is the identity provider when Admin credentials are configured.
     // The password proof above links the existing MongoDB user and its role.
-    // No application JWT is issued on that path.
+    // An application JWT is also issued as a seamless fallback.
     if (isFirebaseAdminConfigured()) {
       await FirebaseAccountService.linkVerifiedLegacyUser(user, password);
-      return { user: { ...safeUser, patientId, doctorId }, linked: true as const };
+      const token = this.generateToken(user, patientId, doctorId);
+      return { user: { ...safeUser, patientId, doctorId }, linked: true as const, token };
     }
 
     const token = this.generateToken(user, patientId, doctorId);

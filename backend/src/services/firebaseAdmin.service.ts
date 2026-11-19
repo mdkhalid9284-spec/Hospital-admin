@@ -12,6 +12,7 @@ export interface FirebaseIdentity {
 }
 
 export const isFirebaseAdminConfigured = (): boolean =>
+  config.nodeEnv !== 'test' &&
   Boolean(config.firebase.projectId && config.firebase.clientEmail && config.firebase.privateKey);
 
 const getAdminAuth = () => {

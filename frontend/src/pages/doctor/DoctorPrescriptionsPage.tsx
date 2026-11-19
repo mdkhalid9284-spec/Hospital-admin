@@ -61,7 +61,10 @@ export const DoctorPrescriptionsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const patRes = await apiClient.get('/patients');
+      const [patRes, rxRes] = await Promise.all([
+        apiClient.get('/patients'),
+        apiClient.get('/prescriptions').catch(() => ({ data: { data: { prescriptions: [] } } })),
+      ]);
       const pats: IPatient[] = patRes.data.data?.patients ?? [];
       setPatients(pats);
       if (pats.length > 0) {
@@ -73,17 +76,8 @@ export const DoctorPrescriptionsPage: React.FC = () => {
         }
       }
 
-      // Fetch all prescriptions for assigned patients
-      const allRx: IPrescription[] = [];
-      for (const p of pats) {
-        try {
-          const rxRes = await apiClient.get(`/prescriptions/patient/${p.id}`);
-          allRx.push(...(rxRes.data.data?.prescriptions ?? []));
-        } catch {
-          // A single patient failure should not blank the whole log.
-        }
-      }
-      allRx.sort((a, b) => b.prescribedAt.localeCompare(a.prescribedAt));
+      const allRx: IPrescription[] = rxRes.data.data?.prescriptions ?? [];
+      allRx.sort((a, b) => (b.prescribedAt || '').localeCompare(a.prescribedAt || ''));
       setPrescriptions(allRx);
     } catch (err: any) {
       setError(err.message || 'Unable to load prescriptions.');

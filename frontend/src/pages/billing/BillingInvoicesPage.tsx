@@ -45,10 +45,11 @@ export const BillingInvoicesPage: React.FC = () => {
         apiClient.get('/bills'),
         apiClient.get('/patients'),
       ]);
+      const patList = (patientsRes.data.data?.patients ?? patientsRes.data.data) || [];
       setBills((billsRes.data.data?.bills ?? billsRes.data.data) || []);
-      setPatients((patientsRes.data.data?.patients ?? patientsRes.data.data) || []);
-      if (patientsRes.data.data?.length > 0) {
-        setNewPatientId(patientsRes.data.data[0].id);
+      setPatients(patList);
+      if (patList.length > 0) {
+        setNewPatientId(patList[0].id);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load billing invoices');

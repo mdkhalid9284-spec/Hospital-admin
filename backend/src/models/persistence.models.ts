@@ -46,29 +46,95 @@ export const persistenceModels = {
     getModel('HcPatient', 'patients', {
       patientCode: { type: String, unique: true, sparse: true, index: true },
       identityKey: flagged(true),
+      userId: { type: String, sparse: true, index: true },
+      phone: { type: String, index: true },
+      email: { type: String, index: true },
     }),
-  doctors: () => getModel('HcDoctor', 'doctors', { doctorCode: flagged(true) }),
+  doctors: () =>
+    getModel('HcDoctor', 'doctors', {
+      doctorCode: flagged(true),
+      userId: { type: String, sparse: true, index: true },
+      specialization: { type: String, index: true },
+    }),
   wards: () => getModel('HcWard', 'wards'),
-  admissions: () => getModel('HcAdmission', 'admissions', { admissionCode: flagged(true) }),
+  admissions: () =>
+    getModel('HcAdmission', 'admissions', {
+      admissionCode: flagged(true),
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+      status: { type: String, index: true },
+    }),
   appointments: () =>
     getModel('HcAppointment', 'appointments', {
       appointmentCode: { type: String, unique: true, sparse: true, index: true },
       doctorSlotKey: flagged(true),
       patientSlotKey: flagged(true),
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+      appointmentDate: { type: String, index: true },
+      status: { type: String, index: true },
     }),
-  medicalRecords: () => getModel('HcMedicalRecord', 'medical_records'),
-  prescriptions: () => getModel('HcPrescription', 'prescriptions', {
-    prescriptionCode: { type: String, unique: true, sparse: true, index: true },
-  }),
-  documents: () => getModel('HcMedicalDocument', 'medical_documents'),
-  bills: () => getModel('HcBill', 'bills', { billCode: flagged(true) }),
-  insuranceClaims: () => getModel('HcInsuranceClaim', 'insurance_claims', { claimCode: flagged(true) }),
-  insurancePolicies: () => getModel('HcInsurancePolicy', 'insurance_policies'),
-  auditLogs: () => getModel('HcAuditLog', 'audit_logs'),
-  notifications: () => getModel('HcNotification', 'notifications'),
-  conversations: () => getModel('HcConversation', 'conversations'),
-  messages: () => getModel('HcMessage', 'messages'),
-  teleconsultations: () => getModel('HcTeleconsultation', 'teleconsultations'),
+  medicalRecords: () =>
+    getModel('HcMedicalRecord', 'medical_records', {
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+    }),
+  prescriptions: () =>
+    getModel('HcPrescription', 'prescriptions', {
+      prescriptionCode: { type: String, unique: true, sparse: true, index: true },
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+    }),
+  documents: () =>
+    getModel('HcMedicalDocument', 'medical_documents', {
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+      category: { type: String, index: true },
+    }),
+  bills: () =>
+    getModel('HcBill', 'bills', {
+      billCode: flagged(true),
+      patientId: { type: String, index: true },
+      status: { type: String, index: true },
+    }),
+  insuranceClaims: () =>
+    getModel('HcInsuranceClaim', 'insurance_claims', {
+      claimCode: flagged(true),
+      patientId: { type: String, index: true },
+      billId: { type: String, index: true },
+      status: { type: String, index: true },
+    }),
+  insurancePolicies: () =>
+    getModel('HcInsurancePolicy', 'insurance_policies', {
+      patientId: { type: String, index: true },
+    }),
+  auditLogs: () =>
+    getModel('HcAuditLog', 'audit_logs', {
+      timestamp: { type: String, index: true },
+      actorId: { type: String, index: true },
+      entityType: { type: String, index: true },
+    }),
+  notifications: () =>
+    getModel('HcNotification', 'notifications', {
+      userId: { type: String, index: true },
+      read: { type: Boolean, index: true },
+    }),
+  conversations: () =>
+    getModel('HcConversation', 'conversations', {
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+    }),
+  messages: () =>
+    getModel('HcMessage', 'messages', {
+      conversationId: { type: String, index: true },
+      createdAt: { type: String, index: true },
+    }),
+  teleconsultations: () =>
+    getModel('HcTeleconsultation', 'teleconsultations', {
+      appointmentId: { type: String, index: true },
+      patientId: { type: String, index: true },
+      doctorId: { type: String, index: true },
+    }),
 };
 
 /** Strip Mongo's internal `_id` before placing documents in the domain store. */

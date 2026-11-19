@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { DocumentController } from '../controllers/document.controller.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
@@ -14,6 +14,20 @@ const upload = multer({
   },
 });
 
+const uploadDocumentMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  upload.fields([
+    { name: 'file', maxCount: 1 },
+    { name: 'document', maxCount: 1 },
+  ])(req, res, (err: any) => {
+    if (err) return next(err);
+    if (!req.file && req.files) {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      req.file = files['file']?.[0] || files['document']?.[0];
+    }
+    next();
+  });
+};
+
 router.use(authenticateToken);
 
 // List all documents or role-filtered (clinical roles only — billing has no need)
@@ -24,7 +38,7 @@ router.get('/', requireRoles('admin', 'doctor', 'patient'), DocumentController.g
 router.post(
   '/upload',
   requireRoles('admin', 'doctor', 'patient'),
-  upload.single('file'),
+  uploadDocumentMiddleware,
   requireResourceOwnership(
     (req) => (req.user?.role === 'patient' ? req.user.patientId : req.body?.patientId),
     'patient'

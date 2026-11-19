@@ -7,6 +7,16 @@ let connectionPromise: Promise<typeof mongoose> | null = null;
 // caller attempts a real reconnect instead of awaiting an already-resolved one.
 mongoose.connection.on('disconnected', () => {
   connectionPromise = null;
+  console.warn('[Database] MongoDB connection dropped. Automatic reconnection in progress...');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('[Database] MongoDB Atlas reconnected successfully.');
+});
+
+mongoose.connection.on('error', (err) => {
+  const msg = err instanceof Error ? err.message : String(err);
+  console.error('[Database] MongoDB connection error:', msg.replace(/mongodb(?:\+srv)?:\/\/\S+/gi, '[redacted]'));
 });
 
 export function mongoHostname(uri: string): string | null {
@@ -94,9 +104,12 @@ export async function connectMongo(): Promise<void> {
   if (!connectionPromise) {
     connectionPromise = mongoose
       .connect(config.database.mongoUri, {
+        maxPoolSize: 50,
+        minPoolSize: 10,
         serverSelectionTimeoutMS: 10000,
-        connectTimeoutMS: 10000,
+        connectTimeoutMS: 15000,
         socketTimeoutMS: 45000,
+        family: 4,
       })
       .then((instance) => {
         console.log('[Database] MongoDB Atlas connected.');

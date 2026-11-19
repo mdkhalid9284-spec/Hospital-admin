@@ -27,6 +27,7 @@ export const DoctorDashboardPage: React.FC = () => {
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [patients, setPatients] = useState<IPatient[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Quick action modals
   const [showApptModal, setShowApptModal] = useState(false);
@@ -42,6 +43,7 @@ export const DoctorDashboardPage: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [apptRes, patRes] = await Promise.all([
         apiClient.get('/appointments'),
         apiClient.get('/patients'),
@@ -51,8 +53,9 @@ export const DoctorDashboardPage: React.FC = () => {
       if (patRes.data.data.patients.length > 0) {
         setApptForm((p) => ({ ...p, patientId: patRes.data.data.patients[0].id }));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setError(err.message || 'Failed to load doctor clinical dashboard.');
     } finally {
       setLoading(false);
     }
@@ -116,6 +119,21 @@ export const DoctorDashboardPage: React.FC = () => {
         <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-bold flex items-center gap-2 anim-pop">
           <CheckCircle size={16} className="text-emerald-600 shrink-0" />
           {toastMsg}
+        </div>
+      )}
+
+      {error && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between gap-3 anim-pop">
+          <div className="flex items-center gap-2">
+            <Users size={16} className="text-rose-600 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={fetchData}
+            className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition-all"
+          >
+            Retry
+          </button>
         </div>
       )}
 

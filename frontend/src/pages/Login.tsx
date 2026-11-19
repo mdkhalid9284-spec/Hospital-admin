@@ -152,10 +152,6 @@ export const Login: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] text-[#EAF9D8]/80 mt-0.5">ICU & Internal Medicine Telemetry</p>
-              <div className="flex items-center gap-1.5 text-[10px] text-[#C7FF75] font-semibold mt-1">
-                <CheckCircle2 size={12} />
-                <span>Zero IDOR · Argon2/Bcrypt Session Verified</span>
-              </div>
             </div>
           </div>
         </div>
@@ -339,12 +335,6 @@ export const Login: React.FC = () => {
               {loading ? 'Verifying Session…' : 'Enter HospitalCare Portal'}
               <ArrowRight size={15} />
             </button>
-
-            <div className="pt-2 text-center">
-              <p className="text-[11px] text-[#8A998B]">
-                Argon2 / Bcrypt verified authentication · Role-Based Access Control
-              </p>
-            </div>
           </form>
           ) : mode === 'signup' ? (
           <form onSubmit={submitSignup} className="space-y-4 bg-white border border-[#E3E8DE] rounded-3xl p-6 sm:p-7 shadow-sm">

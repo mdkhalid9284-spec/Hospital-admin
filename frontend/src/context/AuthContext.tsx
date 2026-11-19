@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { IUser, UserRole } from '../types';
-import { apiClient } from '../api/client';
+import { apiClient, clearApiCache } from '../api/client';
 import {
   auth,
   isFirebaseConfigured,
@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.setItem('hospitalcare_token', freshToken);
             setUser((prev) => {
               if (prev) {
+                if (prev.emailVerified === fbUser.emailVerified) return prev;
                 const updated = { ...prev, emailVerified: fbUser.emailVerified };
                 localStorage.setItem('hospitalcare_user', JSON.stringify(updated));
                 return updated;
@@ -92,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, pass: string): Promise<IUser> => {
+    clearApiCache();
     // 1. Try Firebase Authentication first if configured
     if (isFirebaseConfigured && auth) {
       try {
@@ -296,6 +298,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Ignore Firebase signout errors
       }
     }
+    clearApiCache();
     setUser(null);
     setToken(null);
     localStorage.removeItem('hospitalcare_token');

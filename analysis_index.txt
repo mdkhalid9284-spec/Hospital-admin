@@ -1,0 +1,345 @@
+backend/src\app.ts:13:export const createApp = (): Express => {
+backend/src\schemas\patient.schema.ts:3:export const createPatientSchema = z.object({
+backend/src\schemas\patient.schema.ts:24:export const checkPatientDuplicatesSchema = z.object({
+backend/src\schemas\patient.schema.ts:32:export const updatePatientSchema = createPatientSchema.partial();
+backend/src\schemas\document.schema.ts:3:export const uploadDocumentSchema = z.object({
+backend/src\schemas\communication.schema.ts:3:export const createConversationSchema = z.object({
+backend/src\schemas\communication.schema.ts:9:export const sendMessageSchema = z.object({
+backend/src\schemas\communication.schema.ts:16:export const startTeleconsultationSchema = z.object({
+backend/src\schemas\clinical.schema.ts:3:export const createPrescriptionSchema = z.object({
+backend/src\schemas\clinical.schema.ts:20:export const createClinicalNoteSchema = z.object({
+backend/src\models\User.model.ts:34:export const UserModel =
+frontend/src\api\client.ts:3:export const apiClient = axios.create({
+backend/src\models\persistence.models.ts:44:export const persistenceModels = {
+backend/src\models\persistence.models.ts:75:export const stripMongoFields = <T>(document: any): T => {
+backend/src\schemas\admission.schema.ts:3:export const createAdmissionSchema = z.object({
+backend/src\schemas\admission.schema.ts:12:export const dischargePatientSchema = z.object({
+backend/src\services\admission.service.ts:9:export class AdmissionService {
+backend/src\services\admission.service.ts:18:  public static async admitPatient(
+backend/src\services\admission.service.ts:135:  public static async getAllAdmissions(): Promise<IAdmission[]> {
+backend/src\services\admission.service.ts:139:  public static async getById(id: string): Promise<IAdmission> {
+backend/src\services\admission.service.ts:147:  public static async getByPatientId(patientId: string): Promise<IAdmission[]> {
+backend/src\vercel.ts:10:function getApp(): Promise<Express> {
+backend/src\vercel.ts:23:export default async function handler(
+frontend/src\utils\date.ts:7:export const toISODate = (date: Date): string =>
+frontend/src\utils\date.ts:12:export const parseISODate = (value: string): Date => new Date(`${value.slice(0, 10)}T00:00:00`);
+frontend/src\utils\date.ts:14:export const todayISO = (): string => toISODate(new Date());
+frontend/src\utils\date.ts:16:export const addDays = (base: Date, days: number): Date => {
+frontend/src\utils\date.ts:22:export const startOfWeekMonday = (date: Date): Date => {
+frontend/src\utils\date.ts:29:export const isSameDay = (a: Date, b: Date): boolean =>
+frontend/src\utils\date.ts:34:export const isToday = (date: Date): boolean => isSameDay(date, new Date());
+frontend/src\utils\date.ts:36:export const calculateAge = (dob: string, onDate: string | Date = new Date()): number => {
+frontend/src\utils\date.ts:50:export const formatMonthYear = (date: Date): string =>
+frontend/src\utils\date.ts:53:export const formatDayLong = (date: Date): string =>
+frontend/src\utils\date.ts:61:export const formatDateShort = (date: Date): string =>
+frontend/src\utils\date.ts:64:export const formatDateRange = (start: Date, end: Date): string => {
+backend/src\routes\admission.routes.ts:13:router.get('/', requireRoles('admin', 'doctor', 'patient', 'billing'), AdmissionController.getAll);
+backend/src\routes\admission.routes.ts:16:router.get('/:id', requireRoles('admin', 'doctor', 'patient', 'billing'), AdmissionController.getById);
+backend/src\routes\admission.routes.ts:19:router.post(
+backend/src\routes\admission.routes.ts:27:router.post(
+backend/src\routes\analytics.routes.ts:9:router.get('/summary', requireRoles('admin', 'billing'), AnalyticsController.getSummary);
+backend/src\schemas\appointment.schema.ts:3:export const createAppointmentSchema = z.object({
+backend/src\schemas\appointment.schema.ts:12:export const updateAppointmentSchema = z
+backend/src\schemas\appointment.schema.ts:29:export const updateAppointmentStatusSchema = z.object({
+backend/src\schemas\auth.schema.ts:3:export const registerSchema = z.object({
+backend/src\schemas\auth.schema.ts:24:export const patientSignupSchema = z.object({
+backend/src\schemas\auth.schema.ts:40:export const loginSchema = z.object({
+backend/src\schemas\auth.schema.ts:45:export const forgotPasswordSchema = z.object({
+backend/src\schemas\auth.schema.ts:49:export const existingPatientPrepareSchema = z.object({
+backend/src\schemas\auth.schema.ts:56:export const existingPatientCompleteSchema = z.object({
+backend/src\schemas\auth.schema.ts:60:export const newPatientRegistrationSchema = z.object({
+backend/src\schemas\auth.schema.ts:74:export const resetPasswordSchema = z.object({
+backend/src\services\auth.service.ts:13:export class AuthService {
+backend/src\services\auth.service.ts:23:  public static async registerPatientAccount(data: {
+backend/src\services\auth.service.ts:134:  public static async register(data: {
+backend/src\services\auth.service.ts:150:  public static async login(
+backend/src\services\auth.service.ts:253:  public static async forgotPassword(email: string): Promise<string> {
+backend/src\services\auth.service.ts:276:  public static async resetPassword(token: string, newPass: string): Promise<void> {
+frontend/src\lib\firebase.ts:23:export const isFirebaseConfigured = Boolean(
+frontend/src\lib\firebase.ts:27:export const app: FirebaseApp | null = isFirebaseConfigured
+frontend/src\lib\firebase.ts:31:export const auth: Auth | null = app ? getAuth(app) : null;
+backend/src\config\index.ts:16:export const config = {
+backend/src\config\env.ts:15:export function loadBackendEnv(): { path: string; loaded: boolean } {
+backend/src\config\env.ts:30:export function getBackendRoot(): string {
+backend/src\config\env.ts:34:export function getBackendEnvPath(): string {
+backend/src\config\env.ts:39:export function assertRequiredEnv(keys: string[]): void {
+backend/src\database\index.ts:109:  public async initialize(): Promise<void> {
+backend/src\database\index.ts:181:  private async ensureMongoIndexes(): Promise<void> {
+backend/src\database\index.ts:236:  private async seedMongoFoundation(seed: IDatabaseStore): Promise<void> {
+backend/src\database\index.ts:277:  private async loadFromMongo(): Promise<void> {
+backend/src\database\index.ts:308:  private async loadLocalSnapshot(seed: IDatabaseStore): Promise<void> {
+backend/src\database\index.ts:372:  public async refreshFromStorage(): Promise<void> {
+backend/src\database\index.ts:388:  public async persist(): Promise<void> {
+backend/src\database\index.ts:429:  private async commitDocumentMetadata(documents: IMedicalDocument[]): Promise<void> {
+backend/src\database\index.ts:451:  private async persistMongoDiff(): Promise<void> {
+backend/src\database\index.ts:478:  private async persistLocalSnapshot(): Promise<void> {
+backend/src\database\index.ts:512:  public async resetForTesting(): Promise<void> {
+backend/src\database\index.ts:523:export const db = new HospitalDatabase();
+backend/src\services\bed.service.ts:6:export class BedService {
+backend/src\services\bed.service.ts:7:  public static async getBedBoard(): Promise<{
+backend/src\services\bed.service.ts:30:  public static async findBed(
+backend/src\services\bed.service.ts:56:  public static async allocateBed(
+backend/src\services\bed.service.ts:99:  public static async releaseBed(
+backend/src\services\bed.service.ts:125:  public static async updateStatus(
+backend/src\database\mongo.ts:12:export function mongoHostname(uri: string): string | null {
+backend/src\database\mongo.ts:18:export function validateMongoUri(uri: string): void {
+backend/src\database\mongo.ts:58:function toConnectionError(error: unknown): Error {
+backend/src\database\mongo.ts:89:export async function connectMongo(): Promise<void> {
+backend/src\database\mongo.ts:114:export async function disconnectMongo(): Promise<void> {
+backend/src\database\mongo.ts:121:export function isMongoConnected(): boolean {
+backend/src\schemas\billing.schema.ts:3:export const createBillSchema = z.object({
+backend/src\schemas\billing.schema.ts:20:export const recordPaymentSchema = z.object({
+backend/src\schemas\billing.schema.ts:24:export const createInsuranceClaimSchema = z.object({
+backend/src\schemas\billing.schema.ts:33:export const updateInsuranceClaimStatusSchema = z.object({
+backend/src\middlewares\audit.middleware.ts:6:export const logAuditEvent = (
+backend/src\middlewares\audit.middleware.ts:42:export const requestContextMiddleware = (
+backend/src\routes\teleconsultation.routes.ts:12:router.get(
+backend/src\routes\teleconsultation.routes.ts:18:router.post(
+backend/src\routes\teleconsultation.routes.ts:25:router.get(
+backend/src\routes\teleconsultation.routes.ts:31:router.post(
+backend/src\routes\record.routes.ts:13:router.post(
+backend/src\routes\record.routes.ts:21:router.patch(
+backend/src\routes\record.routes.ts:28:router.get(
+backend/src\services\appointment.service.ts:10:export const STANDARD_TIME_SLOTS = [
+backend/src\services\appointment.service.ts:64:export class AppointmentService {
+backend/src\services\appointment.service.ts:73:  private static async withSlotLock<T>(key: string, task: () => Promise<T>): Promise<T> {
+backend/src\services\appointment.service.ts:94:  private static async withSlotLocks<T>(keys: string[], task: () => Promise<T>): Promise<T> {
+backend/src\services\appointment.service.ts:210:  public static async getDoctorAvailableSlots(
+backend/src\services\appointment.service.ts:252:  public static async bookAppointment(
+backend/src\services\appointment.service.ts:354:  public static async updateAppointment(
+backend/src\services\appointment.service.ts:487:  public static async updateStatus(
+backend/src\services\appointment.service.ts:542:  public static async getByPatientId(patientId: string): Promise<IAppointment[]> {
+backend/src\services\appointment.service.ts:546:  public static async getByDoctorId(doctorId: string): Promise<IAppointment[]> {
+backend/src\services\appointment.service.ts:550:  public static async getAll(): Promise<IAppointment[]> {
+backend/src\routes\prescription.routes.ts:13:router.post(
+backend/src\routes\prescription.routes.ts:21:router.get('/', requireRoles('admin', 'doctor'), PrescriptionController.getAll);
+backend/src\routes\prescription.routes.ts:24:router.get(
+backend/src\routes\patient.routes.ts:13:router.get('/', requireRoles('admin', 'doctor', 'billing'), PatientController.getAll);
+backend/src\routes\patient.routes.ts:16:router.post(
+backend/src\routes\patient.routes.ts:24:router.get(
+backend/src\routes\patient.routes.ts:32:router.post(
+backend/src\routes\patient.routes.ts:40:router.patch(
+backend/src\routes\insurance.routes.ts:16:router.get('/claims', requireRoles('admin', 'billing', 'patient'), InsuranceController.getAll);
+backend/src\routes\insurance.routes.ts:19:router.get('/', requireRoles('admin', 'billing', 'patient'), InsuranceController.getAll);
+backend/src\routes\insurance.routes.ts:22:router.get('/policies', requireRoles('admin', 'billing', 'patient'), InsuranceController.getPolicies);
+backend/src\routes\insurance.routes.ts:25:router.post(
+backend/src\routes\insurance.routes.ts:33:router.patch(
+backend/src\routes\insurance.routes.ts:41:router.get(
+backend/src\controllers\analytics.controller.ts:4:export class AnalyticsController {
+backend/src\controllers\analytics.controller.ts:5:  public static async getSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\analytics.service.ts:5:export const ANALYTICS_RANGES = ['7d', '30d', '90d', '1y'] as const;
+backend/src\services\analytics.service.ts:75:export class AnalyticsService {
+backend/src\services\analytics.service.ts:80:  public static async getSummaryMetrics(rangeInput: string = '30d'): Promise<AnalyticsSummary> {
+backend/src\routes\document.routes.ts:20:router.get('/', requireRoles('admin', 'doctor', 'patient'), DocumentController.getAll);
+backend/src\routes\document.routes.ts:24:router.post(
+backend/src\routes\document.routes.ts:36:router.get('/:id/download', requireRoles('admin', 'doctor', 'patient'), DocumentController.download);
+backend/src\routes\document.routes.ts:39:router.delete('/:id', requireRoles('admin', 'doctor', 'patient'), DocumentController.delete);
+backend/src\routes\document.routes.ts:42:router.get(
+backend/src\utils\date.ts:7:export const DAY_NAMES = [
+backend/src\utils\date.ts:17:export const toISODate = (date: Date): string =>
+backend/src\utils\date.ts:20:export const todayISODate = (): string => toISODate(new Date());
+backend/src\utils\date.ts:22:export const addDays = (base: Date, days: number): Date => {
+backend/src\utils\date.ts:33:export const calculateAge = (dob: string, onDate: string | Date = new Date()): number => {
+backend/src\utils\date.ts:48:export const rangeStartDate = (
+backend/src\database\check.ts:6:async function checkConnection(): Promise<void> {
+backend/src\database\sampleDocuments.ts:20:export const buildSamplePdf = (title: string, lines: string[]): Buffer => {
+backend/src\database\sampleDocuments.ts:81:export const SAMPLE_DOCUMENT_FILES: SampleDocumentFile[] = [
+backend/src\database\sampleDocuments.ts:152:export const sampleBlobPathname = (fileName: string): string =>
+backend/src\database\sampleDocuments.ts:158:export const canonicalSampleFileName = (storageKey: string): string | null => {
+backend/src\database\sampleDocuments.ts:171:export const ensureLocalSampleDocumentFiles = (): void => {
+backend/src\database\sampleDocuments.ts:189:export const ensureSampleDocumentFiles = async (): Promise<void> => {
+backend/src\database\sampleDocuments.ts:209:export const alignSampleDocumentsForBlob = (documents: IMedicalDocument[]): IMedicalDocument[] => {
+backend/src\controllers\appointment.controller.ts:6:export class AppointmentController {
+backend/src\controllers\appointment.controller.ts:7:  public static async getAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\appointment.controller.ts:28:  public static async book(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\appointment.controller.ts:69:  public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\appointment.controller.ts:122:  public static async updateStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\appointment.controller.ts:178:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\routes\auth.routes.ts:20:router.post(
+backend/src\routes\auth.routes.ts:31:router.post(
+backend/src\routes\auth.routes.ts:38:router.post(
+backend/src\routes\auth.routes.ts:45:router.post(
+backend/src\routes\auth.routes.ts:52:router.post(
+backend/src\routes\auth.routes.ts:59:router.post(
+backend/src\routes\auth.routes.ts:66:router.post('/session', authIpRateLimiter, AuthController.session);
+backend/src\routes\auth.routes.ts:68:router.post(
+backend/src\routes\auth.routes.ts:75:router.post(
+backend/src\routes\auth.routes.ts:82:router.get('/me', authenticateToken, AuthController.me);
+backend/src\routes\auth.routes.ts:88:router.post('/logout', authenticateToken, AuthController.logout);
+backend/src\middlewares\persistence.middleware.ts:15:export const persistenceMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+backend/src\routes\audit.routes.ts:9:router.get('/', requireRoles('admin'), AuditController.getLogs);
+backend/src\routes\doctor.routes.ts:10:router.get('/', DoctorController.getAll);
+backend/src\routes\doctor.routes.ts:11:router.get('/:id', DoctorController.getById);
+backend/src\routes\doctor.routes.ts:12:router.post('/', requireRoles('admin'), DoctorController.create);
+backend/src\routes\doctor.routes.ts:13:router.patch('/:id', requireRoles('admin'), DoctorController.update);
+backend/src\routes\doctor.routes.ts:14:router.patch('/:id/toggle-status', requireRoles('admin'), DoctorController.toggleStatus);
+backend/src\routes\doctor.routes.ts:15:router.post('/assign-patient', requireRoles('admin'), DoctorController.assignPatient);
+backend/src\routes\conversation.routes.ts:12:router.get(
+backend/src\routes\conversation.routes.ts:18:router.post(
+backend/src\routes\conversation.routes.ts:25:router.get(
+backend/src\routes\conversation.routes.ts:31:router.post(
+backend/src\routes\conversation.routes.ts:38:router.post(
+backend/src\routes\appointment.routes.ts:16:router.get('/available-slots', AppointmentController.getAvailableSlots);
+backend/src\routes\appointment.routes.ts:17:router.get('/', AppointmentController.getAll);
+backend/src\routes\appointment.routes.ts:19:router.post(
+backend/src\routes\appointment.routes.ts:30:router.patch(
+backend/src\routes\appointment.routes.ts:37:router.patch(
+backend/src\routes\billing.routes.ts:13:router.get('/', requireRoles('admin', 'billing', 'patient'), BillingController.getAll);
+backend/src\routes\billing.routes.ts:16:router.post(
+backend/src\routes\billing.routes.ts:24:router.post(
+backend/src\routes\billing.routes.ts:32:router.get(
+backend/src\routes\bed.routes.ts:10:router.get('/board', requireRoles('admin', 'doctor', 'billing'), BedController.getBedBoard);
+backend/src\routes\bed.routes.ts:11:router.patch('/status', requireRoles('admin'), BedController.updateStatus);
+backend/src\services\conversation.service.ts:17:export class ConversationService {
+backend/src\middlewares\errorHandler.ts:4:export class AppError extends Error {
+backend/src\middlewares\errorHandler.ts:18:export const errorHandler = (
+backend/src\services\bill.service.ts:21:export class BillService {
+backend/src\services\bill.service.ts:25:  public static async createBill(
+backend/src\services\bill.service.ts:105:  public static async recordPayment(
+backend/src\services\bill.service.ts:158:  public static async getByPatientId(patientId: string, filters?: BillFilters): Promise<IBill[]> {
+backend/src\services\bill.service.ts:162:  public static async getAll(filters?: BillFilters): Promise<IBill[]> {
+backend/src\middlewares\rateLimiter.ts:6:export const globalRateLimiter = rateLimitFn({
+backend/src\middlewares\rateLimiter.ts:26:export const authIpRateLimiter = rateLimitFn({
+backend/src\middlewares\rbac.middleware.ts:8:export const requireRoles = (...allowedRoles: UserRole[]) => {
+backend/src\middlewares\rbac.middleware.ts:40:export const requireResourceOwnership = (
+backend/src\controllers\admission.controller.ts:5:export class AdmissionController {
+backend/src\controllers\admission.controller.ts:6:  public static async admit(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\admission.controller.ts:23:  public static async discharge(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\admission.controller.ts:40:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\admission.controller.ts:56:  public static async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\utils\identity.ts:10:export const normalizeName = (value: string | undefined | null): string =>
+backend/src\utils\identity.ts:20:export const normalizePhone = (value: string | undefined | null): string =>
+backend/src\utils\identity.ts:23:export const normalizeCode = (value: string | undefined | null): string =>
+backend/src\utils\identity.ts:26:export const normalizeEmail = (value: string | undefined | null): string =>
+backend/src\utils\identity.ts:30:export const patientIdentityKey = (fullName: string, phone: string): string | null => {
+backend/src\utils\identity.ts:38:export const levenshtein = (a: string, b: string): number => {
+backend/src\utils\identity.ts:56:export const nameSimilarity = (a: string, b: string): number => {
+backend/src\controllers\auth.controller.ts:10:export class AuthController {
+backend/src\controllers\auth.controller.ts:11:  public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:23:  public static async patientSignup(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:35:  public static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:56:  public static async prepareExistingPatient(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:65:  public static async completeExistingPatient(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:75:  public static async registerNewPatient(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:85:  public static async session(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:104:  public static async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:120:  public static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:133:  public static async me(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\auth.controller.ts:144:  public static async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\discharge.service.ts:8:export class DischargeService {
+backend/src\services\discharge.service.ts:9:  public static async processDischarge(
+backend/src\database\seedData.ts:55:export const generateSeedData = async () => {
+backend/src\services\doctor.service.ts:6:export class DoctorService {
+backend/src\services\doctor.service.ts:7:  public static async getAll(includeInactive = false): Promise<IDoctor[]> {
+backend/src\services\doctor.service.ts:11:  public static async getById(doctorId: string): Promise<IDoctor> {
+backend/src\services\doctor.service.ts:19:  public static async createDoctor(
+backend/src\services\doctor.service.ts:49:  public static async updateDoctor(
+backend/src\services\doctor.service.ts:60:  public static async toggleStatus(
+backend/src\services\doctor.service.ts:72:  public static async assignPatientToDoctor(
+backend/src\middlewares\auth.middleware.ts:29:export const revokedTokens = new Set<string>();
+backend/src\middlewares\auth.middleware.ts:49:export const authenticateToken = async (
+backend/src\controllers\bed.controller.ts:4:export class BedController {
+backend/src\controllers\bed.controller.ts:5:  public static async getBedBoard(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\bed.controller.ts:17:  public static async updateStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\audit.controller.ts:4:export class AuditController {
+backend/src\controllers\audit.controller.ts:5:  public static async getLogs(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\middlewares\validator.ts:4:export const validateRequest = (schema: {
+backend/src\services\fileStorage.service.ts:22:export class StorageOperationError extends Error {
+backend/src\services\fileStorage.service.ts:32:export const getStorageProvider = (): StorageProvider =>
+backend/src\services\fileStorage.service.ts:54:export const assertBlobStorageConfigured = (): void => {
+backend/src\services\fileStorage.service.ts:115:export const toNodeReadable = (stream: DownloadStream): Readable => {
+backend/src\services\fileStorage.service.ts:122:export class FileStorageService {
+backend/src\services\fileStorage.service.ts:123:  static async upload(
+backend/src\services\fileStorage.service.ts:165:  static async ensurePrivateBlob(pathname: string, body: Buffer, contentType: string): Promise<void> {
+backend/src\services\fileStorage.service.ts:202:  static async download(
+backend/src\services\fileStorage.service.ts:245:  static async delete(storageKey: string, provider: StorageProvider): Promise<'deleted' | 'missing'> {
+backend/src\services\document.service.ts:57:export class DocumentService {
+backend/src\services\document.service.ts:147:  public static async uploadDocument(
+backend/src\services\document.service.ts:257:  public static async getFileStream(
+backend/src\services\document.service.ts:317:  public static async deleteDocument(
+backend/src\services\document.service.ts:361:  public static async getByPatientId(
+backend/src\services\document.service.ts:372:  public static async getAll(actor: DocumentActor): Promise<IMedicalDocument[]> {
+backend/src\controllers\billing.controller.ts:4:export class BillingController {
+backend/src\controllers\billing.controller.ts:5:  public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\billing.controller.ts:23:  public static async recordPayment(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\billing.controller.ts:41:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\billing.controller.ts:61:  public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\firebaseAdmin.service.ts:14:export const isFirebaseAdminConfigured = (): boolean =>
+backend/src\services\firebaseAdmin.service.ts:39:export const verifyFirebaseIdToken = async (idToken: string): Promise<FirebaseIdentity> => {
+backend/src\services\firebaseAdmin.service.ts:68:export const deleteFirebaseUser = async (uid: string): Promise<void> => {
+backend/src\services\firebaseAdmin.service.ts:79:export const revokeFirebaseSessions = async (uid: string): Promise<void> => {
+backend/src\services\firebaseAdmin.service.ts:95:export const provisionFirebaseUser = async (input: {
+backend/src\controllers\conversation.controller.ts:12:export class ConversationController {
+backend/src\controllers\conversation.controller.ts:13:  public static async list(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\conversation.controller.ts:28:  public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\conversation.controller.ts:40:  public static async getMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\conversation.controller.ts:53:  public static async sendMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\conversation.controller.ts:69:  public static async markRead(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\firebaseAccount.service.ts:131:export class FirebaseAccountService {
+backend/src\services\firebaseAccount.service.ts:137:  public static async prepareExistingPatient(data: {
+backend/src\services\firebaseAccount.service.ts:167:  public static async completeExistingPatient(
+backend/src\services\firebaseAccount.service.ts:234:  public static async registerNewPatient(
+backend/src\services\firebaseAccount.service.ts:401:  public static async linkVerifiedLegacyUser(user: IUser, password: string): Promise<void> {
+backend/src\controllers\doctor.controller.ts:4:export class DoctorController {
+backend/src\controllers\doctor.controller.ts:5:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\doctor.controller.ts:17:  public static async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\doctor.controller.ts:29:  public static async assignPatient(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\doctor.controller.ts:47:  public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\doctor.controller.ts:64:  public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\doctor.controller.ts:81:  public static async toggleStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\insurance.service.ts:50:export class InsuranceService {
+backend/src\services\insurance.service.ts:51:  public static async submitClaim(
+backend/src\services\insurance.service.ts:150:  public static async updateClaimStatus(
+backend/src\services\insurance.service.ts:244:  public static async getByPatientId(
+backend/src\services\insurance.service.ts:253:  public static async getAll(filters?: ClaimFilters): Promise<IInsuranceClaim[]> {
+backend/src\services\insurance.service.ts:257:  public static async getPoliciesByPatientId(patientId: string): Promise<IInsurancePolicy[]> {
+backend/src\services\insurance.service.ts:261:  public static async getAllPolicies(): Promise<IInsurancePolicy[]> {
+backend/src\services\notification.service.ts:5:export class NotificationService {
+backend/src\controllers\document.controller.ts:14:export class DocumentController {
+backend/src\controllers\document.controller.ts:15:  public static async upload(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\document.controller.ts:47:  public static async download(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\document.controller.ts:103:  public static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\document.controller.ts:117:  public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\document.controller.ts:130:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\patient.service.ts:40:export class PatientService {
+backend/src\services\patient.service.ts:44:  private static async withIdentityLock<T>(key: string, task: () => Promise<T>): Promise<T> {
+backend/src\services\patient.service.ts:62:  public static async getAll(
+backend/src\services\patient.service.ts:121:  public static async getById(patientId: string): Promise<IPatient> {
+backend/src\services\patient.service.ts:129:  public static async getByUserId(userId: string): Promise<IPatient | undefined> {
+backend/src\services\patient.service.ts:221:  public static async create(
+backend/src\services\patient.service.ts:284:  public static async update(
+backend/src\services\prescription.service.ts:9:export class PrescriptionService {
+backend/src\services\prescription.service.ts:10:  public static async createPrescription(
+backend/src\services\prescription.service.ts:89:  public static async getByPatientId(patientId: string): Promise<IPrescription[]> {
+backend/src\services\prescription.service.ts:93:  public static async getAll(): Promise<IPrescription[]> {
+backend/src\controllers\insurance.controller.ts:4:export class InsuranceController {
+backend/src\controllers\insurance.controller.ts:5:  public static async submitClaim(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\insurance.controller.ts:27:  public static async updateClaimStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\insurance.controller.ts:45:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\insurance.controller.ts:65:  public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\insurance.controller.ts:80:  public static async getPolicies(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\record.service.ts:7:export class MedicalRecordService {
+backend/src\services\record.service.ts:8:  public static async createNote(
+backend/src\services\record.service.ts:59:  public static async getById(recordId: string): Promise<IMedicalRecord> {
+backend/src\services\record.service.ts:67:  public static async updateNote(
+backend/src\services\record.service.ts:81:  public static async getByPatientId(patientId: string): Promise<IMedicalRecord[]> {
+backend/src\controllers\patient.controller.ts:4:export class PatientController {
+backend/src\controllers\patient.controller.ts:5:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\patient.controller.ts:22:  public static async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\patient.controller.ts:34:  public static async checkDuplicates(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\patient.controller.ts:46:  public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\patient.controller.ts:63:  public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\services\teleconsultation.service.ts:26:export class TeleconsultationService {
+backend/src\controllers\prescription.controller.ts:4:export class PrescriptionController {
+backend/src\controllers\prescription.controller.ts:5:  public static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\prescription.controller.ts:25:  public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\prescription.controller.ts:37:  public static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\record.controller.ts:4:export class RecordController {
+backend/src\controllers\record.controller.ts:5:  public static async createClinicalNote(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\record.controller.ts:25:  public static async updateClinicalNote(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\record.controller.ts:42:  public static async getByPatientId(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\teleconsultation.controller.ts:15:export class TeleconsultationController {
+backend/src\controllers\teleconsultation.controller.ts:16:  public static async list(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\teleconsultation.controller.ts:27:  public static async start(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\teleconsultation.controller.ts:39:  public static async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+backend/src\controllers\teleconsultation.controller.ts:51:  public static async end(req: Request, res: Response, next: NextFunction): Promise<void> {
